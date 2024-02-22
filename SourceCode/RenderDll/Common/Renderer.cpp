@@ -4175,7 +4175,7 @@ extern  byte *sData;
 
 bool CRenderer::DXTDecompress(byte *srcData,byte *dstData,int nWidth,int nHeight,ETEX_Format eSrcTF, bool bUseHW, int nDstBytesPerPix)
 {
-#if !defined(WIN64) && !defined(NULL_RENDERER)
+#if !defined(WIN64) && !defined(NULL_RENDERER) && defined(ENABLE_DXT)
   if (nDstBytesPerPix != 3 && nDstBytesPerPix != 4)
     return false;
 
@@ -4277,7 +4277,7 @@ bool CRenderer::DXTCompress( byte *raw_data,int nWidth,int nHeight,ETEX_Format e
     return false;
   }
 
-#if !defined(WIN64) && !defined(NULL_RENDERER)
+#if !defined(WIN64) && !defined(NULL_RENDERER) && defined(ENABLE_DXT)
   // NOTE: AMD64 port: implement
   if (!bUseHW)
   {

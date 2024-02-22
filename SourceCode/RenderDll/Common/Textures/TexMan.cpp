@@ -2716,7 +2716,7 @@ byte *CTexMan::ImgConvertDXT_RGBA(byte *dst, STexPic *ti, int DXTSize)
 
   sData = dd;
       
-#if defined(WIN64) || defined(LINUX)
+#if defined(WIN64) || defined(LINUX) || !defined(ENABLE_DXT)
 	// NOTE: AMD64 port: implement
 	dd = new byte [ti->m_Width*ti->m_Height*4];
 #else
@@ -2783,7 +2783,7 @@ byte *CTexMan::ImgConvertDXT_RGBA(byte *dst, STexPic *ti, int DXTSize)
   
 byte *CTexMan::ImgConvertRGBA_DXT(byte *dst, STexPic *ti, int& DXTSize, int& nMips, int bits, bool bUseExistingMips)
 {
-#if !defined(PS2) && !defined(WIN64) && !defined(LINUX)
+#if !defined(PS2) && !defined(WIN64) && !defined(LINUX) && defined(ENABLE_DXT)
 	// NOTE: AMD64 port: implement
 
   assert (bits == 24 || bits == 32);

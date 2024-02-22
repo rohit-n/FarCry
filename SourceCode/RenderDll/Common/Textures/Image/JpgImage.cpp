@@ -70,7 +70,7 @@ CImageJpgFile::CImageJpgFile (byte* ptr, long filesize) : CImageFile ()
     mfSet_error (eIFE_BadFormat,"Cannot read JPEG file header");
     return;
   }
-#else
+#elif defined(ENABLE_IJL)
   JPEG_CORE_PROPERTIES image;
   ZeroStruct( image );
   SRGBPixel *pixels;
@@ -206,7 +206,9 @@ CImageJpgFile::CImageJpgFile (byte* ptr, long filesize) : CImageFile ()
   delete [] imageData;
 
   /* And we're done! */
-#endif	//PS2
+#else	//PS2
+mfSet_error(eIFE_BadFormat, "IJL disabled");
+#endif
 }
 
 #endif // WIN64
@@ -381,7 +383,7 @@ CImageJpgFile::CImageJpgFile (byte* ptr, long filesize) : CImageFile () {
 
 void WriteJPG(byte *dat, int wdt, int hgt, char *name)
 {
-#if !defined(PS2) && !defined(WIN64) && !defined(LINUX64) && !defined(NULL_RENDERER)
+#if !defined(PS2) && !defined(WIN64) && !defined(LINUX64) && !defined(NULL_RENDERER) && defined(ENABLE_IJL)
   JPEG_CORE_PROPERTIES image;
   ZeroMemory( &image, sizeof( JPEG_CORE_PROPERTIES ) );
 
