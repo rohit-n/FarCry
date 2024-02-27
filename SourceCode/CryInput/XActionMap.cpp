@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Input.h"
 #include "XActionMap.h"
 #include "XActionMapManager.h"
@@ -176,14 +176,14 @@ void CXActionMap::BindAction(XACTIONID nActionID, const char *sKey,const char *s
 	}
 
 	char sTemp[256];strcpy(sTemp,sKey);
-	_strlwr(sTemp);
+	strlwr(sTemp);
 	XBind NewBind;
 	NewBind.nKey=m_pManager->m_pInput->GetKeyID(sTemp);
 	NewBind.nModifier=0;
 	if(NewBind.nKey ){
 		if(sModifier)
 		{
-			strcpy(sTemp,sModifier);_strlwr(sTemp);
+			strcpy(sTemp,sModifier);strlwr(sTemp);
 			NewBind.nModifier=m_pManager->m_pInput->GetKeyID(sTemp);
 		}
 		

@@ -322,6 +322,8 @@
     <ClCompile Include="CryInput.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Joystick.cpp" />
+    <ClCompile Include="SDLKeyboard.cpp" />
+    <ClCompile Include="SDLMouse.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -338,6 +340,8 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Joystick.h" />
     <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="SDLKeyboard.h" />
+    <ClInclude Include="SDLMouse.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="XActionMap.h" />
     <ClInclude Include="XActionMapManager.h" />

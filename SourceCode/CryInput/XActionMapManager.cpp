@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Input.h"
 #include "XActionMap.h"
 #include "XActionMapManager.h"

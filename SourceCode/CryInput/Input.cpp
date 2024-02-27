@@ -11,8 +11,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #pragma warning(disable:4786)
+#include <algorithm>
 #include <stdio.h>
 #include <ILog.h>
 #include <IInput.h>
@@ -210,15 +211,18 @@ int g_nKeys[]={
 
     XKEY_NULL
 };
-
-bool CInput::Init(ISystem *pSystem,HINSTANCE hinst,HWND hwnd,bool dinput)
+bool CInput::Init(ISystem *pSystem
+#ifndef USE_SDL_INPUT
+	,HINSTANCE hinst,HWND hwnd,bool dinput
+#endif
+)
 {
 	m_pSystem = pSystem;
 
 #ifndef PS2
 	m_pLog=pSystem->GetILog();
   
-#ifndef _XBOX
+#ifndef USE_SDL_INPUT
 	m_hinst=hinst;
 	m_hwnd=hwnd;
 	m_postingenable = 1;
@@ -244,16 +248,24 @@ bool CInput::Init(ISystem *pSystem,HINSTANCE hinst,HWND hwnd,bool dinput)
 	//	return (true);
 	
 	m_pLog->Log("Direct Input initialized (CryInputDLL)\n");	
-#endif //_XBOX
+#endif
 
 #ifndef _XBOX
-	//if (!m_Keyboard.Init(this,m_pLog,m_g_pdi,hinst,hwnd) && dinput) 
-	if (!m_Keyboard.Init(this,m_pSystem,m_g_pdi,hinst,hwnd) && dinput) 
+	//if (!m_Keyboard.Init(this,m_pLog,m_g_pdi,hinst,hwnd) && dinput)
+#ifndef USE_SDL_INPUT
+	if (!m_Keyboard.Init(this,m_pSystem,m_g_pdi,hinst,hwnd) && dinput)
+#else
+	if (!m_Keyboard.Init(this, m_pSystem))
+#endif
 		return (false);
 	m_pLog->LogToFile("Keyboard initialized\n");			
 	
 	m_Mouse.m_pInput = this;
+#ifndef USE_SDL_INPUT
 	if (!m_Mouse.Init(m_pSystem,m_g_pdi,hinst,hwnd,dinput) && dinput) 
+#else
+	if (!m_Mouse.Init(m_pSystem))
+#endif
 		return (false);
 	m_pLog->Log("Mouse initialized\n");		
 	
@@ -263,7 +275,7 @@ bool CInput::Init(ISystem *pSystem,HINSTANCE hinst,HWND hwnd,bool dinput)
 	}		
 	else 
 		m_pLog->Log("Joystick initialized\n");		
-#else //_XBOX
+#else
 
   if (!m_Gamepad.Init(m_pLog)) 
 	{
@@ -373,15 +385,15 @@ void CInput::ShutDown()
 #endif //DEBUG_KEYBOARD 
 #endif //_XBOX
 
-#ifndef PS2
-#ifndef _XBOX
+
+#ifndef USE_SDL_INPUT
 	if (m_g_pdi)
 	{
 		m_g_pdi->Release();
 		m_g_pdi = NULL;
 	}	
 #endif //_XBOX
-#endif
+
 	//
 	delete this;
 }
@@ -689,6 +701,7 @@ bool CInput::GetOSKeyName(int nKey, wchar_t *szwKeyName, int iBufSize)
 	return false;
 }
 
+#ifdef _WIN32
 int CInput::VK2XKEY(int nKey)
 {
 //#ifdef DEBUG_KEYBOARD
@@ -822,7 +835,7 @@ int CInput::VK2XKEY(int nKey)
 
    return XKEY_NULL;
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////////
 int CInput::GetKeyID(const char *sName)
 {
@@ -836,7 +849,7 @@ int CInput::GetKeyID(const char *sName)
 	char sTemp[256];
 	strcpy(sTemp,sName);	
 
-	_strlwr(sTemp);
+	strlwr(sTemp);
 
 	itor=m_mapKeyNames.find(sTemp);
 

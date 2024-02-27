@@ -37,10 +37,14 @@
 
 
 // PC devices
-#ifndef _XBOX
+#ifndef USE_SDL_INPUT
 #include "XKeyboard.h"
-#endif //_XBOX
 #include "XMouse.h"
+#else
+#include "SDLKeyboard.h"
+#include "SDLMouse.h"
+#endif
+
 #include "Joystick.h"
 
 // XBox devices
@@ -77,14 +81,13 @@ public:
 		m_console = 0;
 		m_pSystem = NULL;
 		m_pLog=NULL; 
-#if !defined(_XBOX) && !defined(PS2)
+#if !defined(_XBOX) && !defined(PS2) && !defined(USE_SDL_INPUT)
 		m_g_pdi = NULL; 
 #endif
 	}
+#ifndef USE_SDL_INPUT
 	bool	Init(ISystem *pSystem,HINSTANCE hinst, HWND hwnd, bool usedinput);
-
-#ifdef PS2
-
+#else
 	bool	Init(ISystem *pSystem);
 	
 #endif
@@ -128,12 +131,12 @@ public:
 	inline  float	MouseGetVScreenY() { return m_Mouse.GetVScreenY(); }
 	inline  void	SetMouseInertia(float kinertia) { m_Mouse.SetInertia(kinertia); }
 	inline	bool	JoyButtonPressed(int p_numButton) { return (m_Joystick.IsButtonPressed(p_numButton)); }	
-	inline	int		JoyGetDir()		{ return (m_Joystick.GetDir()); }	
-	inline	int		JoyGetHatDir()  { return (m_Joystick.GetHatDir()); }		
+	inline	int		JoyGetDir()		{ return (m_Joystick.GetDir()); }
+	inline	int		JoyGetHatDir()  { return (m_Joystick.GetHatDir()); }
 	inline	Vec3	JoyGetAnalog1Dir(unsigned int joystickID) const  { return (m_Joystick.GetAnalog1Dir(joystickID)); }		
 	inline	Vec3	JoyGetAnalog2Dir(unsigned int joystickID) const  { return (m_Joystick.GetAnalog2Dir(joystickID)); }		
-  inline  CXKeyboard *GetKeyboard()        { return (&m_Keyboard); }	
-	inline  CXMouse * GetMouse()        { return (&m_Mouse); }	
+	inline  IKeyboard *GetKeyboard()        { return (&m_Keyboard); }
+	inline  IMouse * GetMouse()        { return (&m_Mouse); }
 	inline	int		GetKeyPressedCode()		{ return (m_Keyboard.GetKeyPressedCode()); }
 	inline	const char	*GetKeyPressedName()	{ return (m_Keyboard.GetKeyPressedName()); }
 	inline	int		GetKeyDownCode()		{ return (m_Keyboard.GetKeyDownCode()); }
@@ -188,7 +191,9 @@ public:
 	int GetKeyID(const char *sName);
 	IActionMapManager* CreateActionMapManager();
 	const char *GetXKeyPressedName();
+#ifdef _WIN32
 	int VK2XKEY(int nKey);
+#endif
 	void EnableBufferedInput(bool bEnable)
 	{
 		m_bBufferedInput=bEnable;
@@ -229,19 +234,24 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 
 	IConsole *m_console;
-#ifndef _XBOX
+#ifdef USE_SDL_INPUT
+	CSDLKeyboard	m_Keyboard;
+	CSDLMouse		m_Mouse;
+#else
 	CXKeyboard	m_Keyboard;
 	CXMouse		m_Mouse;
+#endif
 	CJoystick	m_Joystick;
-#else  //_XBOX
+#ifdef _XBOX
   CXGamepad m_Gamepad;
+#endif
 #ifdef DEBUG_KEYBOARD
   CXDebugKeyboard m_Keyboard;
 #endif //DEBUG_KEYBOARD 
-#endif // _XBOX
+
 
 	ILog *m_pLog;	
-#if !defined(_XBOX) && !defined(PS2)
+#if !defined(_XBOX) && !defined(PS2) && !defined(USE_SDL_INPUT)
 	LPDIRECTINPUT8	m_g_pdi;	
 	HINSTANCE		m_hinst;
 	HWND			m_hwnd;

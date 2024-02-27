@@ -1,7 +1,7 @@
 // CryInput.cpp : Defines the entry point for the DLL application.
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #ifndef _XBOX 
 _ACCESS_POOL;
@@ -38,7 +38,9 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 }
 #endif //_XBOX
 
+#ifndef USE_SDL_INPUT
 #include <SDL_syswm.h>
+#endif
 
 IInput *CreateInput( ISystem *pSystem,void* hinst, void* hwnd, bool usedinput)
 {
@@ -46,12 +48,16 @@ IInput *CreateInput( ISystem *pSystem,void* hinst, void* hwnd, bool usedinput)
 	CInput *pInput=new CInput;
 
 	// #TODO: properly HWND gettings, and remove 
+#ifndef USE_SDL_INPUT
 	SDL_SysWMinfo wmInfo;
 	SDL_VERSION(&wmInfo.version);
 	SDL_GetWindowWMInfo((SDL_Window*)hwnd, &wmInfo);
 	HWND realhwnd = wmInfo.info.win.window;
 
 	if (!pInput->Init(pSystem,(HINSTANCE)hinst, realhwnd,usedinput))
+#else
+	if (!pInput->Init(pSystem))
+#endif
 	{
 		delete pInput;
 		return NULL;

@@ -2,6 +2,10 @@ project(CryInput)
 
 add_definitions(-D_USRDLL -DCRYINPUT_EXPORTS)
 
+if (NOT MSVC)
+add_definitions(-DUSE_SDL_INPUT)
+endif()
+
 set(SRC_FILES
     "CryInput.cpp"
     "Input.cpp"
@@ -9,9 +13,19 @@ set(SRC_FILES
     "StdAfx.cpp"
     "XActionMap.cpp"
     "XActionMapManager.cpp"
+)
+
+if (MSVC)
+set (SRC_FILES ${SRC_FILES}
     "XKeyboard.cpp"
     "XMouse.cpp"
 )
+else()
+set (SRC_FILES ${SRC_FILES}
+    "SDLKeyboard.cpp"
+    "SDLMouse.cpp"
+)
+endif()
 
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
