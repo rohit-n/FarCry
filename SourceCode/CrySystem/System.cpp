@@ -865,6 +865,7 @@ bool CSystem::Update( int updateFlags, int nPauseMode )
 		}
 #else
 		SDL_Event event;
+		std::vector<SDL_Event> events;
 		while (SDL_PollEvent(&event))
 		{
 			switch (event.type)
@@ -889,9 +890,18 @@ bool CSystem::Update( int updateFlags, int nPauseMode )
 					g_bWindowInFocus = false;
 					break;
 				}
-			}break;
+			}
+			break;
+			default:
+				events.push_back(event);
+				break;
 			}
 		}
+		for (SDL_Event ev : events)
+		{
+			SDL_PushEvent(&ev);
+		}
+		events.clear();
 #endif
   }
 #endif
