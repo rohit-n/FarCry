@@ -417,7 +417,7 @@ void CFFont::DrawString( float fBaseX, float fBaseY, const char *szMsg, const bo
 		return;
 	}
 
-	int iSize = min(1023, strlen(szMsg));
+	int iSize = 1023 < strlen(szMsg) ? 1023 : strlen(szMsg);
 
 	static wchar_t szwMsg[1024];
 

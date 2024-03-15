@@ -43,7 +43,15 @@ CPhysicalWorld::CPhysicalWorld(ILog *pLog)
 	m_pLog = pLog; 
 	Init(); 
 	g_pPhysWorlds[g_nPhysWorlds] = this;
-	g_nPhysWorlds = min(g_nPhysWorlds+1,sizeof(g_pPhysWorlds)/sizeof(g_pPhysWorlds[0]));
+	if (g_nPhysWorlds + 1 < sizeof(g_pPhysWorlds)/sizeof(g_pPhysWorlds[0]))
+	{
+		g_nPhysWorlds = g_nPhysWorlds + 1;
+	}
+	else
+	{
+		g_nPhysWorlds = sizeof(g_pPhysWorlds)/sizeof(g_pPhysWorlds[0]);
+	}
+
 	m_pEntBeingDeleted = 0;
 	m_bGridThunksChanged = 0;
 	m_bUpdateOnlyFlagged = 0;

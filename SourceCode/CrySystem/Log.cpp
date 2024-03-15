@@ -416,9 +416,9 @@ void CLog::LogStringToFile( const char *szString,bool bAdd )
 		memset(szTemp, ' ', 8);
 		strftime( szTemp, 8, "<%M:%S> ", today );
 	}
-#endif
 
 	OutputDebugStringA(szTemp);
+#endif
 
 	if (bAdd)
 	{

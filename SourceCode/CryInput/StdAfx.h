@@ -32,7 +32,7 @@
 #define USE_NEWPOOL
 #include <CryMemoryManager.h>
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(_WIN32)
 #include <crtdbg.h>
 #endif
 

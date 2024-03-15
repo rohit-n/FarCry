@@ -332,7 +332,9 @@ unsigned int CLMSerializationManager2::Save(const char *pszFilePath, LMGenParam 
 	string strPakName = strDirName + "\\" LEVELLM_PAK_NAME;
 	GetPak()->ClosePack(strPakName.c_str());
 	// make sure the pak file in which this LM data resides is opened
+#ifndef __linux
 	SetFileAttributes(strPakName.c_str(), FILE_ATTRIBUTE_NORMAL);
+#endif
 	ICryArchive_AutoPtr pPak = GetPak()->OpenArchive (strPakName.c_str(), ICryArchive::FLAGS_RELATIVE_PATHS_ONLY);
 	if (!pPak)
 		return NSAVE_RESULT::EPAK_FILE_OPEN_FAIL;
@@ -686,7 +688,7 @@ RenderLMData * CLMSerializationManager2::CreateLightmap(const char *pszFileName,
 	// Create a DOT3 Lightmap object
 	IRenderer *pIRenderer = GetSystem()->GetIRenderer();
 	int iColorLerpTex = 0, iHDRColorLerpTex = 0, iDomDirectionTex = 0, iOcclTex = 0;
-
+#ifndef __linux
 	assert(!IsBadReadPtr(pColorLerp4, sizeof(BYTE) * 4 * iWidth * iHeight));
 #ifdef USE_DOT3_ALPHA
 	assert(!IsBadReadPtr(pDomDirection3, sizeof(BYTE) * 4 * iWidth * iHeight));
@@ -697,7 +699,7 @@ RenderLMData * CLMSerializationManager2::CreateLightmap(const char *pszFileName,
 		assert(!IsBadReadPtr(pOccl2, sizeof(BYTE) * 2 * iWidth * iHeight));
 	if(pHDRColorLerp)
 		assert(!IsBadReadPtr(pHDRColorLerp, sizeof(BYTE) * 4 * iWidth * iHeight));
-
+#endif
 	char szName[128];
 	if (pszFileName)
 	{
@@ -828,7 +830,9 @@ bool CLMSerializationManager2::ExportDLights(const char *pszFilePath, const CDLi
 	string strPakName = strDirName + "\\" LEVELLM_PAK_NAME;
 	GetPak()->ClosePack(strPakName.c_str());
 	// make sure the pak file in which this LM data resides is opened
+#ifndef __linux
 	SetFileAttributes(strPakName.c_str(), FILE_ATTRIBUTE_NORMAL);
+#endif
 	if (!bNewZip)
 		GetPak()->ClosePack( strPakName.c_str() );
 	ICryArchive_AutoPtr pPak = GetPak()->OpenArchive (strPakName.c_str(), ICryArchive::FLAGS_RELATIVE_PATHS_ONLY|(bNewZip?ICryArchive::FLAGS_CREATE_NEW:0));
@@ -844,9 +848,9 @@ bool CLMSerializationManager2::ExportDLights(const char *pszFilePath, const CDLi
 		pPak->RemoveFile (pFileName);
 		return true;
 	}
-
+#ifndef __linux
 	assert(!IsBadReadPtr(ppLights, sizeof(CDLight *) * iNumLights));
-
+#endif
 	sHeader.iNumDLights = iNumLights;
 	fMem.Write (sHeader);
 

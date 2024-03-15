@@ -245,7 +245,11 @@ protected:
 		if(!pThis)
 		{
 			m_pSS->RaiseError("Null Self");
+#ifndef __linux
 			::OutputDebugString("Null Self\n");
+#else
+			fprintf(stderr, "%s", "Null Self\n");
+#endif
 			return 0;
 		}
 		//int i=m_pFunctionHandler->GetFunctionID();

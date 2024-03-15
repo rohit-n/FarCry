@@ -25,8 +25,10 @@
 
 #ifdef _DEBUG
 static char THIS_FILE[] = __FILE__;
+#ifdef _WIN32
 #define DEBUG_CLIENTBLOCK new( _NORMAL_BLOCK, THIS_FILE, __LINE__) 
 #define new DEBUG_CLIENTBLOCK
+#endif //WIN32
 #endif
 
 #if defined (WIN32) || (WIN64)
