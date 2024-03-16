@@ -218,9 +218,9 @@ CSystem::CSystem():
 	m_pSizer = NULL;
 
 	m_pCVarQuit=NULL;
-
+#ifndef __linux
 	m_pDownloadManager = 0;
-
+#endif
 	// default game MOD is root
 	memset(m_szGameMOD,0,256);
 #if defined( _DATAPROBE )
@@ -529,9 +529,9 @@ void CSystem::ShutDown(bool bRelaunch)
 	SAFE_DELETE(m_pSizer);
 	SAFE_DELETE(m_pStreamEngine);
 	SAFE_DELETE(m_pDefaultValidator);
-
+#ifndef __linux
 	SAFE_RELEASE(m_pDownloadManager);
-
+#endif
 	if (m_pLog)
 		m_pLog->EnableVerbosity(false);	// in order for the logs after this line to work
 	
@@ -1094,12 +1094,12 @@ bool CSystem::Update( int updateFlags, int nPauseMode )
 		m_pIMusic->Update();
 		m_Time.MeasureTime("MusicSysUp");
 	}
-
+#ifndef __linux
 	if (m_pDownloadManager && !bNoUpdate)
 	{
 		m_pDownloadManager->Update();
 	}
-
+#endif
 	//////////////////////////////////////////////////////////////////////////
 	// Strange, !do not remove... ask Timur for the meaning of this.
 	//////////////////////////////////////////////////////////////////////////

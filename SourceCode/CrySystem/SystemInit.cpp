@@ -1367,9 +1367,10 @@ bool CSystem::Init( const SSystemInitParams &params )
 		}
 	}
 
+#ifndef __linux
 	m_pDownloadManager = new CDownloadManager;
 	m_pDownloadManager->Create(this);
-
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Check loader.
