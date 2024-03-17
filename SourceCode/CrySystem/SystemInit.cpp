@@ -57,16 +57,16 @@ extern HMODULE gDLLHandle;
 //////////////////////////////////////////////////////////////////////////
 
 #if defined(LINUX)
-#		define DLL_SOUND				"crysoundsystem.so"
-#		define DLL_NETWORK			"crynetwork.so"
-#		define DLL_ENTITYSYSTEM	"cryentitysystem.so"
-#		define DLL_INPUT				"cryinput.so"
-#		define DLL_PHYSICS			"cryphysics.so"
+#		define DLL_SOUND				"libCrySoundSystem.so"
+#		define DLL_NETWORK			"libCryNetwork.so"
+#		define DLL_ENTITYSYSTEM	"libCryEntitySystem.so"
+#		define DLL_INPUT				"libCryInput.so"
+#		define DLL_PHYSICS			"libCryPhysics.so"
 #		define DLL_MOVIE				"crymovie.so"
-#		define DLL_AI						"cryaisystem.so"
-#		define DLL_FONT					"cryfont.so"
-#		define DLL_3DENGINE			"cry3dengine.so"
-#		define DLL_NULLRENDERER	"xrendernull.so"
+#		define DLL_AI						"libCryAISystem.so"
+#		define DLL_FONT					"libCryFont.so"
+#		define DLL_3DENGINE			"libCry3DEngine.so"
+#		define DLL_NULLRENDERER	"libXRenderNULL.so"
 #else
 #	define DLL_SOUND				"CrySoundSystem.dll"
 #	define DLL_NETWORK			"CryNetwork.dll"
@@ -784,7 +784,7 @@ bool CSystem::InitScriptSystem()
 {
 #ifndef _XBOX
 #if defined(LINUX)
-	m_dll.hScript = LoadDLL("cryscriptsystem.so");
+	m_dll.hScript = LoadDLL("libCryScriptSystem.so");
 #else
 	m_dll.hScript = LoadDLL("CryScriptSystem.dll");
 #endif
@@ -966,7 +966,7 @@ bool CSystem::Init3DEngine()
 bool CSystem::InitAnimationSystem()
 {
 #if defined(LINUX)
-	m_dll.hAnimation = LoadDLL("cryanimation.so");
+	m_dll.hAnimation = LoadDLL("libCryAnimation.so");
 #else
 	m_dll.hAnimation = LoadDLL("CryAnimation.dll");
 #endif
