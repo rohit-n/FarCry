@@ -3397,9 +3397,14 @@ int CUISystem::RetrieveCommonAttribute(IScriptObject *pObject, CUIWidget *pWidge
 		char szFlags[5]={0};
 
 		strncpy(szFlags, szValue, 4);
-		strupr(szFlags);
-    
-		for (int i = 0; i < (int)min(strlen(szFlags), 4); i++)
+		szFlags[0] = toupper(szFlags[0]);
+		szFlags[1] = toupper(szFlags[1]);
+		szFlags[2] = toupper(szFlags[2]);
+		szFlags[3] = toupper(szFlags[3]);
+
+		int len = strlen(szFlags) < 4 ? strlen(szFlags) : 4;
+
+		for (int i = 0; i < len; i++)
 		{
 			if (szFlags[i] == 'L')
 			{
