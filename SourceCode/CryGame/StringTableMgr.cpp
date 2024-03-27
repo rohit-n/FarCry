@@ -15,6 +15,14 @@
 #include <StlUtils.h>
 #include <IInput.h>
 
+#define TO_LOWER(STR) i = 0; \
+		while (STR[i] != 0)\
+		{\
+			if (isalpha(STR[i]))\
+				STR[i] = tolower(STR[i]);\
+			i++;\
+		}
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -106,6 +114,7 @@ bool CStringTableMgr::LoadExcelXmlSpreadsheet( const string &sFileName )
 	//string sPath="LANGUAGES/"+m_sLanguage+string("/")+sFileName;
 
 	string sPath="LANGUAGES/"+sFileName;
+	size_t i;
 
 	//check if this table has already been loaded
 	FileNamesMapItor nit = m_mapLoadedTables.find(sPath);		
@@ -231,7 +240,7 @@ bool CStringTableMgr::LoadExcelXmlSpreadsheet( const string &sFileName )
 
 			char szLowerCaseKey[1024];
 			strcpy(szLowerCaseKey,sKeyString);
-			strlwr(szLowerCaseKey);
+			TO_LOWER(szLowerCaseKey);
 			m_vStrings.push_back( unicodeStr );
 			m_vEnglishStrings.push_back( sEnglishString );
 			m_keysMap[szLowerCaseKey] = nID;
@@ -300,13 +309,14 @@ bool CStringTableMgr::LoadStringTable(string sFileName)
 bool CStringTableMgr::LookupString( const char *sKey,wstring &sLocalizedString )
 {
 	assert(sKey);
+	size_t i;
 
 	// Label sign.
 	if (sKey[0] == '@')
 	{
 		char szLowKey[512];
 		strcpy(szLowKey,sKey);
-		strlwr(szLowKey);
+		TO_LOWER(szLowKey);
 
 		int nId = stl::find_in_map( m_keysMap,szLowKey,-1 );
 		if (nId >= 0)
@@ -345,13 +355,14 @@ bool CStringTableMgr::LookupString( const char *sKey,wstring &sLocalizedString )
 bool CStringTableMgr::LookupEnglishString( const char *sKey, string &sLocalizedString )
 {
 	assert(sKey);
+	size_t i;
 
 	// Label sign.
 	if (sKey[0] == '@') 
 	{
 		char szLowKey[512];
 		strcpy(szLowKey,sKey);
-		strlwr(szLowKey);
+		TO_LOWER(szLowKey);
 
 		int nId = stl::find_in_map( m_keysMap,szLowKey,-1 );
 		if (nId >= 0)
@@ -459,7 +470,8 @@ bool CStringTableMgr::GetSubtitleLabel(const char *_szFilename,char *szLabel)
 	
 	char szFilename[512];
 	strcpy(szFilename,_szFilename);
-	strlwr(szFilename);
+	size_t i;
+	TO_LOWER(szFilename);
 
   ptrdiff_t len = strlen(szFilename)-1;
   if (len<=1)    

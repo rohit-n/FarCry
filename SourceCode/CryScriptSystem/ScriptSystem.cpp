@@ -340,9 +340,14 @@ string& FormatPath( const string &sPath )
 	{
 		if (sLowerName[i] == '\\')
 			sLowerName[i] = '/';
+
+		if (isalpha(sLowerName[i]))
+		{
+			sLowerName[i] = tolower(sLowerName[i]);
+		}
 		i++;
 	}
-	strTemp = strlwr(sLowerName);
+	strTemp = sLowerName;
 	return strTemp;
 }
 

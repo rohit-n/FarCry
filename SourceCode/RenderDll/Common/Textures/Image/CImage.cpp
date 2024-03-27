@@ -99,6 +99,7 @@ CImageFile* CImageFile::mfLoad_file (char* szFileName)
 {
   double dTime0 = 0;
   ticks(dTime0);
+  size_t i = 0;
 
   FILE* pRawFile = iSystem->GetIPak()->FOpen (szFileName, "rb");
 
@@ -113,7 +114,12 @@ CImageFile* CImageFile::mfLoad_file (char* szFileName)
   nAcceptFOpen++;
 
   strcpy(m_CurFileName, szFileName);
-  strlwr(m_CurFileName);
+  while (m_CurFileName[i] != 0)
+  {
+    if (isalpha(m_CurFileName[i]))
+      m_CurFileName[i] = tolower(m_CurFileName[i]);
+    i++;
+  }
   CImageFile* pImageFile = mfLoad_file (pRawFile);
 	if (pImageFile)
 	{

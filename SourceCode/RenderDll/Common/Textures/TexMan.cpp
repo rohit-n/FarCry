@@ -1422,7 +1422,7 @@ STexPic *CTexMan::LoadFromImage (const char *name, uint flags, uint flags2, byte
   CImageFile* im[2];
   STexPic *tx = NULL;
   char wasloaded[2][256];
-  int i;
+  int i = 0;
 
   wasloaded[0][0] = 0;
   wasloaded[1][0] = 0;
@@ -1430,7 +1430,12 @@ STexPic *CTexMan::LoadFromImage (const char *name, uint flags, uint flags2, byte
   nam[0][0] = nam[1][0] = 0;
 
   strcpy(nm[0], name);
-  strlwr(nm[0]);
+  while (nm[0][i] != 0)
+  {
+    if (isalpha(nm[0][i]))
+      nm[0][i] = tolower(nm[0][i]);
+    i++;
+  }
 
   ConvertDOSToUnixName(nm[0], nm[0]);
 

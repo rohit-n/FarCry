@@ -29,6 +29,13 @@
 
 #define UI_DEFAULTS							(UI_MOUSE_VISIBLE | UI_BACKGROUND_VISIBLE | UI_ENABLED)
 
+#define TO_LOWER(STR, INDEX) INDEX = 0; \
+		while (STR[INDEX] != 0)\
+		{\
+			if (isalpha(STR[INDEX]))\
+				STR[INDEX] = tolower(STR[INDEX]);\
+			INDEX++;\
+		}
 
 //------------------------------------------------------------------------------------------------- 
 //------------------------------------------------------------------------------------------------- 
@@ -3330,11 +3337,12 @@ int CUISystem::RetrieveCommonAttribute(IScriptObject *pObject, CUIWidget *pWidge
 	char	*szValue;
 	float	fValue;
 	int		iValue;
+	size_t j;
 
 	pObject->GetCurrentKey(szKeyName);
 
 	strcpy(szAttributeName, szKeyName);
-	strlwr(szAttributeName);
+	TO_LOWER(szAttributeName, j);
 
 	pObject->GetCurrent(szValue);
 	pObject->GetCurrent(fValue);
@@ -3620,11 +3628,12 @@ int CUISystem::RetrieveTextAttribute(CUIWidget *pWidget, IScriptObject *pObject,
 	
 	char					*szValue;
 	wstring	szWValue;
+	size_t i;
 
 	pObject->GetCurrentKey(szKeyName);
 
 	strcpy(szAttributeName, szKeyName);
-	strlwr(szAttributeName);
+	TO_LOWER(szAttributeName, i);
 
 	if (szTextField == szAttributeName)
 	{
@@ -3727,6 +3736,7 @@ int CUISystem::CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CU
 	string szClassName;
 	UIRect			pRect;
 	int					iResult = 0;
+	size_t j;
 
 	IScriptObject *pObj = 0;
 
@@ -3755,7 +3765,11 @@ int CUISystem::CreateObjectFromTable(CUIWidget **pWidget, CUIWidget *pParent, CU
 
 			// convert to lowercase
 			szClassName = szAttributeValue;
-			strlwr((char *)szClassName.c_str());
+			for (j = 0; j < szClassName.length(); j++)
+			{
+				if (isalpha(szClassName[i]))
+					szClassName[i] = tolower(szClassName[i]);
+			}
 		}
 
 		// get rect
@@ -3943,6 +3957,7 @@ int CUISystem::SetupStaticFromTable(CUIStatic *pStatic, IScriptObject *pObject)
 
 	string szModel;
 	string szAnimation;
+	size_t i;
 
 	pObject->BeginIteration();
 
@@ -3951,7 +3966,8 @@ int CUISystem::SetupStaticFromTable(CUIStatic *pStatic, IScriptObject *pObject)
 		pObject->GetCurrentKey(szKeyName);
 
 		strcpy(szAttributeName, szKeyName);
-		strlwr(szAttributeName);
+		i = 0;
+		TO_LOWER(szAttributeName, i);
 
 		pObject->GetCurrent(szValue);
 		pObject->GetCurrent(fValue);
@@ -4071,6 +4087,7 @@ int CUISystem::SetupButtonFromTable(CUIButton *pButton, IScriptObject *pObject)
 	char	*szValue;
 	float	fValue;
 	int		iValue;
+	size_t i;
 
 	pObject->BeginIteration();
 
@@ -4079,7 +4096,7 @@ int CUISystem::SetupButtonFromTable(CUIButton *pButton, IScriptObject *pObject)
 		pObject->GetCurrentKey(szKeyName);
 
 		strcpy(szAttributeName, szKeyName);
-		strlwr(szAttributeName);
+		TO_LOWER(szAttributeName, i);
 
 		pObject->GetCurrent(szValue);
 		pObject->GetCurrent(fValue);
@@ -4151,6 +4168,7 @@ int CUISystem::SetupEditBoxFromTable(CUIEditBox *pEditBox, IScriptObject *pObjec
 	char	*szValue;
 	float	fValue;
 	int		iValue;
+	size_t i;
 
 	pObject->BeginIteration();
 
@@ -4159,7 +4177,7 @@ int CUISystem::SetupEditBoxFromTable(CUIEditBox *pEditBox, IScriptObject *pObjec
 		pObject->GetCurrentKey(szKeyName);
 
 		strcpy(szAttributeName, szKeyName);
-		strlwr(szAttributeName);
+		TO_LOWER(szAttributeName, i);
 
 		pObject->GetCurrent(szValue);
 		pObject->GetCurrent(fValue);
@@ -4279,6 +4297,7 @@ int CUISystem::SetupScrollBarFromTable(CUIScrollBar *pScrollBar, IScriptObject *
 	char	*szValue;
 	float	fValue;
 	int		iValue;
+	size_t i;
 
 	pObject->BeginIteration();
 
@@ -4287,7 +4306,7 @@ int CUISystem::SetupScrollBarFromTable(CUIScrollBar *pScrollBar, IScriptObject *
 		pObject->GetCurrentKey(szKeyName);
 
 		strcpy(szAttributeName, szKeyName);
-		strlwr(szAttributeName);
+		TO_LOWER(szAttributeName, i);
 
 		pObject->GetCurrent(szValue);
 		pObject->GetCurrent(fValue);
@@ -4369,6 +4388,7 @@ int CUISystem::SetupListViewFromTable(CUIListView *pListView, IScriptObject *pOb
 	char	*szValue;
 	float	fValue;
 	int		iValue;
+	size_t i;
 
 	pObject->BeginIteration();
 
@@ -4377,7 +4397,7 @@ int CUISystem::SetupListViewFromTable(CUIListView *pListView, IScriptObject *pOb
 		pObject->GetCurrentKey(szKeyName);
 
 		strcpy(szAttributeName, szKeyName);
-		strlwr(szAttributeName);
+		TO_LOWER(szAttributeName, i);
 
 		pObject->GetCurrent(szValue);
 		pObject->GetCurrent(fValue);
@@ -4475,6 +4495,7 @@ int CUISystem::SetupCheckBoxFromTable(CUICheckBox *pCheckBox, IScriptObject *pOb
 	char	*szValue;
 	float	fValue;
 	int		iValue;
+	size_t i;
 
 	pObject->BeginIteration();
 
@@ -4483,7 +4504,7 @@ int CUISystem::SetupCheckBoxFromTable(CUICheckBox *pCheckBox, IScriptObject *pOb
 		pObject->GetCurrentKey(szKeyName);
 
 		strcpy(szAttributeName, szKeyName);
-		strlwr(szAttributeName);
+		TO_LOWER(szAttributeName, i);
 
 		pObject->GetCurrent(szValue);
 		pObject->GetCurrent(fValue);
@@ -4563,6 +4584,7 @@ int CUISystem::SetupComboBoxFromTable(CUIComboBox *pComboBox, IScriptObject *pOb
 	char	*szValue;
 	float	fValue;
 	int		iValue;
+	size_t i;
 
 	pObject->BeginIteration();
 
@@ -4571,7 +4593,7 @@ int CUISystem::SetupComboBoxFromTable(CUIComboBox *pComboBox, IScriptObject *pOb
 		pObject->GetCurrentKey(szKeyName);
 
 		strcpy(szAttributeName, szKeyName);
-		strlwr(szAttributeName);
+		TO_LOWER(szAttributeName, i);
 
 		pObject->GetCurrent(szValue);
 		pObject->GetCurrent(fValue);
@@ -4677,6 +4699,7 @@ int CUISystem::SetupVideoPanelFromTable(CUIVideoPanel *pVideoPanel, IScriptObjec
 	string		szVideo = "";
 	int						iPlayNow = 0;
 	int						iPlaySound = 0;
+	size_t i;
 
 	pObject->BeginIteration();
 
@@ -4685,7 +4708,7 @@ int CUISystem::SetupVideoPanelFromTable(CUIVideoPanel *pVideoPanel, IScriptObjec
 		pObject->GetCurrentKey(szKeyName);
 
 		strcpy(szAttributeName, szKeyName);
-		strlwr(szAttributeName);
+		TO_LOWER(szAttributeName, i);
 
 		pObject->GetCurrent(szValue);
 		pObject->GetCurrent(fValue);

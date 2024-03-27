@@ -102,6 +102,7 @@ int CScriptObjectInput::BindCommandToKey(IFunctionHandler *pH)
 	CHECK_PARAMETERS(3);
 	const char *sCmd;
 	const char *sRes;
+	size_t i;
 	int nCex;
 	pH->GetParam(1,sCmd);
 	pH->GetParam(2,sRes);
@@ -110,8 +111,16 @@ int CScriptObjectInput::BindCommandToKey(IFunctionHandler *pH)
 	if (!sRes)
 		return pH->EndFunction();
 	 
-	char sTemp[256];strcpy(sTemp,sRes);
-	m_pConsole->CreateKeyBind(sCmd, strlwr(sTemp), nCex?true:false);
+	char sTemp[256];
+	strcpy(sTemp,sRes);
+	i = 0;
+	while (sTemp[i] != 0)
+	{
+		if (isalpha(sTemp[i]))
+			sTemp[i] = tolower(sTemp[i]);
+		i++;
+	}
+	m_pConsole->CreateKeyBind(sCmd, sTemp, nCex ? true : false);
 	
 	return pH->EndFunction();
 }
