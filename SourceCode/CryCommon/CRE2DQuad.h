@@ -27,4 +27,4 @@ public:
   struct_VERTEX_FORMAT_P3F_TEX2F m_arrVerts[4];
 };
 
-#endif _CRE2DQuad_H_
+#endif //_CRE2DQuad_H_

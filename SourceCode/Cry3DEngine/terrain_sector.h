@@ -192,4 +192,4 @@ struct CTerrainNode : public CSectorInfo
 	CTerrainNode * m_pParent;
 };
 
-#endif SECINFO_H
+#endif //SECINFO_H

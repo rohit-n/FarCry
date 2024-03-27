@@ -191,7 +191,7 @@ typedef struct in_addr_windows
 
 //-------------------------------------end socket stuff------------------------------------------
 
-#define __TIMESTAMP__ __DATE__" "__TIME__
+//#define __TIMESTAMP__ __DATE__" "__TIME__
 
 // function renaming
 #define _finite __finite
