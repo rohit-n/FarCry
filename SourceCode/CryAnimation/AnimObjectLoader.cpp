@@ -325,7 +325,11 @@ void CAnimObjectLoader::LoadAnimations( const char *cgaFile )
 	ICryPak *pack = g_GetISystem()->GetIPak();
 
 	// Search files that match filter specification.
+#ifndef __linux
 	_finddata_t fd;
+#else
+	dirent fd;
+#endif
 	int res;
 	intptr_t handle;
 	if ((handle = pack->FindFirst( filter,&fd )) != -1)
@@ -335,7 +339,7 @@ void CAnimObjectLoader::LoadAnimations( const char *cgaFile )
 		{
 			// Animation file found, load it.
 			strcpy( filename,fullpath );
-			strcat( filename,fd.name );
+			strcat( filename,FNAME(fd) );
 			LoadAnimation( filename );
 
 			res = pack->FindNext( handle,&fd );

@@ -2682,7 +2682,11 @@ SShaderCacheHeaderItem *CShader::GetCacheItem(SShaderCache *pCache, int nMask)
 
 static void sConvert(const char *Path)
 {
-  struct _finddata_t fileinfo;
+#ifndef __linux
+	struct _finddata_t fileinfo;
+#else
+	dirent fileinfo;
+#endif
   intptr_t handle;
   char nmf[256];
   char nmfDst[256];
@@ -2697,12 +2701,12 @@ static void sConvert(const char *Path)
     return;
   do
   {
-    if (fileinfo.name[0] == '.')
+    if (FNAME(fileinfo)[0] == '.')
       continue;
-    if (fileinfo.attrib & _A_SUBDIR)
+    if (IS_DIR(fileinfo))
       continue;
     strcpy(nmf, Path);
-    strcat(nmf, fileinfo.name);
+    strcat(nmf, FNAME(fileinfo));
 
     SShaderCacheHeader hd;
 

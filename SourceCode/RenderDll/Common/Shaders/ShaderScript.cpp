@@ -555,7 +555,11 @@ bool CShader::mfReloadFile(const char *szPath, const char *szName, int nFlags)
 
 void CShader::mfCheckAffectedFiles(const char *ShadersPath, int nCheckFile, TArray<char *>& CheckNames, TArray<char *>& AffectedFiles)
 {
-  struct _finddata_t fileinfo;
+#ifndef __linux
+	struct _finddata_t fileinfo;
+#else
+	dirent fileinfo;
+#endif
   intptr_t handle;
   int len;
   FILE *fp;
@@ -576,20 +580,20 @@ void CShader::mfCheckAffectedFiles(const char *ShadersPath, int nCheckFile, TArr
 
   do
   {
-    if (fileinfo.name[0] == '.')
+    if (FNAME(fileinfo)[0] == '.')
       continue;
 
-    if (fileinfo.attrib & _A_SUBDIR)
+    if (IS_DIR(fileinfo))
     {
       char next[256];
-      sprintf(next, "%s%s/", ShadersPath, fileinfo.name);
+      sprintf(next, "%s%s/", ShadersPath, FNAME(fileinfo));
 
       mfCheckAffectedFiles(next, nCheckFile, CheckNames, AffectedFiles);
       continue;
     }
 
     strcpy(nmf, ShadersPath);
-    strcat(nmf, fileinfo.name);
+    strcat(nmf, FNAME(fileinfo));
     len = strlen(nmf);
     while (len && nmf[len] != '.')
       len--;
@@ -1869,7 +1873,11 @@ char *CShader::mfScriptForFileName(const char *name, SShader *shGen, uint64 nMas
 
 int CShader::mfLoadSubdir (char *drn, int n) 
 {
-  struct _finddata_t fileinfo;
+#ifndef __linux
+	struct _finddata_t fileinfo;
+#else
+	dirent fileinfo;
+#endif
   intptr_t handle;
   int len;
   char nmf[256];
@@ -2297,20 +2305,20 @@ int CShader::mfLoadSubdir (char *drn, int n)
 
   do
   {
-    if (fileinfo.name[0] == '.')
+    if (FNAME(fileinfo)[0] == '.')
       continue;
 
-    if (fileinfo.attrib & _A_SUBDIR)
+    if (IS_DIR(fileinfo))
     {
       char ddd[256];
-      sprintf(ddd, "%s%s/", drn, fileinfo.name);
+      sprintf(ddd, "%s%s/", drn, FNAME(fileinfo));
 
       n = mfLoadSubdir(ddd, n);
       continue;
     }
 
     strcpy(nmf, drn);
-    strcat(nmf, fileinfo.name);
+    strcat(nmf, FNAME(fileinfo));
     len = strlen(nmf);
     while (len && nmf[len] != '.')
       len--;
@@ -2481,8 +2489,16 @@ void CShader::mfRemoveFromHash(SShader *ef)
 void CShader::mfAddToHash(char *name, SShader *ef)
 {
   char nameEf[256];
+  size_t i = 0;
   strncpy(nameEf, name, 256);
-  strlwr(nameEf);
+  while (nameEf[i] != 0)
+  {
+    if (isalpha(nameEf[i]))
+    {
+      nameEf[i] = tolower(nameEf[i]);
+    }
+    i++;
+  }
   SRefEfsLoaded fe;
   fe.m_Ef = ef;
   m_RefEfsLoaded.insert(LoadedShadersMapItor::value_type(nameEf, fe));

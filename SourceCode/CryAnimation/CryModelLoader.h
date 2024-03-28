@@ -111,8 +111,11 @@ protected:
 	FILE * m_fCalFile;
 	// the handle with which the animations are to be found, -1 by default
 	intptr_t m_nCafFindFileHandle;
+#ifndef __linux
 	struct _finddata_t m_fileinfo;
-
+#else
+	dirent m_fileinfo;
+#endif
 	// different LODs are kept in different files; each file will have its own reader here
 	TFixedArray<CChunkFileReader_AutoPtr> m_arrLodFiles;
 

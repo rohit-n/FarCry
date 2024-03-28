@@ -180,7 +180,11 @@ public:
 	// the directory wildcard must already be adjusted
 	CCryPakFindData (class CCryPak*pPak, const char* szDir);
 	bool	empty() const;
+#ifndef __linux
 	bool	Fetch(_finddata_t* pfd);
+#else
+	bool	Fetch(dirent* pfd);
+#endif
 	void	Scan(CCryPak*pPak, const char* szDir);
 
 	size_t sizeofThis()const;
@@ -198,7 +202,9 @@ protected:
 
 		FileDesc (struct _finddata_t* fd);
 		FileDesc (struct __finddata64_t* fd);
-
+#ifdef __linux
+		FileDesc (struct dirent* fd);
+#endif
 		FileDesc (ZipDir::FileEntry* fe);
 
 		// default initialization is as a directory entry
@@ -375,8 +381,13 @@ public:
   virtual long FTell(FILE *handle);
   virtual int FFlush(FILE *handle);
   virtual int FClose(FILE *handle);
+#ifndef __linux
   virtual intptr_t FindFirst(const char *pDir, struct _finddata_t *fd);
   virtual int FindNext(intptr_t handle, struct _finddata_t *fd);
+#else
+  virtual intptr_t FindFirst(const char *pDir, struct dirent* fd);
+  virtual int FindNext(intptr_t handle, struct dirent *fd);
+#endif
   virtual int FindClose(intptr_t handle);
   virtual int FEof(FILE *handle);
   virtual int FScanf(FILE *, const char *, ...);

@@ -376,18 +376,18 @@ unsigned CryModelLoader::loadAnimationsNoCAL ()
 	do
 	{
 		SAnimFile AnimFile;
-		AnimFile.strFileName = strDirName + "\\" + m_fileinfo.name;
+		AnimFile.strFileName = strDirName + "\\" + FNAME(m_fileinfo);
 
 		if(!stricmp(AnimFile.strFileName.c_str(), strDefaultPose.c_str()))
 			// skip the default pose as it has already been loaded
 			continue;
 
 		//if (!stricmp(FindExtension(fileinfo.name), "caf")) // actually ,according to the search mask, this should be met automatically
-		char* szExtension = StripFileExtension(m_fileinfo.name);
+		char* szExtension = StripFileExtension(FNAME(m_fileinfo));
 		assert (!stricmp(szExtension, "caf"));
-		assert (strlen(m_fileinfo.name) > nBaseNameLength);
+		assert (strlen(FNAME(m_fileinfo)) > nBaseNameLength);
 
-		AnimFile.strAnimName = m_fileinfo.name + nBaseNameLength;
+		AnimFile.strAnimName = FNAME(m_fileinfo) + nBaseNameLength;
 		arrAnimFiles.push_back (AnimFile);
 	}
 	while (g_GetPak()->FindNext( m_nCafFindFileHandle, &m_fileinfo ) != -1);

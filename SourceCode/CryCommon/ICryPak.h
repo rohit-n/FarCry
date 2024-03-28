@@ -252,10 +252,17 @@ struct ICryPak
   virtual intptr_t 
   FindFirst(
   const char *pDir, 
+#ifndef __linux
   struct _finddata_t *fd
+#else
+ struct dirent* fd
+#endif
   )=0;
-
+#ifndef __linux
   virtual int FindNext(intptr_t handle, struct _finddata_t *fd)=0;
+#else
+  virtual int FindNext(intptr_t handle, struct dirent* fd)=0;
+#endif
   virtual int FindClose(intptr_t handle)=0;
 //	virtual bool IsOutOfDate(const char * szCompiledName, const char * szMasterFile)=0;
 	//returns file modification time

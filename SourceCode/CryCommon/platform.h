@@ -94,9 +94,13 @@ typedef void *EVENT_HANDLE;
 #define CPUF_MMX   8
 
 
-
-
-
+#ifndef __linux
+#define IS_DIR(X) X.attrib &_A_SUBDIR
+#define FNAME(X) X.name
+#else
+#define IS_DIR(X) X.d_type == DT_DIR
+#define FNAME(X) X.d_name
+#endif
 
 
 

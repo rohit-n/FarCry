@@ -746,9 +746,13 @@ int CScriptObjectSystem::GetEntities(IFunctionHandler *pH)
 		}
 	}
 
+#ifndef __linux
 	inline bool Filter(struct _finddata_t& fd, int nScanMode)
+#else
+	inline bool Filter(struct dirent& fd, int nScanMode)
+#endif
 	{
-		if (!strcmp(fd.name, ".") || !strcmp(fd.name, ".."))
+		if (!strcmp(FNAME(fd), ".") || !strcmp(FNAME(fd), ".."))
 			return false;
 
 		switch (nScanMode)
@@ -756,9 +760,9 @@ int CScriptObjectSystem::GetEntities(IFunctionHandler *pH)
 		case SCANDIR_ALL:
 			return true;
 		case SCANDIR_SUBDIRS:
-			return 0 != (fd.attrib & _A_SUBDIR);
+			return 0 != (IS_DIR(fd));
 		case SCANDIR_FILES:
-			return 0 == (fd.attrib & _A_SUBDIR);
+			return 0 == (IS_DIR(fd));
 		default:
 			return false;
 		}
@@ -785,19 +789,18 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler *pH)
 	if (pH->GetParamCount()>2)
 		pH->GetParam(3, nInPack);
 
+#ifdef __linux
+	nInPack = 1; //CryPak can load loose files in the correct directory
+#endif
+
 	if (!nInPack)
 	{
-#if !defined(XBOX) && !defined(PS2)
-
+#ifndef __linux
 		struct __finddata64_t c_file;
 		intptr_t hFile;
 
 		// Find first file in current directory
-#if defined(WIN32)
 		if ((hFile = _findfirst64( (string(pszFolderName) + "\\*.*").c_str(), &c_file )) == -1L)
-#elif defined(LINUX)
-		if ((hFile = _findfirst64( (string(pszFolderName) + "/*").c_str(), &c_file )) == -1)
-#endif
 		{
 			return (pH->EndFunction(*pObj));
 		}
@@ -819,10 +822,14 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler *pH)
 	}
 	else
 	{
-		_finddata_t c_file;
+#ifndef __linux
+		finddata_t c_file;
+#else
+		dirent c_file;
+#endif
 		intptr_t hFile;
 
-		if ((hFile = m_pSystem->GetIPak()->FindFirst((string(pszFolderName) + "\\*.*").c_str(), &c_file)) == -1L)
+		if ((hFile = m_pSystem->GetIPak()->FindFirst((string(pszFolderName) + "/*.*").c_str(), &c_file)) == -1L)
 		{
 			return pH->EndFunction(*pObj);
 		}
@@ -832,7 +839,7 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler *pH)
 			{
 				if (Filter (c_file, nScanMode))
 				{
-					pObj->SetAt(k, c_file.name);
+					pObj->SetAt(k, FNAME(c_file));
 					k++;
 				}
 			}

@@ -202,6 +202,40 @@ char* CCryPak::BeautifyPath(char* dst)
 	return q;
 }
 
+#ifdef __linux
+const char* CCryPak::AdjustFileName(const char *src, char *dst, unsigned nFlags,bool *bFoundInPak)
+{
+	char* rp;
+	char buf[g_nMaxPath];
+	strcpy(buf, "../");
+	strcat(buf, src);
+
+	if (*src == '/')
+	{
+		//already an absolute path
+		strcpy(dst, src);
+		return dst;
+	}
+
+	rp = realpath(buf, dst);
+	if (!rp)
+	{
+		rp = realpath("../", dst);
+		if (!rp)
+		{
+			fprintf(stderr, "realpath failed for ../!\n");
+			__builtin_trap();
+			return NULL;
+		}
+
+		strcpy(dst, rp);
+		strcat(dst, "/");
+		strcat(dst, src);
+
+	}
+	return dst;
+}
+#else
 //////////////////////////////////////////////////////////////////////////
 // given the source relative path, constructs the full path to the file according to the flags
 const char* CCryPak::AdjustFileName(const char *src, char *dst, unsigned nFlags,bool *bFoundInPak)
@@ -352,6 +386,7 @@ const char* CCryPak::AdjustFileName(const char *src, char *dst, unsigned nFlags,
 
 	return dst; // the last MOD scanned, or the absolute path outside MasterCD
 }
+#endif
 /*
 FILETIME CCryPak::GetFileTime(const char * szFileName)
 {
@@ -635,7 +670,12 @@ CCachedFileDataPtr CCryPak::GetFileData(const char* szName)
 		{
 			//const char	*szDebug1=itZip->strBindRoot.c_str();
 			//const char	*szDebug2=itZip->pZip->GetFilePath();
-
+#ifdef __linux
+			if (*(szName+nBindRootLen) == '/')
+			{
+				nBindRootLen++;
+			}
+#endif
 			ZipDir::FileEntry* pFileEntry = itZip->pZip->FindFile (szName+nBindRootLen);
 			if (pFileEntry)
 			{
@@ -895,7 +935,11 @@ const char *GetExtension (const char *in);
 #endif //_XBOX
 
 //////////////////////////////////////////////////////////////////////////
+#ifndef __linux
 intptr_t CCryPak::FindFirst(const char *pDir, struct _finddata_t *fd)
+#else
+intptr_t CCryPak::FindFirst(const char *pDir, struct dirent *fd)
+#endif
 {
 	AUTO_LOCK(m_csMain);
 	char szFullPathBuf[g_nMaxPath];
@@ -930,7 +974,11 @@ intptr_t CCryPak::FindFirst(const char *pDir, struct _finddata_t *fd)
 }
 
 //////////////////////////////////////////////////////////////////////////
+#ifndef __linux
 int CCryPak::FindNext(intptr_t handle, struct _finddata_t *fd)
+#else
+int CCryPak::FindNext(intptr_t handle, struct dirent *fd)
+#endif
 {
 	AUTO_LOCK(m_csMain);
 	//if (m_setFindData.find ((CCryPakFindData*)handle) == m_setFindData.end())
@@ -969,7 +1017,11 @@ bool CCryPak::OpenPack(const char *szPath, unsigned nFlags)
 
 	const char *szFullPath = AdjustFileName(szPath, szFullPathBuf, nFlags|FLAGS_IGNORE_MOD_DIRS);
 	string strBindRoot;
+#ifndef __linux
 	const char *pLastSlash = strrchr(szFullPath, g_cNativeSlash);
+#else
+	const char *pLastSlash = strrchr(szFullPath, g_cNonNativeSlash);
+#endif
 	if (pLastSlash)
 		strBindRoot.assign (szFullPath, pLastSlash - szFullPath +  1);
 	else
@@ -1058,6 +1110,7 @@ bool CCryPak::OpenPacks(const char* szBindRoot, const char *pWildcardIn, unsigne
 	return OpenPacksCommon(pBindRoot, cWorkBuf, nFlags);
 }
 
+#ifndef __linux
 bool CCryPak::OpenPacksCommon(const char* szDir, char *cWork, unsigned nFlags)
 {
 	__finddata64_t fd;
@@ -1118,7 +1171,6 @@ bool CCryPak::ClosePacks(const char *pWildcardIn, unsigned nFlags)
 	return false;
 }
 
-
 bool CCryPak::InitPack(const char *szBasePath, unsigned nFlags)
 {
 	string strPath = szBasePath;
@@ -1150,7 +1202,99 @@ bool CCryPak::InitPack(const char *szBasePath, unsigned nFlags)
 
 	return true;
 }
+#else
+bool CCryPak::OpenPacksCommon(const char* szDir, char *cWork, unsigned nFlags)
+{
+	char buf[g_nMaxPath];
+	char* p1, *ext;
+	const char* p2;
+	DIR *fdir;
+	int i;
+	struct dirent *d;
+	std::vector<string> files;
+	strcpy(buf, cWork);
 
+	p1 = strrchr(buf, '*');
+	if (p1)
+	{
+		*p1 = '\0';
+	}
+
+	fdir = opendir(buf);
+	if (fdir == NULL)
+	{
+		return false;
+	}
+
+	p1 = buf;
+	p2 = szDir;
+
+	while (*p1 == *p2)
+	{
+		p1++;
+		p2++;
+	}
+	p1++;
+
+	while ((d = readdir(fdir)) != NULL)
+	{
+		ext = strstr(d->d_name, ".");
+		if (ext && !strcasecmp(ext, ".pak"))
+		{
+			files.push_back(string(p1) + string(d->d_name));
+		}
+	}
+
+	closedir(fdir);
+
+	std::sort(files.begin(), files.end());
+	for (i = 0; i < files.size(); i++)
+	{
+		OpenPackCommon(szDir, files[i].c_str(), nFlags);
+	}
+
+	return files.size() > 0 ? true : false;
+}
+
+bool CCryPak::ClosePacks(const char *pWildcardIn, unsigned nFlags)
+{
+	__builtin_trap();
+	return false;
+}
+
+bool CCryPak::InitPack(const char *szBasePath, unsigned nFlags)
+{
+	char cWorkBuf[g_nMaxPath];
+	const char* cWork = AdjustFileName(szBasePath, cWorkBuf, nFlags);
+	struct dirent *fileinfo;
+	char* ext;
+	DIR *fdir = opendir(cWork);
+	if (fdir == NULL)
+	{
+		return true;
+	}
+
+	while ((fileinfo = readdir(fdir)) != NULL)
+	{
+		ext = strstr(fileinfo->d_name, ".");
+		if (ext && !strcasecmp(ext, ".cpk"))
+		{
+			if (szBasePath && szBasePath[0])
+				snprintf(cWorkBuf, sizeof(cWorkBuf), "%s/%s", szBasePath, fileinfo->d_name);
+			else
+				strcpy(cWorkBuf, fileinfo->d_name);
+
+			if (!OpenPack(cWorkBuf))
+			{
+				m_pLog->LogError("\003Cannot bind pak file %s", cWork);
+			}
+		}
+	}
+
+	closedir(fdir);
+	return true;
+}
+#endif
 /////////////////////////////////////////////////////
 bool CCryPak::Init(const char *szBasePath)
 {
@@ -1404,7 +1548,7 @@ void CCryPakFindData::ScanFS(CCryPak*pPak, const char *szDirIn)
 {
 	//char cWork[CCryPak::g_nMaxPath];
 	//pPak->AdjustFileName(szDirIn, cWork);
-
+#ifndef __linux
 	__finddata64_t fd;
 #ifdef WIN64
 	memset (&fd, 0, sizeof(fd));
@@ -1420,6 +1564,45 @@ void CCryPakFindData::ScanFS(CCryPak*pPak, const char *szDirIn)
 	while(0 == _findnext64(nFS, &fd));
 
 	_findclose (nFS);
+#else
+	size_t len = strlen(szDirIn);
+	DIR *fdir;
+	char buf[256];
+	struct dirent *d;
+	strcpy(buf, szDirIn);
+	if (len <= 3)
+	{
+		fprintf(stderr, "%s Directory length too small\n", szDirIn);
+		return;
+	}
+
+	if (strcmp(buf + (len - 3), "*.*"))
+	{
+		fprintf(stderr, "%s - Specific wildcards not supported\n", szDirIn);
+		return;
+	}
+
+	buf[len - 3] = '\0';
+	if (buf[len - 4] == '\\')
+	{
+		buf[len - 4] = '\0';
+	}
+
+	fdir = opendir(buf);
+	if (fdir == NULL)
+	{
+		fprintf(stderr, "Failed to open %s\n", buf);
+		return;
+	}
+
+	while ((d = readdir(fdir)) != NULL)
+	{
+		m_mapFiles.insert (FileMap::value_type(d->d_name, FileDesc(d)));
+	}
+
+	closedir(fdir);
+
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1431,6 +1614,12 @@ void CCryPakFindData::ScanZips (CCryPak* pPak, const char* szDir)
 	{
 		size_t nBindRootLen = it->strBindRoot.length();
 
+#ifdef __linux
+		if (*(szDir+nBindRootLen) == '/')
+		{
+			nBindRootLen++;
+		}
+#endif
 #if defined(LINUX)
 		if (nLen > nBindRootLen && !comparePathNames(szDir, it->strBindRoot.c_str(), nBindRootLen))
 #else
@@ -1458,6 +1647,7 @@ bool CCryPakFindData::empty() const
 	return m_mapFiles.empty();
 }
 
+#ifndef __linux
 bool CCryPakFindData::Fetch(_finddata_t* pfd)
 {
 	if (m_mapFiles.empty())
@@ -1474,6 +1664,24 @@ bool CCryPakFindData::Fetch(_finddata_t* pfd)
 	m_mapFiles.erase (it);
 	return true;
 }
+#else
+bool CCryPakFindData::Fetch(dirent* pfd)
+{
+	if (m_mapFiles.empty())
+		return false;
+
+	FileMap::iterator it = m_mapFiles.begin();
+	memcpy(pfd->d_name, it->first.c_str(), min(sizeof(pfd->d_name), it->first.length()+1));
+	// pfd->attrib = it->second.nAttrib;
+	// pfd->size   = it->second.nSize;
+	// pfd->time_access = it->second.tAccess;
+	// pfd->time_create = it->second.tCreate;
+	// pfd->time_write  = it->second.tWrite;
+
+	m_mapFiles.erase (it);
+	return true;
+}
+#endif
 
 CCryPakFindData::FileDesc::FileDesc (struct _finddata_t* fd)
 {
@@ -1495,6 +1703,16 @@ CCryPakFindData::FileDesc::FileDesc (struct __finddata64_t* fd)
 	tWrite  = (time_t)fd->time_write;
 }
 
+#ifdef __linux
+CCryPakFindData::FileDesc::FileDesc (struct dirent* fd)
+{
+	nSize   = 0;
+	nAttrib = 0;
+	tAccess = 0;
+	tCreate = 0;
+	tWrite  = 0;
+}
+#endif
 
 CCryPakFindData::FileDesc::FileDesc (ZipDir::FileEntry* fe)
 {

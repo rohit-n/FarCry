@@ -184,7 +184,11 @@ bool CXSurfaceMgr::LoadMaterials( const string &sFolder,bool bReload,bool bAddMa
 	int surfaceId = 102; // 100,101 reserved for default and water.
 
 	//_bstr_t sSearchPattern=sPath+_T("\\")+_T("*.*");
+#ifndef __linux
 	struct _finddata_t c_file;
+#else
+	dirent c_file;
+#endif
 	intptr_t hFile;
 	string sSearchPattern = sFolder+"\\*.*";
 	char fName[_MAX_PATH];
@@ -204,23 +208,23 @@ bool CXSurfaceMgr::LoadMaterials( const string &sFolder,bool bReload,bool bAddMa
 	{
 		do{
 
-			if(!((!strncmp(c_file.name,".",1)) &&  (c_file.attrib &_A_SUBDIR)))
+			if(!((!strncmp(FNAME(c_file),".",1)) &&  (IS_DIR(c_file))))
 			{
-				if(c_file.attrib & _A_SUBDIR)
+				if(IS_DIR(c_file))
 				{
-					LoadMaterials(sFolder+"/"+string(c_file.name));
+					LoadMaterials(sFolder+"/"+string(FNAME(c_file)));
 				}
 				else{
 
 					//Check for the extension .lua
-					if(strlen(c_file.name)>=4)
+					if(strlen(FNAME(c_file))>=4)
 					{
-						if(!stricmp(&c_file.name[strlen(c_file.name)-4],".lua"))
+						if(!stricmp(&FNAME(c_file)[strlen(FNAME(c_file))-4],".lua"))
 						{
 							char sMaterialName[256];
-							strncpy(sMaterialName,c_file.name,strlen(c_file.name)-4);
-							sMaterialName[strlen(c_file.name)-4]='\0';
-							string sFilePath = sFolder+"/"+string(c_file.name);
+							strncpy(sMaterialName,FNAME(c_file),strlen(FNAME(c_file))-4);
+							sMaterialName[strlen(FNAME(c_file))-4]='\0';
+							string sFilePath = sFolder+"/"+string(FNAME(c_file));
 							//m_pLog->Log( "Loading %s ",sFile.c_str());
 							//TRACE("Loading MatName %s [%s]",sMaterialName,sFilePath.c_str());
 
@@ -252,7 +256,6 @@ bool CXSurfaceMgr::LoadMaterials( const string &sFolder,bool bReload,bool bAddMa
 		pIPak->FindClose( hFile );
 
 	}
-
 
 	LoadDefaults();
 
