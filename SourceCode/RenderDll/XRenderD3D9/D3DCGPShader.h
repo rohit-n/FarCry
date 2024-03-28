@@ -212,7 +212,7 @@ public:
   }
   void mfInit()
   {
-#ifndef WIN64
+#if !defined(WIN64) && defined(USE_CG)
 		// NOTE: AMD64 port: find the 64-bit CG runtime
     if (!gcpRendD3D->m_CGContext)
     {
@@ -260,7 +260,7 @@ public:
 
   char *mfLoadCG_Int(char *prog_text)
   {
-#ifndef WIN64
+#if !defined(WIN64) && defined(USE_CG)
 		// NOTE: AMD64 port: find the 64-bit CG runtime
     CGprofile pr = (CGprofile)m_CGProfileType;
     //if (pr == CG_PROFILE_PS_1_1)

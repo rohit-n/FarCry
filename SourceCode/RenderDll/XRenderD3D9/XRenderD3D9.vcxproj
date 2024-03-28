@@ -230,7 +230,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Winmm.lib;version.lib;d3d9.lib;d3dx9.lib;DXErr.lib;cg.lib;cgD3D9.lib;legacy_stdio_definitions.lib;ijl15.lib;nvDXTlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Winmm.lib;version.lib;d3d9.lib;d3dx9.lib;DXErr.lib;legacy_stdio_definitions.lib;ijl15.lib;nvDXTlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\DX9SDK\Lib;Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>

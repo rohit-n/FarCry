@@ -171,7 +171,7 @@ public:
   }
   void mfInit()
   {
-#ifndef WIN64
+#if !defined(WIN64) && defined(USE_CG)
 		// NOTE: AMD64 port: find the 64-bit CG runtime
 		if (!gcpRendD3D->m_CGContext)
     {

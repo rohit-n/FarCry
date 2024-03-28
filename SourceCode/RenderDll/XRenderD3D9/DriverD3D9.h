@@ -576,7 +576,7 @@ public:
   bool AllocateVBChunk(int size, TVertPool *Ptr, SVertexStream *pVB, const char *szSource);
   bool ReleaseVBChunk(TVertPool *Ptr, SVertexStream *pVB);
 
-#if !defined(_XBOX) && !defined(WIN64)
+#if !defined(_XBOX) && !defined(WIN64) && defined(USE_CG)
   CGcontext m_CGContext;
 #endif
 

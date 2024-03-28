@@ -2496,7 +2496,7 @@ create:
             CloseHandle(hdst);
           }
         }
-#ifndef WIN64
+#if !defined(WIN64) && defined(USE_CG)
 			  // NOTE: AMD64 port: find the 64-bit CG runtime
         if (m_Insts[m_CurInst].m_CGProgram)
           cgDestroyProgram(m_Insts[m_CurInst].m_CGProgram);
