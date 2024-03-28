@@ -823,7 +823,7 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler *pH)
 	else
 	{
 #ifndef __linux
-		finddata_t c_file;
+		_finddata_t c_file;
 #else
 		dirent c_file;
 #endif
