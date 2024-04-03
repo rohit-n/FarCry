@@ -39,7 +39,13 @@ The GLRenderer interface Class
 #undef GL_PROC
 
 #include "CG/cgGL.h"
-
+#ifdef USE_SDL
+#ifdef _WIN32
+#include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
+#endif
 class PBuffer;
 class CPBuffer;
 
@@ -58,6 +64,10 @@ struct SRendContext
 	HDC		m_hDC;
 	HGLRC	m_hRC;
 	HWND	m_Glhwnd;
+#ifdef USE_SDL
+    SDL_Window* m_Window;
+    SDL_GLContext m_Context;
+#endif
   bool  m_bFSAAWasSet;
   int m_PixFormat;
 };
@@ -151,8 +161,11 @@ public:
   //! Changes resolution of the window/device (doen't require to reload the level
   virtual bool	ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen);
   virtual void	Reset (void) {};
-
-  HWND  SetMode(int x,int y,int width,int height,unsigned int cbpp, int zbpp, int sbits, bool fullscreen,HINSTANCE hinst, HWND Glhwnd);
+#ifdef USE_SDL
+  SDL_Window*  SetMode(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, HINSTANCE hinst, HWND Glhwnd);
+#else
+  HWND  SetMode(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, HINSTANCE hinst, HWND Glhwnd);
+#endif
   bool  CheckOGLExtensions();
   void  GLSetDefaultState();
 

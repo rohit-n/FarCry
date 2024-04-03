@@ -412,13 +412,15 @@ void CGLRenderer::BeginFrame()
     }
   }
   ChangeLog ();
-    
+#ifndef USE_SDL
   if (m_CurrContext->m_hRC != pwglGetCurrentContext())
     pwglMakeCurrent(m_CurrContext->m_hDC, m_CurrContext->m_hRC);
 
   if (CV_gl_swapOnStart && m_bSwapBuffers)
     SwapBuffers(m_CurrContext->m_hDC);
-
+#else
+  SDL_GL_SwapWindow(m_CurrContext->m_Window);
+#endif
   if (CV_r_gamma+m_fDeltaGamma != m_fLastGamma || CV_r_brightness != m_fLastBrightness || CV_r_contrast != m_fLastContrast)
     SetGamma(CV_r_gamma+m_fDeltaGamma, CV_r_brightness, CV_r_contrast);
 

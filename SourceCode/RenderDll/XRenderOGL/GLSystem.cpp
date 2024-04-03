@@ -16,7 +16,13 @@ static char THIS_FILE[] = __FILE__;
 #include "CG/cgGL.h"
 #include "GLCGVProgram.h"
 #include "GLCGPShader.h"
-
+#ifdef USE_SDL
+#ifdef _WIN32
+#include <SDL_syswm.h>
+#else
+#include <SDL2/SDL_syswm.h>
+#endif
+#endif
 
 #ifdef USE_3DC
 #include "../Common/3Dc/CompressorLib.h"
@@ -1290,7 +1296,11 @@ int CGLRenderer::EnumDisplayFormats(TArray<SDispFormat>& Formats, bool bReset)
   return Formats.Num();
 }
 
+#ifdef USE_SDL
+SDL_Window* CGLRenderer::SetMode(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, HINSTANCE hinst, HWND Glhwnd)
+#else
 HWND CGLRenderer::SetMode(int x,int y,int width,int height,unsigned int cbpp, int zbpp, int sbits, bool fullscreen,HINSTANCE hinst, HWND Glhwnd)
+#endif
 {
   ///////////////////////////////////Get Desktop Settings
 
@@ -1378,7 +1388,7 @@ HWND CGLRenderer::SetMode(int x,int y,int width,int height,unsigned int cbpp, in
 
 	char szWinTitle[80];
 	sprintf(szWinTitle,"- Far Cry - %s (%s)",__DATE__, __TIME__);
-
+#ifndef USE_SDL
   if (fullscreen)
   {
     if (!ChangeDisplay(m_vidmodes[best_mode].dmPelsWidth,m_vidmodes[best_mode].dmPelsHeight,m_vidmodes[best_mode].dmBitsPerPel))
@@ -1433,15 +1443,41 @@ HWND CGLRenderer::SetMode(int x,int y,int width,int height,unsigned int cbpp, in
     m_width = width;
     m_height = height;
   }
+#else
+    Uint32 windowFlags = SDL_WINDOW_OPENGL;
+    if (fullscreen)
+    {
+        windowFlags |= SDL_WINDOW_FULLSCREEN;
+    }
+    m_width = width;
+    m_height = height;
+
+    SDL_Window* win = SDL_CreateWindow(szWinTitle,
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        width,
+        height,
+        windowFlags);
+#endif
   m_VX = m_VY = 0;
   m_VWidth = m_width;
   m_VHeight = m_height;
-
+#ifndef USE_SDL
   if (!Glhwnd)
   {
     iLog->Log("Error: CreateWindowEx\n");
     return (false);
   }
+#else
+  if (!win)
+  {
+      return NULL;
+  }
+  SDL_SysWMinfo wmInfo;
+  SDL_VERSION(&wmInfo.version);
+  SDL_GetWindowWMInfo(win, &wmInfo);
+  Glhwnd = wmInfo.info.win.window;
+#endif
 
   m_FullScreen = fullscreen;
 
@@ -1450,8 +1486,11 @@ HWND CGLRenderer::SetMode(int x,int y,int width,int height,unsigned int cbpp, in
 
   //SAFE_DELETE_ARRAY(m_vidmodes);
 #endif
-
+#ifdef USE_SDL
+  return win;
+#else
   return Glhwnd;
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1694,6 +1733,9 @@ WIN_HWND CGLRenderer::Init(int x,int y,int width,int height,unsigned int cbpp, i
 #endif
 
   m_hInst = (HINSTANCE)hinst;
+#ifdef USE_SDL
+  SDL_Window* win = NULL;
+#endif
   if (bReInit)
   {
     CLeafBuffer *pLB = CLeafBuffer::m_Root.m_Prev;
@@ -1707,7 +1749,7 @@ WIN_HWND CGLRenderer::Init(int x,int y,int width,int height,unsigned int cbpp, i
     FreeResources(FRR_TEXTURES | FRR_REINITHW);
     ShutDown(true);
   }
-
+#ifndef USE_SDL
   if (!Glhdc)
     Glhwnd = SetMode(x, y, width, height, cbpp, zbpp, sbits, fullscreen, (HINSTANCE)hinst, (HWND)Glhwnd);
   else
@@ -1719,6 +1761,9 @@ WIN_HWND CGLRenderer::Init(int x,int y,int width,int height,unsigned int cbpp, i
     m_VWidth = m_width;
     m_VHeight = m_height;
   }
+#else
+  win = SetMode(x, y, width, height, cbpp, zbpp, sbits, fullscreen, (HINSTANCE)hinst, (HWND)Glhwnd);
+#endif
   if ( !LoadLibrary() )
   {
     iLog->Log("Error: Could not open OpenGL library\n");
@@ -1744,6 +1789,9 @@ exr:
 #endif
   }
   rc->m_Glhwnd = (HWND)Glhwnd;
+#ifdef USE_SDL
+  rc->m_Window = win;
+#endif
 
   // Find functions.
   SUPPORTS_GL = 1;
@@ -1753,7 +1801,16 @@ exr:
     iLog->Log("Error: Library <%s> isn't OpenGL library\n", m_LibName);
     goto exr;
   }
+#ifndef USE_SDL
   CreateRContext(rc, Glhdc, hGLrc, cbpp, zbpp, sbits, true);
+#else
+  rc->m_Context = SDL_GL_CreateContext(win);
+  if (rc->m_Context)
+  {
+	  SDL_GL_MakeCurrent(win, rc->m_Context);
+  }
+  m_CurrContext = rc;
+#endif
 
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_MaxTextureSize);
   if (CV_gl_maxtexsize)
@@ -1786,7 +1843,7 @@ exr:
     token = strtok(NULL, " ");
   }
   iLog->LogToFile("\n");
-
+#ifndef USE_SDL
   GET_GL_PROC(PFNWGLGETEXTENSIONSSTRINGARBPROC,wglGetExtensionsStringARB);
   if(wglGetExtensionsStringARB)
   {
@@ -1805,7 +1862,7 @@ exr:
       iLog->LogToFile("\n");
     }
   }
-
+#endif
   CheckOGLExtensions();
   CheckGammaSupport();
   ChangeLog();
@@ -2057,8 +2114,11 @@ exr:
 
   gRenDev->m_cEF.mfInit();
   EF_PipelineInit();
-
+#ifdef USE_SDL
+  return win;
+#else
   return (m_CurrContext->m_Glhwnd);
+#endif
 }
 
 bool CGLRenderer::CreateRContext(SRendContext *rc, WIN_HDC Glhdc, WIN_HGLRC hGLrc, int cbpp, int zbpp, int sbits, bool bAllowFSAA)
@@ -2451,7 +2511,7 @@ void CGLRenderer::ShutDown(bool bReInit)
   RestoreDeviceGamma();
 
   glFinish();
-
+#ifndef USE_SDL
   HWND hWnd = m_RContexts[0]->m_Glhwnd;
 
   for (i=0; i<m_RContexts.Num(); i++)
@@ -2460,11 +2520,12 @@ void CGLRenderer::ShutDown(bool bReInit)
   }
   if (hWnd && !bReInit)
   {
-#ifdef WIN32 // FIX_LINUX
     DestroyWindow(hWnd);
-#endif
   }
-
+#else
+  SDL_GL_DeleteContext(m_RContexts[0]->m_Context);
+  SDL_DestroyWindow(m_RContexts[0]->m_Window);
+#endif
   //ChangeDisplay(m_deskwidth,m_deskheight,m_deskbpp);
   ChangeDisplay(0,0,0);
 

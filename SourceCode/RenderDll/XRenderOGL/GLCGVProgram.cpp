@@ -1662,8 +1662,8 @@ create:
           }
           char *szvAttr = sGetText(&token);
           char *szhReg = sGetText(&token);
-          int len = strlen(szhReg);
-          if (szhReg[len-1] == ',')
+          int len = szhReg != NULL ? strlen(szhReg) : 0;
+          if (szhReg && szhReg[len-1] == ',')
           {
             char *sznComps = sGetText(&token);
             nComps = atoi(sznComps);
@@ -1672,7 +1672,7 @@ create:
             nComps = 1;
           char *szVarType = sGetText(&token);
           char *sznVar = sGetText(&token);
-          if (!szvAttr || szvAttr[0] != '$')
+          if (szhReg && (!szvAttr || szvAttr[0] != '$'))
           {
             if (!m_Insts[m_CurInst].m_BindVars)
               m_Insts[m_CurInst].m_BindVars = new TArray<SCGBind>;
