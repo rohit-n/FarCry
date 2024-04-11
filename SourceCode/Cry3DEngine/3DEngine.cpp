@@ -1340,7 +1340,7 @@ float C3DEngine::GetDistanceToSectorWithWater()
 		pSectorInfo = m_pTerrain->GetSecInfo(GetViewCamera().GetPos());
 
   return (pSectorInfo && (m_pTerrain->m_fDistanceToSectorWithWater > 0.1f))
-    ? m_pTerrain->m_fDistanceToSectorWithWater : max(GetViewCamera().GetPos().z - GetWaterLevel(),0.1f);
+    ? m_pTerrain->m_fDistanceToSectorWithWater : crymax(GetViewCamera().GetPos().z - GetWaterLevel(),0.1f);
 }
 
 void C3DEngine::SetSkyBoxAlpha(float fAlpha)
@@ -1901,7 +1901,7 @@ float C3DEngine::GetWaterLevel(IEntityRender * pEntityRender, Vec3d * pvFlowDir)
 		else
 			pos = pEntityRender->GetPos();
     float fWaterVolumeLevel = m_pObjManager->m_pCWaterVolumes->GetWaterVolumeLevelFor2DPoint(pos, pvFlowDir);
-    return max(fWaterVolumeLevel, pEntityRender->GetEntityVisArea() ? WATER_LEVEL_UNKNOWN : m_pObjManager->m_pTerrain->GetWaterLevel());
+    return crymax(fWaterVolumeLevel, pEntityRender->GetEntityVisArea() ? WATER_LEVEL_UNKNOWN : m_pObjManager->m_pTerrain->GetWaterLevel());
   }
 
   if(m_pObjManager && m_pObjManager->m_pTerrain && pEntityRender && !pEntityRender->GetEntityVisArea())
@@ -1917,7 +1917,7 @@ float C3DEngine::GetWaterLevel(const Vec3d * pvPos, Vec3d * pvFlowDir)
 	if(m_pObjManager && pvPos && m_pObjManager->m_pCWaterVolumes && m_pObjManager->m_pTerrain)
 	{
 		float fWaterVolumeLevel = m_pObjManager->m_pCWaterVolumes->GetWaterVolumeLevelFor2DPoint(*pvPos, pvFlowDir);
-    return max(fWaterVolumeLevel, pArea ? WATER_LEVEL_UNKNOWN : m_pObjManager->m_pTerrain->GetWaterLevel());
+    return crymax(fWaterVolumeLevel, pArea ? WATER_LEVEL_UNKNOWN : m_pObjManager->m_pTerrain->GetWaterLevel());
 	}
 
 	if(m_pObjManager && m_pObjManager->m_pTerrain && !pArea)
@@ -2090,7 +2090,7 @@ void C3DEngine::DrawRain()
 
 void C3DEngine::SetRainAmount( float fAmount )
 {
-	GetCVars()->e_rain_amount = max(min(1.f,fAmount),0);
+	GetCVars()->e_rain_amount = crymax(crymin(1.f,fAmount),0);
 }
 
 void C3DEngine::SetWindForce( const Vec3d & vWindForce )
@@ -2119,7 +2119,7 @@ float C3DEngine::GetLightAmountForEntity(IEntityRender * pEntity, bool bOnlyVisi
 	uint dwDLightMask = (uint)-1; // check all lights
 	CheckDistancesToLightSources(dwDLightMask, pEntity->GetPos(), 1, pEntity, 16, 0, 0, &vLightAmount);
 	float fLightAmount = (vLightAmount.x+vLightAmount.y+vLightAmount.z)*0.233f;
-	return min(1.f,fLightAmount);
+	return crymin(1.f,fLightAmount);
 }
 
 IVisArea * C3DEngine::GetVisAreaFromPos(const Vec3d &vPos)

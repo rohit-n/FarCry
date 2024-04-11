@@ -643,8 +643,8 @@ void CLeafBuffer::CreateBuffer( CIndexedMesh * pTriData, bool bStripifyAndShareV
 			Vec3d v = pV->xyz;
 			vMin.CheckMin(v);
 			vMax.CheckMax(v);
-			nMin = min(nMin, ind);
-			nMax = max(nMax, ind);
+			nMin = crymin(nMin, ind);
+			nMax = crymax(nMax, ind);
 		}
 		mi->m_vCenter = (vMin + vMax) * 0.5f;
 		mi->m_fRadius = (vMin - mi->m_vCenter).GetLength();
@@ -1070,8 +1070,8 @@ bool CLeafBuffer::CreateBuffer( struct VertexBufferSource* pSource )
 				const Vec3d& vVertex = pSource->pVertices[nVertex];
 				vMinVtx.CheckMin(vVertex);
 				vMaxVtx.CheckMax(vVertex);
-				nMinVtx = min (nMinVtx, nVertex);
-				nMaxVtx = max (nMaxVtx, nVertex);
+				nMinVtx = crymin(nMinVtx, nVertex);
+				nMaxVtx = crymax(nMaxVtx, nVertex);
 			}
 			mi.m_vCenter = (vMinVtx+vMaxVtx) * 0.5f;
 			mi.m_fRadius = (vMinVtx - mi.m_vCenter).GetLength();
@@ -1204,8 +1204,8 @@ void CLeafBuffer::StripifyMesh(int StripType)
         int newVertex = pg[groupCtr].indices[indexCtr] + vertFirst;
         NewIndexes.Add(newVertex);
 
-        nMin = min(nMin, newVertex);
-        nMax = max(nMax, newVertex);
+        nMin = crymin(nMin, newVertex);
+        nMax = crymax(nMax, newVertex);
 
         //copy from old -> new vertex buffer
         memcpy(&pVBNew[newVertex], &pVBOld[oldVertex], sizeof(struct_VERTEX_FORMAT_P3F_N_COL4UB_TEX2F));
@@ -1723,7 +1723,7 @@ void CLeafBuffer::SortTris()
         float d2 = GetSquaredDistance(*v2, vCam);
         SSortTri st;
         st.nTri = n;
-        st.fDist = max(d2, max(d1, d0));
+        st.fDist = crymax(d2, crymax(d1, d0));
         sSortTris.AddElem(st);
       }
       ::Sort(&sSortTris[nStart], nTris);
@@ -2148,9 +2148,9 @@ void CLeafBuffer::SetChunk( IShader * pShader,
   assert(!pMat->pRE ||pMat->pRE->m_pChunk->nFirstIndexId<60000);
 
   pMat->nFirstIndexId = nFirstIndexId;
-  pMat->nNumIndices  = max(nIndexCount,0);
+  pMat->nNumIndices  = crymax(nIndexCount,0);
   pMat->nFirstVertId = nFirstVertId;
-  pMat->nNumVerts = max(nVertCount,0);
+  pMat->nNumVerts = crymax(nVertCount,0);
 
 /*#ifdef _DEBUG
 	ushort *pInds = (ushort *)m_Indices.m_VData;

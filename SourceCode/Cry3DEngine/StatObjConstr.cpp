@@ -53,8 +53,8 @@ void CStatObj::CalcRadiuses()
 {
 	m_vBoxCenter = (m_vBoxMax+m_vBoxMin)*0.5f;
   m_fObjectRadius = GetDistance(m_vBoxMin, m_vBoxMax)*0.5f;
-  float dxh = (float)max( fabs(GetBoxMax().x), fabs(GetBoxMin().x));
-  float dyh = (float)max( fabs(GetBoxMax().y), fabs(GetBoxMin().y));
+  float dxh = (float)crymax( fabs(GetBoxMax().x), fabs(GetBoxMin().x));
+  float dyh = (float)crymax( fabs(GetBoxMax().y), fabs(GetBoxMin().y));
   m_fRadiusHors = (float)cry_sqrtf(dxh*dxh+dyh*dyh);
   m_fRadiusVert = (GetBoxMax().z - GetBoxMin().z)*0.5f;// never change this
 }

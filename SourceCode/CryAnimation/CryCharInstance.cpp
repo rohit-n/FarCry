@@ -264,7 +264,7 @@ const float CryCharInstance::GetRadius()
 	if(vSize.z>=32)
 		g_GetLog()->LogWarning ("CryCharInstance::GetRadius: bbox is very big: %s (%.2f)", 
 		m_pCryCharBody->GetNameCStr(), vSize.z);
-	return max(vSize.x,max(vSize.y,vSize.z))*0.5f;
+	return crymax(vSize.x,crymax(vSize.y,vSize.z))*0.5f;
 }
 
 

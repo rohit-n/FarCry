@@ -548,8 +548,8 @@ void CSectorInfo::AddLowResSectorIndex(int _x, int _y, int _step, int _lod)
 {
   unsigned short id = _x/_step*(CTerrain::GetTerrainSize()/_step+1) + _y/_step;
 
-	m_nLowResTerrainIdxRange[_lod][0] = min(m_nLowResTerrainIdxRange[_lod][0],id);
-	m_nLowResTerrainIdxRange[_lod][1] = max(m_nLowResTerrainIdxRange[_lod][1],id);
+	m_nLowResTerrainIdxRange[_lod][0] = crymin(m_nLowResTerrainIdxRange[_lod][0],id);
+	m_nLowResTerrainIdxRange[_lod][1] = crymax(m_nLowResTerrainIdxRange[_lod][1],id);
 
   m_lstLowResTerrainIdxArray[_lod].Add(id);
 }

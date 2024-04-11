@@ -885,5 +885,5 @@ int CBasicArea::GetLastStaticElementIdWithInMaxViewDist(float fMaxViewDist)
 			nCurrId += nCount>>nJump;
 	}
 
-	return min(nCurrId+2,m_lstEntities[STATIC_ENTITIES].Count());
+	return crymin(nCurrId+2,m_lstEntities[STATIC_ENTITIES].Count());
 }

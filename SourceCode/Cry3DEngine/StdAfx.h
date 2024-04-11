@@ -186,7 +186,7 @@ struct IEntityRender;
 #include "CrySizer.h"
 #include "StlUtils.h"
 
-inline float L1Distance2D(const Vec3 &v0, const Vec3 &v1)	{	return max(Ffabs(v0.x-v1.x),Ffabs(v0.y-v1.y));	}	
+inline float L1Distance2D(const Vec3 &v0, const Vec3 &v1)	{	return crymax(Ffabs(v0.x-v1.x),Ffabs(v0.y-v1.y));	}	
 
 inline float GetDist2D(float x1, float y1, float x2, float y2)
 {

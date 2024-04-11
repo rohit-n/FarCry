@@ -363,7 +363,7 @@ void	CPlayer::UpdateBoatCamera()
 				float fCurTime = m_pGame->GetSystem()->GetIPhysicalWorld()->GetPhysicsTime();
 				if (m_pGame->IsMultiplayer() && m_pGame->UseFixedStep())
 					m_pGame->SnapTime(fCurTime);
-				float	timeScale = min(0.1f,fCurTime-m_fLastCamUpdateTime);//m_pTimer->GetFrameTime();
+				float	timeScale = crymin(0.1f,fCurTime-m_fLastCamUpdateTime);//m_pTimer->GetFrameTime();
 				m_fLastCamUpdateTime = fCurTime;
 				Vec3 targetAngle = car->GetAngles();
 				targetAngle.x = Snap_s180(targetAngle.x);

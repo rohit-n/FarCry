@@ -474,7 +474,7 @@ void Quaternion_tpl<F>::SetRotationV0V1(const Vec3_tpl<F>& v0, const Vec3_tpl<F>
 	assert((fabs_tpl(1-(v0|v0)))<0.001); //check if unit-vector
 	assert((fabs_tpl(1-(v1|v1)))<0.001); //check if unit-vector
 #endif
-	w=sqrt_tpl(max((F)0.0,(1+v0*v1)*(F)0.5)); 
+	w=sqrt_tpl(crymax((F)0.0,(1+v0*v1)*(F)0.5)); 
 	if (w>0.001) {
 		v=v0^v1; v*=(F)0.5/w; 
 	} else {

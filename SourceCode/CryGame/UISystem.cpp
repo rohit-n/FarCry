@@ -657,7 +657,7 @@ void CUISystem::Update()
 			if (pMouseOver && ((fTime - m_fToolTipOverStart) * 1000.0f >= ui_ToolTipDelay->GetIVal()))
 			{
 				float fElapsed = (fTime - (m_fToolTipOverStart + ui_ToolTipDelay->GetIVal() * 0.001f)) * 1000.0f;
-				m_fToolTipAlpha = max(0.0f, min((fElapsed - fToolTipFadeTime) / fToolTipFadeTime, 1.0f));
+				m_fToolTipAlpha = crymax(0.0f, crymin((fElapsed - fToolTipFadeTime) / fToolTipFadeTime, 1.0f));
 
 				float fRelX, fRelY;
 				GetRelativeXY(&fRelX, &fRelY, vMouseXY.x, vMouseXY.y, pMouseOver);
@@ -674,7 +674,7 @@ void CUISystem::Update()
 			GetRelativeXY(&fRelX, &fRelY, vMouseXY.x, vMouseXY.y, pMouseOver);
 
 			float fElapsed = (fTime - (m_fLastInput + ui_ToolTipDelay->GetIVal() * 0.001f)) * 1000.0f;
-			m_fToolTipAlpha = max(0.0f, min((fElapsed - fToolTipFadeTime) / fToolTipFadeTime, 1.0f));
+			m_fToolTipAlpha = crymax(0.0f, crymin((fElapsed - fToolTipFadeTime) / fToolTipFadeTime, 1.0f));
 
 			pMouseOver->GetToolTip(vMouseXY.x, vMouseXY.y, m_szwToolTipText);
 		}
@@ -1464,7 +1464,7 @@ int CUISystem::ReleaseMouse()
 //------------------------------------------------------------------------------------------------- 
 float CUISystem::GetIdleTime()
 {
-	return max((m_pSystem->GetITimer()->GetCurrTime() - m_fLastInput) - UI_DEFAULT_IDLETIME_START, 0.0f);
+	return crymax((m_pSystem->GetITimer()->GetCurrTime() - m_fLastInput) - UI_DEFAULT_IDLETIME_START, 0.0f);
 }
 
 //------------------------------------------------------------------------------------------------- 
@@ -2543,10 +2543,10 @@ int CUISystem::DrawQuad(const UIRect &pRect, const color4f &cColor)
 {
 	color4f cClampColor;
 
-	cClampColor.v[0] = min(max(cColor.v[0], 0.0f), 1.0f);
-	cClampColor.v[1] = min(max(cColor.v[1], 0.0f), 1.0f);
-	cClampColor.v[2] = min(max(cColor.v[2], 0.0f), 1.0f);
-	cClampColor.v[3] = min(max(cColor.v[3], 0.0f), 1.0f);
+	cClampColor.v[0] = crymin(crymax(cColor.v[0], 0.0f), 1.0f);
+	cClampColor.v[1] = crymin(crymax(cColor.v[1], 0.0f), 1.0f);
+	cClampColor.v[2] = crymin(crymax(cColor.v[2], 0.0f), 1.0f);
+	cClampColor.v[3] = crymin(crymax(cColor.v[3], 0.0f), 1.0f);
 
 	DrawImage(pRect, -1, 0, cClampColor);
 
@@ -2608,10 +2608,10 @@ int CUISystem::DrawImage(const UIRect &pRect, int iTextureID, const float *vTexC
 	float fB = pRect.fTop + pRect.fHeight;
 
 	// clip the image to the scissor rect
-	fX = max(m_pScissorRect.fLeft, fX);
-	fY = max(m_pScissorRect.fTop, fY);
-	fR = min(m_pScissorRect.fLeft + m_pScissorRect.fWidth, fR);
-	fB = min(m_pScissorRect.fTop + m_pScissorRect.fHeight, fB);
+	fX = crymax(m_pScissorRect.fLeft, fX);
+	fY = crymax(m_pScissorRect.fTop, fY);
+	fR = crymin(m_pScissorRect.fLeft + m_pScissorRect.fWidth, fR);
+	fB = crymin(m_pScissorRect.fTop + m_pScissorRect.fHeight, fB);
 
 	// fix texture coordinates
 	if (iTextureID > -1)
@@ -4920,7 +4920,7 @@ int CUISystem::ConvertToString(char *szString, const wstring &szWString, int iMa
 
 	if (iMaxSize > 0)
 	{
-		iSize = min(iMaxSize, iSize);
+		iSize = crymin(iMaxSize, iSize);
 	}
 
 	wchar_t *pChar = (wchar_t *)szWString.c_str();

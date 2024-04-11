@@ -122,8 +122,8 @@ void CRainItem::Process(Vec3d &right, Vec3d &up, Vec3d &front, const int & nTexI
     Vec3d vCollPos = m_vPos;
     vCollPos.z = pTerrain->GetZApr(m_vPos.x,m_vPos.y)+0.05f;
 
-		float fDist = (float)max(
-			fabs(vCollPos.x - _vCamPos.x),max(fabs(vCollPos.y - _vCamPos.y), fabs(vCollPos.z - _vCamPos.z)));
+		float fDist = (float)crymax(
+			fabs(vCollPos.x - _vCamPos.x),crymax(fabs(vCollPos.y - _vCamPos.y), fabs(vCollPos.z - _vCamPos.z)));
 
 		fDist/=RAIN_RANGE;
 		float fDistAlpha = 1.f-fDist;
@@ -225,7 +225,7 @@ void CRainManager::Render(CTerrain * pTerrain,
 
 	m_fDropTime += GetTimer()->GetFrameTime();
 
-	const float fDropPeriod = max(0.002f, (1.f-GetCVars()->e_rain_amount)/50.f);
+	const float fDropPeriod = crymax(0.002f, (1.f-GetCVars()->e_rain_amount)/50.f);
 	
 	while(m_fDropTime>fDropPeriod)
   {
@@ -234,8 +234,8 @@ void CRainManager::Render(CTerrain * pTerrain,
     Vec3d vCollPos( vFocusPos.x + rn()*RAIN_RANGE*2, vFocusPos.y + rn()*RAIN_RANGE*2, 0);
 		vCollPos.z = pTerrain->GetZApr(vCollPos.x,vCollPos.y)+0.05f;
 
-		float fDist = (float)max(
-			fabs(vCollPos.x - vCamPos.x),max(fabs(vCollPos.y - vCamPos.y), fabs(vCollPos.z - vCamPos.z)));
+		float fDist = (float)crymax(
+			fabs(vCollPos.x - vCamPos.x),crymax(fabs(vCollPos.y - vCamPos.y), fabs(vCollPos.z - vCamPos.z)));
 
 		fDist/=RAIN_RANGE;
 		float fDistAlpha = 1.f-fDist;

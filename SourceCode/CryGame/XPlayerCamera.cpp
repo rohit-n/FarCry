@@ -104,11 +104,11 @@ void CPlayer::UpdateLean()
 		
 		if(m_walkParams.fLeanTarget==0)
 		{
-			m_walkParams.fCurrLean+=m_walkParams.fCurrLean<0?min(m_pTimer->GetFrameTime()*(fMul*m_walkParams.leanSpeed*3),fDiff*fMul):max(m_pTimer->GetFrameTime()*(fMul*m_walkParams.leanSpeed*3),fDiff*fMul);
+			m_walkParams.fCurrLean+=m_walkParams.fCurrLean < 0 ? crymin(m_pTimer->GetFrameTime()*(fMul*m_walkParams.leanSpeed*3),fDiff*fMul) : crymax(m_pTimer->GetFrameTime()*(fMul*m_walkParams.leanSpeed*3),fDiff*fMul);
 		}
 		else
 		{
-			m_walkParams.fCurrLean+=m_walkParams.fLeanTarget>0?min(m_pTimer->GetFrameTime()*(fMul*m_walkParams.leanSpeed*3),fDiff*fMul):max(m_pTimer->GetFrameTime()*(fMul*m_walkParams.leanSpeed*3),fDiff*fMul);
+			m_walkParams.fCurrLean+=m_walkParams.fLeanTarget > 0 ? crymin(m_pTimer->GetFrameTime()*(fMul*m_walkParams.leanSpeed*3),fDiff*fMul) : crymax(m_pTimer->GetFrameTime()*(fMul*m_walkParams.leanSpeed*3),fDiff*fMul);
 		}
 		//CLIP TO ! BYTE PRECISION
 		int temp=(int)((m_walkParams.fCurrLean)/(1.f/255));

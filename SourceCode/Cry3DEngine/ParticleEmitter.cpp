@@ -260,7 +260,7 @@ void CParticleEmitter::SetSpawnPeriod( float fSpawnPeriod )
 //////////////////////////////////////////////////////////////////////////
 void CParticleEmitter::SetLifeTime( float fLifeTime )
 {
-	m_endTime = m_startTime + max(fLifeTime,0);
+	m_endTime = m_startTime + crymax(fLifeTime,0);
 	m_bUseEndTime=true;
 }
 

@@ -664,10 +664,10 @@ void CFFont::DrawStringW(float fBaseX, float fBaseY, const wchar_t *szMsg, const
 					}
 
 					// clip the image to the scissor rect
-					fNewX = max(m_fClipX, fX);
-					fNewY = max(m_fClipY, fY);
-					fNewR = min(m_fClipR, fR);
-					fNewB = min(m_fClipB, fB);
+					fNewX = crymax(m_fClipX, fX);
+					fNewY = crymax(m_fClipY, fY);
+					fNewR = crymin(m_fClipR, fR);
+					fNewB = crymin(m_fClipB, fB);
 
 					float fRcpWidth = 1.0f / fWidth;
 					float fRcpHeight = 1.0f / vSize.y;
@@ -771,7 +771,7 @@ vector2f CFFont::GetTextSize(const char *szMsg, const bool bASCIIMultiLine)
 		return vector2f(0.0f, 0.0f);
 	}
 
-	int iSize = min(1023, strlen(szMsg));
+	int iSize = crymin(1023, strlen(szMsg));
 
 	static wchar_t szwMsg[1024];
 

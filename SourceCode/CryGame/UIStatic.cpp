@@ -979,7 +979,7 @@ int CUIStatic::GetText(IFunctionHandler *pH)
 	}
 
 	char	szString[1024] = {0,0};
-	int		iStringSize = min(m_vLines[0].szText.size(), 1023);
+	int		iStringSize = crymin(m_vLines[0].szText.size(), 1023);
 	wchar_t *pChar = (wchar_t *)m_vLines[0].szText.c_str();
 
 	int i = 0;
@@ -1088,7 +1088,7 @@ int CUIStatic::GetLine(IFunctionHandler *pH)
 	if (iLine < (int)m_vLines.size())
 	{
 		
-		int		iStringSize = min(m_vLines[iLine].szText.size(), 1023);
+		int		iStringSize = crymin(m_vLines[iLine].szText.size(), 1023);
 		wchar_t *pChar = (wchar_t *)m_vLines[iLine].szText.c_str();
 
 		int i = 0;

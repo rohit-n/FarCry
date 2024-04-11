@@ -547,7 +547,7 @@ float	CXArea::CalculateFade( const Vec3d& pos3D )
 					{
 						float fFade1=MinDelta[k]/EdgeDist[k];
 						float fFade2=MaxDelta[k]/EdgeDist[k];
-						fMinFade=min(fMinFade,min(fFade1,fFade2));
+						fMinFade=crymin(fMinFade,crymin(fFade1,fFade2));
 					} //k
 
 					/*

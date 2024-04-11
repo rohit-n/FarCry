@@ -48,7 +48,7 @@ void CDecal::Process(bool & active, IRenderer * pIRenderer, const float fCurTime
 
 	float fSizeK;
 	if(m_fGrowTime)
-		fSizeK = min(1.f, cry_sqrtf((fCurTime - m_fLifeBeginTime)/m_fGrowTime));
+		fSizeK = crymin(1.f, cry_sqrtf((fCurTime - m_fLifeBeginTime)/m_fGrowTime));
 	else
 		fSizeK = 1.f;
 
@@ -151,11 +151,11 @@ void CDecal::Process(bool & active, IRenderer * pIRenderer, const float fCurTime
 			UCol uCol; 
 			if(pStrongestLightForTranspGeom && pStrongestLightForTranspGeom->m_fRadius)
 			{
-				float fAtten = min(1.f,pStrongestLightForTranspGeom->m_fRadius/pStrongestLightForTranspGeom->m_Origin.GetDistance(m_vWSPos));
-				float fDot = max(0,(pStrongestLightForTranspGeom->m_Origin-m_vWSPos).normalized().Dot(m_vFront));
-				uCol.bcolor[0] = uchar(min(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.r));
-				uCol.bcolor[1] = uchar(min(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.g));
-				uCol.bcolor[2] = uchar(min(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.b));
+				float fAtten = crymin(1.f,pStrongestLightForTranspGeom->m_fRadius/pStrongestLightForTranspGeom->m_Origin.GetDistance(m_vWSPos));
+				float fDot = crymax(0,(pStrongestLightForTranspGeom->m_Origin-m_vWSPos).normalized().Dot(m_vFront));
+				uCol.bcolor[0] = uchar(crymin(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.r));
+				uCol.bcolor[1] = uchar(crymin(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.g));
+				uCol.bcolor[2] = uchar(crymin(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.b));
 			}
 			else
 				uCol.dcolor = 0; 
@@ -174,11 +174,11 @@ void CDecal::Process(bool & active, IRenderer * pIRenderer, const float fCurTime
 		UCol uCol; 
 		if(pStrongestLightForTranspGeom && pStrongestLightForTranspGeom->m_fRadius)
 		{
-			float fAtten = min(1.f,pStrongestLightForTranspGeom->m_fRadius/pStrongestLightForTranspGeom->m_Origin.GetDistance(m_vWSPos));
-			float fDot = max(0,(pStrongestLightForTranspGeom->m_Origin-m_vWSPos).normalized().Dot(m_vFront));
-			uCol.bcolor[0] = uchar(min(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.r));
-			uCol.bcolor[1] = uchar(min(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.g));
-			uCol.bcolor[2] = uchar(min(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.b));
+			float fAtten = crymin(1.f,pStrongestLightForTranspGeom->m_fRadius/pStrongestLightForTranspGeom->m_Origin.GetDistance(m_vWSPos));
+			float fDot = crymax(0,(pStrongestLightForTranspGeom->m_Origin-m_vWSPos).normalized().Dot(m_vFront));
+			uCol.bcolor[0] = uchar(crymin(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.r));
+			uCol.bcolor[1] = uchar(crymin(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.g));
+			uCol.bcolor[2] = uchar(crymin(255.f,355.f*fDot*fAtten*pStrongestLightForTranspGeom->m_Color.b));
 		}
 		else
 			uCol.dcolor = 0; 
@@ -251,7 +251,7 @@ void CDecal::DrawBigDecalOnTerrain(C3DEngine * p3DEngine, IRenderer * pIRenderer
 
 	float fSizeK;
 	if(m_fGrowTime)
-		fSizeK = min(1.f, cry_sqrtf((fCurrTime - m_fLifeBeginTime)/m_fGrowTime));
+		fSizeK = crymin(1.f, cry_sqrtf((fCurrTime - m_fLifeBeginTime)/m_fGrowTime));
 	else
 		fSizeK = 1.f;
 

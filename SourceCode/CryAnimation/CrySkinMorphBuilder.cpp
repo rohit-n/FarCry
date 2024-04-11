@@ -81,8 +81,8 @@ void CrySkinMorphBuilder::findAffectingBoneRange()
 	{
 		unsigned nGeomVert = m_pMorphVerts[nMorphVert].nVertexId;
 		pLinks = &m_pGeometry->getLink(nGeomVert);
-		m_nFirstAffectingBone = min (m_nFirstAffectingBone, pLinks->minBoneID());
-		m_numAffectingBones = max(m_numAffectingBones, pLinks->maxBoneID()+1);
+		m_nFirstAffectingBone = crymin(m_nFirstAffectingBone, pLinks->minBoneID());
+		m_numAffectingBones = crymax(m_numAffectingBones, pLinks->maxBoneID()+1);
 	}
 
 	assert (m_nFirstAffectingBone < m_numAffectingBones);

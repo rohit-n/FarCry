@@ -96,7 +96,7 @@ unsigned CryVertexBinding::maxBoneID ()const
 {
 	unsigned nResult = 0;
 	for (unsigned i = 0; i < this->size(); ++i)
-		nResult = max((unsigned)(*this)[i].BoneID, nResult);
+		nResult = crymax((unsigned)(*this)[i].BoneID, nResult);
 	return nResult;
 }
 
@@ -105,7 +105,7 @@ unsigned CryVertexBinding::minBoneID () const
 {
 	unsigned nResult = (unsigned)(*this)[0].BoneID;
 	for (unsigned i = 1; i < this->size(); ++i)
-		nResult = min((unsigned)(*this)[i].BoneID, nResult);
+		nResult = crymin((unsigned)(*this)[i].BoneID, nResult);
 	return nResult;
 }
 

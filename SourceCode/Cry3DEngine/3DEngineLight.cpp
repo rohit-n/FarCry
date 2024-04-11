@@ -1084,7 +1084,7 @@ CDLight * C3DEngine::CheckDistancesToLightSources(uint & nDLightMask,
 	// sort by light amount
 	qsort(&m_lstDL_CDTLS[0], m_lstDL_CDTLS.Count(), sizeof(m_lstDL_CDTLS[0]), C3DEngine__Cmp_LightAmount);
 
-	nMaxLightBitsNum = min(nMaxLightBitsNum,GetCVars()->e_max_entity_lights+nProjectorsNum);
+	nMaxLightBitsNum = crymin(nMaxLightBitsNum,GetCVars()->e_max_entity_lights+nProjectorsNum);
 	//	if(pEntityRender && pEntityRender->GetRndFlags() & ERF_USELIGHTMAPS && pEntityRender->HasLightmap(0))
 	//	nMaxLightBitsNum--;
 

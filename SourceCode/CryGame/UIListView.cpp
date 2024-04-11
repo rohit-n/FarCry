@@ -162,7 +162,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 			assert(m_pVScroll);
 
 			m_pVScroll->SetRect(pVScrollRect, 1);
-			m_pVScroll->SetStep(max(m_fItemHeight / (m_fTotalHeight - pListRect.fHeight), 0.05f));
+			m_pVScroll->SetStep(crymax(m_fItemHeight / (m_fTotalHeight - pListRect.fHeight), 0.05f));
 		}
 		else
 		{
@@ -195,7 +195,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 
 			m_pHScroll->SetRect(pHScrollRect, 1);
 			
-			m_pHScroll->SetStep(max((pListRect.fWidth * 0.1f) / (m_fTotalWidth - pListRect.fWidth), 0.05f));
+			m_pHScroll->SetStep(crymax((pListRect.fWidth * 0.1f) / (m_fTotalWidth - pListRect.fWidth), 0.05f));
 		}
 		else
 		{

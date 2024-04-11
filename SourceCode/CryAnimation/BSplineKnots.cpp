@@ -158,7 +158,7 @@ double BSplineKnots::getKnotProductPenalty (int nStartKnot, int nEndKnot)
 
 		assert (fSum > -1e-10);
 
-		return max(0.0,fSum);
+		return crymax(0.0,fSum);
 	}
 }
 

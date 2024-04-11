@@ -2642,7 +2642,7 @@ float SParamComp_LightColor::mfGet()
   {
     fc *= gRenDev->m_RP.m_pCurLightMaterial->Front.m_Diffuse[m_Offs];
   }
-  fc = min(fc, 1.0f);
+  fc = crymin(fc, 1.0f);
   return fc;
 }
 
@@ -2664,7 +2664,7 @@ void SParamComp_LightColor::mfGet4f(vec4_t v)
   }
   if (!(rd->m_RP.m_PersFlags & RBPF_HDR))
   {
-    float fMax = max(max(v[0], v[1]), v[2]);
+    float fMax = crymax(crymax(v[0], v[1]), v[2]);
     if (fMax > 1.1f)
     {
       float fIMax = 1.0f / fMax;
@@ -2697,7 +2697,7 @@ void SParamComp_LightsColor::mfGet4f(vec4_t v)
   }
   if (!(rd->m_RP.m_PersFlags & RBPF_HDR))
   {
-    float fMax = max(max(v[0], v[1]), v[2]);
+    float fMax = crymax(crymax(v[0], v[1]), v[2]);
     if (fMax > 1.1f)
     {
       float fIMax = 1.0f / fMax;
@@ -2723,7 +2723,7 @@ float SParamComp_DiffuseColor::mfGet()
   {
     fc = gRenDev->m_RP.m_pCurLightMaterial->Front.m_Diffuse[m_Offs];
   }
-  fc = min(fc, 1.0f);
+  fc = crymin(fc, 1.0f);
   return fc;
 }
 void SParamComp_DiffuseColor::mfGet4f(vec4_t v)
@@ -2740,9 +2740,9 @@ void SParamComp_DiffuseColor::mfGet4f(vec4_t v)
     v[2] *= mt->Front.m_Diffuse[2];
     v[3] *= mt->Front.m_Diffuse[3];
   }
-  v[0] = min(v[0], 1.0f);
-  v[1] = min(v[1], 1.0f);
-  v[2] = min(v[2], 1.0f);
+  v[0] = crymin(v[0], 1.0f);
+  v[1] = crymin(v[1], 1.0f);
+  v[2] = crymin(v[2], 1.0f);
 }
 
 float SParamComp_ObjColor::mfGet()
@@ -2758,7 +2758,7 @@ float SParamComp_SpecLightColor::mfGet()
   float fc = gRenDev->m_RP.m_pCurLight->m_SpecColor[m_Offs];
   if (gRenDev->m_RP.m_pCurLightMaterial)
     fc *= gRenDev->m_RP.m_pCurLightMaterial->Front.m_Specular[m_Offs];
-  fc = min(fc, 1.0f);
+  fc = crymin(fc, 1.0f);
   return fc;
 }
 void SParamComp_SpecLightColor::mfGet4f(vec4_t v)
@@ -2777,7 +2777,7 @@ void SParamComp_SpecLightColor::mfGet4f(vec4_t v)
   }
   if (!(rd->m_RP.m_PersFlags & RBPF_HDR))
   {
-    float fMax = max(max(v[0], v[1]), v[2]);
+    float fMax = crymax(crymax(v[0], v[1]), v[2]);
     if (fMax > 1.1f)
     {
       float fIMax = 1.0f / fMax;
@@ -2809,7 +2809,7 @@ void SParamComp_SpecLightsColor::mfGet4f(vec4_t v)
   }
   if (!(rd->m_RP.m_PersFlags & RBPF_HDR))
   {
-    float fMax = max(max(v[0], v[1]), v[2]);
+    float fMax = crymax(crymax(v[0], v[1]), v[2]);
     if (fMax > 1.1f)
     {
       float fIMax = 1.0f / fMax;
@@ -2835,7 +2835,7 @@ float SParamComp_AmbLightColor::mfGet()
 
 		fc *= gRenDev->m_RP.m_pCurLightMaterial->Front.m_Diffuse[m_Offs];			// diffuse is used like filter so it affects ambient as well
   }
-  fc = min(fc, 1.0f);
+  fc = crymin(fc, 1.0f);
 
   return fc;
 }
@@ -2865,9 +2865,9 @@ void SParamComp_AmbLightColor::mfGet4f(vec4_t v)
     v[1] *= mt->Front.m_Diffuse[1];
     v[2] *= mt->Front.m_Diffuse[2];
   }
-  v[0] = min(v[0], 1.0f);
-  v[1] = min(v[1], 1.0f);
-  v[2] = min(v[2], 1.0f);
+  v[0] = crymin(v[0], 1.0f);
+  v[1] = crymin(v[1], 1.0f);
+  v[2] = crymin(v[2], 1.0f);
 }
 
 float SParamComp_CameraAngle::mfGet()
@@ -3652,7 +3652,7 @@ void SParamComp_OSLightsPos::mfGet4f(vec4_t v)
   {
     vCenterRE = Vec3(0,0,0);
   }
-  fDist = max(1.0f, GetSquaredDistance(vCenterRE, dl->m_Origin));
+  fDist = crymax(1.0f, GetSquaredDistance(vCenterRE, dl->m_Origin));
   fDist = cryISqrtf(fDist);
   v[3] = fDist;
 }
@@ -3704,7 +3704,7 @@ void SParamComp_SLightPos::mfGet4f(vec4_t v)
   {
     vCenterRE = Vec3(0,0,0);
   }
-  fDist = max(1.0f, GetSquaredDistance(vCenterRE, rd->m_RP.m_pCurLight->m_Origin));
+  fDist = crymax(1.0f, GetSquaredDistance(vCenterRE, rd->m_RP.m_pCurLight->m_Origin));
   fDist = cryISqrtf(fDist);
   v[3] = fDist;
 }
@@ -3766,7 +3766,7 @@ float SParamComp_MinLightDistance::mfGet()
   {
     vCenterRE = Vec3(0,0,0);
   }
-  fDist = max(1.0f, GetSquaredDistance(vCenterRE, gRenDev->m_RP.m_pCurLight->m_Origin));
+  fDist = crymax(1.0f, GetSquaredDistance(vCenterRE, gRenDev->m_RP.m_pCurLight->m_Origin));
   fDist = cryISqrtf(fDist);
   return fDist;
 }

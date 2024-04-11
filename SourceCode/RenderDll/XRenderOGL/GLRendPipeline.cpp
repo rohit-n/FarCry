@@ -3216,7 +3216,7 @@ bool CGLRenderer::EF_SetLights(int Flags)
         fRadRE = 1000.0f;
         vCenterRE = Vec3(0,0,0);
       }
-      float fDist = max(0.1f, (vCenterRE - dl->m_Origin).Length());
+      float fDist = crymax(0.1f, (vCenterRE - dl->m_Origin).Length());
       float fMaxDist = CLAMP(fDist + fRadRE, dl->m_fRadius * 0.1f, dl->m_fRadius * 0.99f);
       float fMinDist = CLAMP(fDist - fRadRE, dl->m_fRadius * 0.1f, dl->m_fRadius * 0.99f);
       float fMinAtt = 1.0f / sAttenuation(fMinDist, dl->m_fRadius);
@@ -3228,15 +3228,15 @@ bool CGLRenderer::EF_SetLights(int Flags)
       }
       else
       {
-        fCA = max(0.01f, fMinAtt - (fMaxAtt - fMinAtt) / (fMaxDist - fMinDist) * fMinDist);
-        fLA = max(0.0f, (fMinAtt - fCA) / fMinDist);
+        fCA = crymax(0.01f, fMinAtt - (fMaxAtt - fMinAtt) / (fMaxDist - fMinDist) * fMinDist);
+        fLA = crymax(0.0f, (fMinAtt - fCA) / fMinDist);
       }
       fQA = 0.0f;
       cDiffuse = dl->m_Color; // * 1.25f;
     }
-    fCA = max(0.0f, fCA);
-    fLA = max(0.0f, fLA);
-    fQA = max(0.0f, fQA);
+    fCA = crymax(0.0f, fCA);
+    fLA = crymax(0.0f, fLA);
+    fQA = crymax(0.0f, fQA);
     Pos[0] = lpos.x;
     Pos[1] = lpos.y;
     Pos[2] = lpos.z;
@@ -3878,7 +3878,7 @@ void CGLRenderer::EF_DrawDetailOverlayPasses()
         sbNeedRender.AddElem(true);
       else
         sbNeedRender.AddElem(false);
-      fDistToCam = min(fDistToCam, fDistObj);
+      fDistToCam = crymin(fDistToCam, fDistObj);
       nObj++;
       if (nObj >= gRenDev->m_RP.m_MergedObjects.Num())
         break;
@@ -4211,7 +4211,7 @@ void CGLRenderer::EF_DrawFogOverlayPasses()
         fDist = 999999.0f;
         while (true)
         {
-          fDist = min(fDist, m_RP.m_pRE->mfMinDistanceToCamera(pObj));
+          fDist = crymin(fDist, m_RP.m_pRE->mfMinDistanceToCamera(pObj));
           nObj++;
           if (nObj >= m_RP.m_MergedObjects.Num())
             break;

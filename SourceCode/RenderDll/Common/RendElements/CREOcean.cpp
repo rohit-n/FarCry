@@ -209,13 +209,13 @@ void CREOcean::mfPrepare()
       pVertices->xyz.y = m_Pos[vy][vx][1];
       float fZ = -m_HX[y][x] * fHScale;
       pVertices->xyz.z = fZ;
-      m_MinBound.x = min(m_Pos[vy][vx][0], m_MinBound.x);
-      m_MinBound.y = min(m_Pos[vy][vx][1], m_MinBound.y);
-      m_MinBound.z = min(fZ, m_MinBound.z);
+      m_MinBound.x = crymin(m_Pos[vy][vx][0], m_MinBound.x);
+      m_MinBound.y = crymin(m_Pos[vy][vx][1], m_MinBound.y);
+      m_MinBound.z = crymin(fZ, m_MinBound.z);
 
-      m_MaxBound.x = max(m_Pos[vy][vx][0], m_MaxBound.x);
-      m_MaxBound.y = max(m_Pos[vy][vx][1], m_MaxBound.y);
-      m_MaxBound.z = max(fZ, m_MaxBound.z);
+      m_MaxBound.x = crymax(m_Pos[vy][vx][0], m_MaxBound.x);
+      m_MaxBound.y = crymax(m_Pos[vy][vx][1], m_MaxBound.y);
+      m_MaxBound.z = crymax(fZ, m_MaxBound.z);
 
       m_Normals[vy][vx] = Vec3d(m_NX[y][x], m_NY[y][x], 64.0f);
       pVertices->normal = m_Normals[vy][vx];

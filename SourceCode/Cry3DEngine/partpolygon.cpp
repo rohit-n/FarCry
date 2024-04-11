@@ -112,7 +112,7 @@ void CSprite::Render( const PartProcessParams &PPP,IShader *pShader )
 		rParms.pMaterial = m_pMaterial;
     rParms.dwFObjFlags |= FOB_TRANS_MASK;
 
-		int nSortId = max(-4,min(4,m_pParams->nDrawLast));
+		int nSortId = crymax(-4,crymin(4,m_pParams->nDrawLast));
 		nSortId = FtoI(PPP.pObjManager->GetSortOffset(m_vPos,PPP.vCamPos,m_pEmitter->m_fWaterLevel)) - nSortId;
 		rParms.fCustomSortOffset = (float)nSortId;
 
@@ -187,7 +187,7 @@ void CSprite::Render( const PartProcessParams &PPP,IShader *pShader )
 			}
 		}
 
-		int nSortId = max(-4,min(4,m_pParams->nDrawLast));
+		int nSortId = crymax(-4,crymin(4,m_pParams->nDrawLast));
 		nSortId = FtoI(PPP.pObjManager->GetSortOffset(m_vPos,PPP.vCamPos,m_pEmitter->m_fWaterLevel)) - nSortId;
 		/*
 		if((vCamPos.z-pTerrain->Ge tWaterLevel())*(m_vPos.z-pTerrain->GetWaterLev el())>0)
@@ -288,8 +288,8 @@ void CSprite::Render( const PartProcessParams &PPP,IShader *pShader )
 			float fDistFromCenterX = m_pParams->vSpaceLoopBoxSize.x - fabs(m_pEmitter->m_pos.x-m_vPos.x);
 			float fDistFromCenterY = m_pParams->vSpaceLoopBoxSize.y - fabs(m_pEmitter->m_pos.y-m_vPos.y);
 			float fDistFromCenterZ = m_pParams->vSpaceLoopBoxSize.z - fabs(m_pEmitter->m_pos.z-m_vPos.z);
-			float fMinDistToTheBorder = min(min(fDistFromCenterX,fDistFromCenterY),fDistFromCenterZ);
-			fAlphaSpaceLoopRatio = max(0,min(1.f,fMinDistToTheBorder*0.5f));
+			float fMinDistToTheBorder = crymin(crymin(fDistFromCenterX,fDistFromCenterY),fDistFromCenterZ);
+			fAlphaSpaceLoopRatio = crymax(0,crymin(1.f,fMinDistToTheBorder*0.5f));
 		}
 
 		// make particle color
@@ -352,7 +352,7 @@ void CSprite::Render( const PartProcessParams &PPP,IShader *pShader )
 			if (m_pArrvPosHistory)
 			{
 				float fTailLength = (m_pParams->fTailLenght/m_nTailSteps) /  m_fScale; // Here we must divide by scale because speed is scaled.
-				m_fTrailCurPos += min(1.f, PPP.fFrameTime/fTailLength);
+				m_fTrailCurPos += crymin(1.f, PPP.fFrameTime/fTailLength);
 				m_pArrvPosHistory[FtoI(m_fTrailCurPos)%m_nTailSteps] = m_vPos;
 			}
 		}

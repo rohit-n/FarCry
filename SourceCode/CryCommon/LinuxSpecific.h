@@ -331,31 +331,6 @@ typedef struct
 		return *pT;
 	}
 
-	template<typename S, typename T>
-	inline const S& min(const S& rS, const T& rT)
-	{
-		return (rS <= rT)? rS : rT;
-	}
-
-	template<typename S, typename T>
-	inline const S& max(const S& rS, const T& rT)
-	{
-		return (rS >= rT)? rS : rT;
-	}
-
-	template<typename S, typename T>
-	inline const S& __min(const S& rS, const T& rT)
-	{
-		return min(rS, rT);
-	}
-
-	template<typename S, typename T>
-	inline const S& __max(const S& rS, const T& rT)
-	{
-		return max(rS, rT);
-	}
-
-
 	typedef enum {INVALID_HANDLE_VALUE = -1l}INVALID_HANDLE_VALUE_ENUM;
 	//for compatibility reason we got to create a class which actually contains an int rather than a void* and make sure it does not get mistreated
 	template <class T, T U>//U is default type for invalid handle value, T the encapsulated handle type to be used instead of void* (as under windows and never linux)

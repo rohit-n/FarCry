@@ -601,7 +601,7 @@ void CryModelSubmesh::Deform( int nLodToDeform, unsigned nDeformFlags)
 			nDeformFlags &= ~FLAG_DEFORM_UPDATE_TANGENTS;
 	}
 	// we won't need tangents simultaneously with the vertices/normals
-	g_Temp.reserve (max(sizeTangents, sizeVertices+sizeNormals));
+	g_Temp.reserve (crymax(sizeTangents, sizeVertices+sizeNormals));
 
 	const unsigned* pExtToIntMap = pGeomInfo->getExtToIntMapEntries();
 
@@ -981,7 +981,7 @@ void CryModelSubmesh::RenderShadowVolumes (const SRendParams *rParams, int nLimi
 	// all of the operations here (except when another PROFILE_FRAME_* is used) are related to deformations, extrusions etc.
 	// for the shadow volume
 
-	int nShadowLOD = max (m_pParent->m_nLodLevel, min2((int)m_pMesh->numLODs()-1, max2(g_GetCVars()->ca_LimitShadowLOD(), nLimitLOD)));
+	int nShadowLOD = crymax(m_pParent->m_nLodLevel, min2((int)m_pMesh->numLODs()-1, max2(g_GetCVars()->ca_LimitShadowLOD(), nLimitLOD)));
 
 	// detect the shadow edges
 	IStencilShadowConnectivity *pConnectivity = m_pMesh->getStencilShadowConnectivity(nShadowLOD);

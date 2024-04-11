@@ -112,7 +112,7 @@ bool CStatObjInst::DrawEntity(const struct SRendParams & _EntDrawParams)
 
   // calculate switch to sprite distance 
   float near_far_dist = (18.f * pBody->GetRadiusVert() * m_fScale)
-    * max(0.5f,m_pObjManager->m_lstStaticTypes[m_nObjectTypeID].fSpriteDistRatio)
+    * crymax(0.5f,m_pObjManager->m_lstStaticTypes[m_nObjectTypeID].fSpriteDistRatio)
     + 0.2f*(float)fabs((m_vPos.z + pBody->GetCenter().z*m_fScale) - vCamPos.z);
   /*
   static float fAverageSpriteDistRatio = 0.5f;
@@ -161,14 +161,14 @@ bool CStatObjInst::DrawEntity(const struct SRendParams & _EntDrawParams)
 
   // detect lod switch soon
   const float fLodSwitchCountDown = GetCVars()->e_vegetation_sprites_slow_switch ?
-    min(1.f, fabsf(fDistance - near_far_dist)/(near_far_dist*0.33f)) : 1.f;
+    crymin(1.f, fabsf(fDistance - near_far_dist)/(near_far_dist*0.33f)) : 1.f;
 
   if(!m_pObjManager->m_nRenderStackLevel)
   { // calculate bending amount
     if(m_pObjManager->m_lstStaticTypes[m_nObjectTypeID].fBending)
     {
       float fBending = GetBendingRandomFactor() * m_pObjManager->m_lstStaticTypes[m_nObjectTypeID].fBending;
-      m_fFinalBending = min(1.5f, 2.5f*(m_fCurrentBending + m_pObjManager->m_fWindForce)*fBending) / (pBody->GetRadiusVert()*m_fScale) * 1.8f;          
+      m_fFinalBending = crymin(1.5f, 2.5f*(m_fCurrentBending + m_pObjManager->m_fWindForce)*fBending) / (pBody->GetRadiusVert()*m_fScale) * 1.8f;          
       m_fFinalBending *= fLodSwitchCountDown;
     }
     else
@@ -244,7 +244,7 @@ bool CStatObjInst::DrawEntity(const struct SRendParams & _EntDrawParams)
     rParms.fBending = m_fFinalBending;
 
     // fade heat amount
-    rParms.fHeatAmount = min(2.f*(1.f - fDistance/near_far_dist),1.f);
+    rParms.fHeatAmount = crymin(2.f*(1.f - fDistance/near_far_dist),1.f);
 
     // set alpha blend
     if( m_pObjManager->m_lstStaticTypes[m_nObjectTypeID].bUseAlphaBlending )
@@ -258,7 +258,7 @@ bool CStatObjInst::DrawEntity(const struct SRendParams & _EntDrawParams)
       { // fade alpha on distance
 //        float fAlpha = 1.f - fDistance / (fMaxViewDist);//*m_pObjManager->m_lstStaticTypes[m_nObjectTypeID].fMaxViewDistRati o);
   //      rParms.fAlpha = min(0.99f,fAlpha*3);
-				rParms.fAlpha = min(0.99f,_EntDrawParams.fAlpha);
+				rParms.fAlpha = crymin(0.99f,_EntDrawParams.fAlpha);
       }
 
 			// entire object will use alpha blending so lets use only one light for it
@@ -272,7 +272,7 @@ bool CStatObjInst::DrawEntity(const struct SRendParams & _EntDrawParams)
 
     if(!GetCVars()->e_vegetation_debug)
     { // ignore editor colors per instance
-      rParms.vColor = Vec3d(CHAR_TO_FLOAT,CHAR_TO_FLOAT,CHAR_TO_FLOAT)*max((float)m_ucBright,32.f);
+      rParms.vColor = Vec3d(CHAR_TO_FLOAT,CHAR_TO_FLOAT,CHAR_TO_FLOAT)*crymax((float)m_ucBright,32.f);
       rParms.vColor *= m_pObjManager->m_lstStaticTypes[m_nObjectTypeID].fBrightness;
       rParms.vColor.CheckMin(Vec3d(1,1,1));
     }
@@ -344,7 +344,7 @@ bool CStatObjInst::DrawEntity(const struct SRendParams & _EntDrawParams)
 		rParms.dwFObjFlags |= (_EntDrawParams.dwFObjFlags & ~FOB_TRANS_MASK);
 
     // calculate lod and render the object
-		int nLod = max(0,(int)(fDistance*GetLodRatioNormilized()/(GetCVars()->e_obj_lod_ratio*GetRenderRadius())));
+		int nLod = crymax(0,(int)(fDistance*GetLodRatioNormilized()/(GetCVars()->e_obj_lod_ratio*GetRenderRadius())));
     pBody->Render( rParms, Vec3(zero), nLod );//int(fDistance/near_far_dist*pBody->m_nLoadedLodsNum*pBody->m_nLoadedLodsNum) );
 
     /*{ // speed test, render tree directly without shader pipeline - no speed difference
@@ -384,7 +384,7 @@ bool CStatObjInst::DrawEntity(const struct SRendParams & _EntDrawParams)
         {
           float DZ = m_vPos.z + pBody->GetCenter().z*m_fScale - vCamPos.z;
           float fAngle2 = -cry_atanf(DZ/fDistance)*(1.f-fLodSwitchCountDown);
-          fAngle2 = max(0,min(1,(fAngle2+0.5f)));
+          fAngle2 = crymax(0,crymin(1,(fAngle2+0.5f)));
           m_ucLodAngle = uchar(fAngle2*255.f);
         }
         else
@@ -447,7 +447,7 @@ CStatObj* CStatObjInst::GetStatObj() const
 float CStatObjInst::GetMaxViewDist()
 {
   if (GetStatObj())
-		return max(GetCVars()->e_obj_min_view_dist, GetStatObj()->GetRadius()*m_fScale*GetCVars()->e_obj_view_dist_ratio*GetViewDistRatioNormilized());
+		return crymax(GetCVars()->e_obj_min_view_dist, GetStatObj()->GetRadius()*m_fScale*GetCVars()->e_obj_view_dist_ratio*GetViewDistRatioNormilized());
 	
 	return 0;
 }

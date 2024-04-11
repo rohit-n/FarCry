@@ -23,7 +23,7 @@
 
 CSpriteManager::CSpriteManager( CPartManager *pPartManager )
 {
-	m_nMaxSpritesCount = min(16384, max(16,GetCVars()->e_particles_max_count));
+	m_nMaxSpritesCount = crymin(16384, crymax(16,GetCVars()->e_particles_max_count));
 	m_arrSprites = new CSprite[m_nMaxSpritesCount];
 
 	m_nCurSpritesCount=0;
@@ -100,7 +100,7 @@ void CSpriteManager::Spawn( CParticleEmitter &emitter,bool bChildProcess )
 
 
 	float fCurrTime = m_pPartManager->GetParticlesTime();
-	int nCount = max(1,int(Params.nCount*GetCVars()->e_particles_lod));
+	int nCount = crymax(1,int(Params.nCount*GetCVars()->e_particles_lod));
 
 	// pass Params structure to CPartSpray::Spawn() nCount times
 	for(int i=0; i < nCount; i++)
@@ -178,7 +178,7 @@ void CSpriteManager::SpawnParticle( CParticleEmitter &emitter,bool bChildProcess
 		tm.SetMatFromVectors( dir,n1,n2 );
 
 		Vec3d vPartDir(2.0f*rnd()-1.0f,2.0f*rnd()-1.0f,2.0f*rnd()-1.0f);
-		float focus = max(0,min(1,Params.fFocus));
+		float focus = crymax(0,crymin(1,Params.fFocus));
 		vPartDir.x *= focus;
 		vPartDir.Normalize();
 		vPartDir = tm * vPartDir;
@@ -313,9 +313,9 @@ void CSpriteManager::SpawnParticle( CParticleEmitter &emitter,bool bChildProcess
 void CSpriteManager::Render(CObjManager * pObjManager, CTerrain * pTerrain, int nRecursionLevel, CPartManager * pPartManager, IShader * pPartLightShader)
 {
 	// update max sprites count if console variable changed
-	if(m_nMaxSpritesCount != min(16384, max(16,GetCVars()->e_particles_max_count)))
+	if(m_nMaxSpritesCount != crymin(16384, crymax(16,GetCVars()->e_particles_max_count)))
 	{
-		m_nMaxSpritesCount = min(16384, max(16,GetCVars()->e_particles_max_count));
+		m_nMaxSpritesCount = crymin(16384, crymax(16,GetCVars()->e_particles_max_count));
 		delete [] m_arrSprites;
 		m_arrSprites = new CSprite[m_nMaxSpritesCount];
 		memset(m_arrSprites,0,sizeof(CSprite)*m_nMaxSpritesCount);

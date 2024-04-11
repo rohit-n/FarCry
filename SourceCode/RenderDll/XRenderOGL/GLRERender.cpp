@@ -707,7 +707,7 @@ bool CREFlare::mfCheckVis(CCObject *obj)
           fIntens = 0;
         else
         if (bRays)
-          fIntens = max(0.75f, fIntens);
+          fIntens = crymax(0.75f, fIntens);
         obj->m_AmbColor[0] = obj->m_AmbColor[1];
         obj->m_AmbColor[1] = obj->m_AmbColor[2];
         obj->m_AmbColor[2] = obj->m_TempVars[3];

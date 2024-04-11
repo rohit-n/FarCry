@@ -537,7 +537,7 @@ void CREOcean::mfDrawOceanSectors()
           float fZ = GetHMap(fX, fY);
           pTZ[0] = fZ;
           pTZ += 2;
-          fMinLevel = min(fMinLevel, fZ);
+          fMinLevel = crymin(fMinLevel, fZ);
           if (!bBlend && fWaterLevel-fZ <= 1.0f)
             bBlend = true;
           if (fWaterLevel-fZ < 16.0f)

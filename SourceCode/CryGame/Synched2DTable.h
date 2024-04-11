@@ -223,7 +223,7 @@ private: // --------------------------------------------------------------------
 
 				uint32 dwCnt = line.GetColumnCount();
 
-				dwRet = max(dwRet,dwCnt);
+				dwRet = crymax(dwRet,dwCnt);
 			}
 
 			return dwRet;

@@ -111,7 +111,7 @@ void STexPic::Restore()
           gRenDev->m_RP.m_FrameObject++;
           pObj = gRenDev->m_RP.m_pCurObject;
         }
-        fDist = min(fDist, gRenDev->m_RP.m_pRE->mfDistanceToCameraSquared(*pObj));
+        fDist = crymin(fDist, gRenDev->m_RP.m_pRE->mfDistanceToCameraSquared(*pObj));
         nObj++;
         if (nObj >= gRenDev->m_RP.m_MergedObjects.Num())
           break;
@@ -124,7 +124,7 @@ void STexPic::Restore()
 #endif
       fDist = crySqrtf(fDist);
       if (m_Flags2 & FT2_NEEDTORELOAD)
-        fDist = min(m_fMinDistance, fDist);
+        fDist = crymin(m_fMinDistance, fDist);
     }
     //gRenDev->m_TexMan->CheckTexLimits(this);
     LoadFromCache(FPR_IMMEDIATELLY, fDist);
@@ -604,7 +604,7 @@ int STexPic::UpdateMip(float fDist)
   if (fDist)
   {
     fDist *= gRenDev->m_TexMan->m_fStreamDistFactor;
-    nMip = min(m_nMips-1, (int)(fDist / (float)CRenderer::CV_r_texturespixelsize));
+    nMip = crymin(m_nMips-1, (int)(fDist / (float)CRenderer::CV_r_texturespixelsize));
   }
   if ((m_Width > 64 || m_Height > 64) && !CRenderer::CV_r_texturesstreamingsync)
   {
@@ -613,9 +613,9 @@ int STexPic::UpdateMip(float fDist)
       nResMip += CRenderer::CV_r_texbumpresolution + m_nCustomMip;
     else
       nResMip += CRenderer::CV_r_texresolution + m_nCustomMip;
-    nResMip = min(m_nMips-1, nResMip);
+    nResMip = crymin(m_nMips-1, nResMip);
     m_nBaseMip = nResMip;
-    nMip = min(m_nMips-1, nMip+nResMip);
+    nMip = crymin(m_nMips-1, nMip+nResMip);
   }
   else
     m_nBaseMip = 0;
@@ -739,7 +739,7 @@ void STexPic::LoadFromCache(int Flags, float fDist)
   else
   {
     // Always stream lowest 4 mips synchronously
-    int nStartLowestM = max(nStartMip, nEndMip-3);
+    int nStartLowestM = crymax(nStartMip, nEndMip-3);
     for (i=nStartLowestM; i<=nEndMip; i++)
     {
       if (!m_Mips[0][i] || !m_Mips[0][i]->m_bUploaded)
@@ -1477,7 +1477,7 @@ STexPic *CTexMan::LoadFromCache(STexPic *ti, int flags, int flags2, char *name, 
     int nSyncStartMip = -1;
     int nSyncEndMip = -1;
     int nEndMip = ti->m_nMips-1;
-    int nStartLowestM = max(0, nEndMip-3);
+    int nStartLowestM = crymax(0, nEndMip-3);
     for (i=nStartLowestM; i<=nEndMip; i++)
     {
       if (!ti->m_Mips[0][i] || !ti->m_Mips[0][i]->m_bUploaded)

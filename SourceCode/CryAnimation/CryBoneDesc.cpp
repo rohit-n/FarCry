@@ -169,7 +169,7 @@ unsigned CryBoneDesc::Serialize (bool bSave, void *pStream, unsigned nSize)
 		m_strName.assign (pName, pNameEnd);
 		// return aligned size of the chunk including the string 0 terminator, but
 		// no more than the declared size of the stream
-		return min(nSize, (unsigned)align4 (pNameEnd+1-(const char*)pStream));
+		return crymin(nSize, (unsigned)align4 (pNameEnd+1-(const char*)pStream));
 	}
 }
 

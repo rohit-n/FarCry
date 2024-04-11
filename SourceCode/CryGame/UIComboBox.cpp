@@ -191,7 +191,7 @@ LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 
 						if (m_iRollUp)
 						{
-							iItem = m_iFirstItem + min(m_iMaxItems - 1, (int)m_vItemList.size() - 1) - iItem;
+							iItem = m_iFirstItem + crymin(m_iMaxItems - 1, (int)m_vItemList.size() - 1) - iItem;
 						}
 						else
 						{
@@ -899,12 +899,12 @@ UIRect CUIComboBox::GetListRect(bool bScrollBars)
 
 	if (m_iRollUp)
 	{
-		pListRect.fHeight = m_fItemHeight * min((int)m_vItemList.size(), m_iMaxItems);
+		pListRect.fHeight = m_fItemHeight * crymin((int)m_vItemList.size(), m_iMaxItems);
 	}
 	else
 	{
 		pListRect.fTop += pListRect.fHeight + (m_pBorder.fSize > 0.125f ? m_pBorder.fSize : 0.0f);
-		pListRect.fHeight = m_fItemHeight * min((int)m_vItemList.size(), m_iMaxItems);
+		pListRect.fHeight = m_fItemHeight * crymin((int)m_vItemList.size(), m_iMaxItems);
 	}
 
 	if (bScrollBars && m_bVerticalScrollBar)
@@ -928,14 +928,14 @@ void CUIComboBox::DropList()
 
 	if (m_iRollUp)
 	{
-		float fRollUpHeight = m_fItemHeight * min((int)m_vItemList.size(), m_iMaxItems) + (m_pBorder.fSize > 0.125f ? m_pBorder.fSize : 0.0f);
+		float fRollUpHeight = m_fItemHeight * crymin((int)m_vItemList.size(), m_iMaxItems) + (m_pBorder.fSize > 0.125f ? m_pBorder.fSize : 0.0f);
 
 		m_pRect.fHeight += fRollUpHeight;
 		m_pRect.fTop -= fRollUpHeight;
 	}
 	else
 	{
-		m_pRect.fHeight += m_fItemHeight * min((int)m_vItemList.size(), m_iMaxItems) + (m_pBorder.fSize > 0.125f ? m_pBorder.fSize : 0.0f);
+		m_pRect.fHeight += m_fItemHeight * crymin((int)m_vItemList.size(), m_iMaxItems) + (m_pBorder.fSize > 0.125f ? m_pBorder.fSize : 0.0f);
 	}
 
 	m_iOldZ = m_iZ; // temporarily change the Z value so that our list is the topmost thing

@@ -165,8 +165,8 @@ struct AABB {
 	bool IsEmpty() const { return min == max; }
 
 	void Add( const Vec3 &v )	{
-		min.x=__min( min.x,v.x );	min.y=__min( min.y,v.y );	min.z=__min( min.z,v.z );
-		max.x=__max( max.x,v.x );	max.y=__max( max.y,v.y );	max.z=__max( max.z,v.z );
+		min.x=crymin( min.x,v.x );	min.y=crymin( min.y,v.y );	min.z=crymin( min.z,v.z );
+		max.x=crymax( max.x,v.x );	max.y=crymax( max.y,v.y );	max.z=crymax( max.z,v.z );
 	}
 
 	//! Check if this bounding box overlap with bounding box of sphere.

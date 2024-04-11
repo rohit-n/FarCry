@@ -401,7 +401,7 @@ void fxIncrLevel()
 {
   assert (sRecurse < 31);
   sRecurse++;
-  sRecurse = min(sRecurse, 31);
+  sRecurse = crymin(sRecurse, 31);
   SAFE_DELETE_ARRAY(sTempBuf1[sRecurse]);
 }
 
@@ -410,7 +410,7 @@ void fxDecrLevel()
   assert (sRecurse > 0);
   SAFE_DELETE_ARRAY(sTempBuf1[sRecurse]);
   sRecurse--;
-  sRecurse = max(sRecurse, 0);
+  sRecurse = crymax(sRecurse, 0);
 }
 
 void fxIgnoreBlock(char **buf)

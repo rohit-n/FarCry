@@ -107,7 +107,7 @@ void CGLRenderer::DrawObjSprites_NoBend (list2<CStatObjInst*> *pList, float fMax
     else
       fFadeOut = 1.f;
 
-    float fBright = CHAR_TO_FLOAT*max((float)o->m_ucBright,32.f);
+    float fBright = CHAR_TO_FLOAT*crymax((float)o->m_ucBright,32.f);
 
     // apply brightness from vegetation group settings
     fBright *= pObjMan->m_lstStaticTypes[o->m_nObjectTypeID].fBrightness;
@@ -144,7 +144,7 @@ void CGLRenderer::DrawObjSprites_NoBend (list2<CStatObjInst*> *pList, float fMax
       prev_tid = tid;
     }
 
-    fBright = min(fBright, 1.0f);
+    fBright = crymin(fBright, 1.0f);
     UCol col;
     col.bcolor[0] = (byte)QInt(fBright * vWorldColor.x * 255.0f);
     col.bcolor[1] = (byte)QInt(fBright * vWorldColor.y * 255.0f);
@@ -425,7 +425,7 @@ void CGLRenderer::DrawObjSprites_NoBend_Merge (list2<CStatObjInst*> *pList, floa
 		else
 			fFadeOut = 1.f;
 
-    Vec3d vBright = Vec3d(CHAR_TO_FLOAT,CHAR_TO_FLOAT,CHAR_TO_FLOAT)*max((float)o->m_ucBright,32.f);
+    Vec3d vBright = Vec3d(CHAR_TO_FLOAT,CHAR_TO_FLOAT,CHAR_TO_FLOAT)*crymax((float)o->m_ucBright,32.f);
 
     // apply brightness from vegetation group settings
     vBright *= pObjMan->m_lstStaticTypes[o->m_nObjectTypeID].fBrightness;
@@ -857,7 +857,7 @@ void CGLRenderer::DrawObjSprites (list2<CStatObjInst*> *pList, float fMaxViewDis
     if(fFadeOut>1.f)
       fFadeOut=1.f;
 
-    Vec3d vBright = Vec3d(CHAR_TO_FLOAT,CHAR_TO_FLOAT,CHAR_TO_FLOAT)*max((float)o->m_ucBright,32.f);
+    Vec3d vBright = Vec3d(CHAR_TO_FLOAT,CHAR_TO_FLOAT,CHAR_TO_FLOAT)*crymax((float)o->m_ucBright,32.f);
 
     // apply brightness from vegetation group settings
     vBright *= pObjMan->m_lstStaticTypes[o->m_nObjectTypeID].fBrightness;

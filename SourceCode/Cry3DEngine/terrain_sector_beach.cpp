@@ -580,9 +580,9 @@ void CSectorInfo::MakeBeachStage2(FILE * hFileToSave)
 
   for(int i=0; i<6; i++)
   {
-    verts[i].color.bcolor[0]=(byte)min(255,vTerrainColor[0]*512.0f);
-    verts[i].color.bcolor[1]=(byte)min(255,vTerrainColor[1]*512.0f);
-    verts[i].color.bcolor[2]=(byte)min(255,vTerrainColor[2]*512.0f);
+    verts[i].color.bcolor[0]=(byte)crymin(255,vTerrainColor[0]*512.0f);
+    verts[i].color.bcolor[1]=(byte)crymin(255,vTerrainColor[1]*512.0f);
+    verts[i].color.bcolor[2]=(byte)crymin(255,vTerrainColor[2]*512.0f);
     verts[i].color.bcolor[3]=0;                       
   }
 
@@ -608,12 +608,12 @@ void CSectorInfo::MakeBeachStage2(FILE * hFileToSave)
 
 		// limit to avoid shore going up to the hill
 		float fMaxShoreHeight = 0.25f;
-		p1->pos1.z = min(p1->pos1.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
-		p1->pos2.z = min(p1->pos2.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
-		p1->posm.z = min(p1->posm.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
-		p2->pos1.z = min(p2->pos1.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
-		p2->pos2.z = min(p2->pos2.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
-		p2->posm.z = min(p2->posm.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
+		p1->pos1.z = crymin(p1->pos1.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
+		p1->pos2.z = crymin(p1->pos2.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
+		p1->posm.z = crymin(p1->posm.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
+		p2->pos1.z = crymin(p2->pos1.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
+		p2->pos2.z = crymin(p2->pos2.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
+		p2->posm.z = crymin(p2->posm.z, m_pTerrain->GetWaterLevel()+fMaxShoreHeight);
 
 		float fShoreHeightOffset = 0.05f;
 
@@ -627,17 +627,17 @@ void CSectorInfo::MakeBeachStage2(FILE * hFileToSave)
 		float fBrG = vAmbColor.y + (1.f-vAmbColor.y)*m_pTerrain->IsOnTheLight((int)p1->posm.x,(int)p1->posm.y);
 		float fBrB = vAmbColor.z + (1.f-vAmbColor.z)*m_pTerrain->IsOnTheLight((int)p1->posm.x,(int)p1->posm.y);
 
-		uchar r1 = (byte)(min(255,vTerrainColor[0]*512.0f)*fBrR);
-		uchar g1 = (byte)(min(255,vTerrainColor[1]*512.0f)*fBrG);
-		uchar b1 = (byte)(min(255,vTerrainColor[2]*512.0f)*fBrB);
+		uchar r1 = (byte)(crymin(255,vTerrainColor[0]*512.0f)*fBrR);
+		uchar g1 = (byte)(crymin(255,vTerrainColor[1]*512.0f)*fBrG);
+		uchar b1 = (byte)(crymin(255,vTerrainColor[2]*512.0f)*fBrB);
 
 		fBrR = vAmbColor.x + (1.f-vAmbColor.x)*m_pTerrain->IsOnTheLight((int)p2->posm.x,(int)p2->posm.y);
 		fBrG = vAmbColor.y + (1.f-vAmbColor.y)*m_pTerrain->IsOnTheLight((int)p2->posm.x,(int)p2->posm.y);
 		fBrB = vAmbColor.z + (1.f-vAmbColor.z)*m_pTerrain->IsOnTheLight((int)p2->posm.x,(int)p2->posm.y);
 
-		uchar r2 = (byte)(min(255,vTerrainColor[0]*512.0f)*fBrR);
-		uchar g2 = (byte)(min(255,vTerrainColor[1]*512.0f)*fBrG);
-		uchar b2 = (byte)(min(255,vTerrainColor[2]*512.0f)*fBrB);
+		uchar r2 = (byte)(crymin(255,vTerrainColor[0]*512.0f)*fBrR);
+		uchar g2 = (byte)(crymin(255,vTerrainColor[1]*512.0f)*fBrG);
+		uchar b2 = (byte)(crymin(255,vTerrainColor[2]*512.0f)*fBrB);
 
     // pos
     verts[0].xyz.x = p1->pos1.x;

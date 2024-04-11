@@ -91,7 +91,7 @@ void CCryModEffIKSolver::ApplyToBone(int nLayer)
 		return;
 
 	beta = (alen*alen+clen*clen-blen*blen)/(2*alen*clen);
-	beta = min(0.9999f,max(-0.9999f,beta));
+	beta = crymin(0.9999f,crymax(-0.9999f,beta));
 	a = a.rotated(n,beta,cry_sqrtf(1-beta*beta)).normalized();
 	c/=clen; n=a^c; nlen=n.len(); 
 	if (nlen<1E-6)

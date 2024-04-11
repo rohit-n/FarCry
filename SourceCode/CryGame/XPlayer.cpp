@@ -1470,7 +1470,7 @@ void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
 		{
 			//TRACE("RETURNING m_fRecoilXDelta=%f",m_fRecoilXDelta);
 			float multiplier=m_stats.firing?m_pGame->w_recoil_speed_down*0.2f:m_pGame->w_recoil_speed_down;
-			float m=min(1,m_pTimer->GetFrameTime()*multiplier);
+			float m=crymin(1,m_pTimer->GetFrameTime()*multiplier);
 			float xdiff=m_fRecoilXDelta>m_fRecoilX*m?m_fRecoilX*m:m_fRecoilXDelta;
 			//float zdiff=m_fRecoilZDelta>0?min(m_fRecoilZDelta,m_fRecoilZ*m):-m_fRecoilZDelta;
 
@@ -1493,8 +1493,8 @@ void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
 			//GetISystem()->GetILog()->Log("APPLYING m_fRecoilXDelta=%f",m_fRecoilXDelta);
 			float deltatime=m_pTimer->GetFrameTime()*m_pGame->w_recoil_speed_up;
 			//GetISystem()->GetILog()->Log("deltatime=%f",deltatime);
-			float dx=m_fRecoilXUp>0?min(m_fRecoilXUp,m_fRecoilX*deltatime):max(m_fRecoilXUp,m_fRecoilX*deltatime);
-			float dz=m_fRecoilZUp>0?(float)min(m_fRecoilZUp,m_fRecoilZ*deltatime):(float)max(m_fRecoilZUp,-fabs(m_fRecoilZ*deltatime));
+			float dx=m_fRecoilXUp>0?crymin(m_fRecoilXUp,m_fRecoilX*deltatime):crymax(m_fRecoilXUp,m_fRecoilX*deltatime);
+			float dz=m_fRecoilZUp>0?(float)crymin(m_fRecoilZUp,m_fRecoilZ*deltatime):(float)crymax(m_fRecoilZUp,-fabs(m_fRecoilZ*deltatime));
 
 			if(m_fRecoilXDelta+dx>=m_pGame->w_recoil_max_degree){
 				//GetISystem()->GetILog()->Log("w_recoil_max_degree=%f",m_pGame->w_recoil_max_degree);
@@ -2894,7 +2894,7 @@ float CPlayer::CalculateAccuracyFactor(float accuracy)
 	}
 
 	factor = 1 - factor;
-	factor = __max(factor, 0.000f);
+	factor = crymax(factor, 0.000f);
 
 	float stanceAccuracyModifier = 1.0f;
 
@@ -2996,7 +2996,7 @@ void CPlayer::UpdateWeapon()
 		}else{
 			m_fAccuracy=m_fAccuracy-(m_pGame->w_accuracy_gain_scale*frametime);
 		}
-		m_fAccuracy=__max(m_fAccuracy, 0.1f);
+		m_fAccuracy= crymax(m_fAccuracy, 0.1f);
 
 		if(!m_pMountedWeapon && !m_pVehicle)
 		{
@@ -3004,14 +3004,14 @@ void CPlayer::UpdateWeapon()
 			{
 				if(m_fAccuracy<wp.accuracy_decay_on_run)
 				{
-					m_fAccuracy=min(wp.accuracy_decay_on_run,m_fAccuracy+(frametime*6));
+					m_fAccuracy = crymin(wp.accuracy_decay_on_run,m_fAccuracy+(frametime*6));
 				} 
 			}
 			else if(m_stats.moving)
 			{
 				if(m_fAccuracy<(wp.accuracy_decay_on_run))
 				{
-					m_fAccuracy=min(wp.accuracy_decay_on_run,m_fAccuracy+(frametime*3));
+					m_fAccuracy = crymin(wp.accuracy_decay_on_run,m_fAccuracy+(frametime*3));
 				}
 			}
 		}
@@ -3100,7 +3100,7 @@ void CPlayer::UpdateWeapon()
 					wi.fireFirstBulletTime=wi.fireTime;
 					m_fRecoilXDelta=0;		
 				}
-				float deltatime=max(0.001f,m_pTimer->GetCurrTime()-wi.fireFirstBulletTime);
+				float deltatime = crymax(0.001f,m_pTimer->GetCurrTime()-wi.fireFirstBulletTime);
 				
 				int bullets=0;
 				//[kirill] - can't shoot if using mounted vehicle weapon and weapon is off of angle limits
@@ -3130,7 +3130,7 @@ void CPlayer::UpdateWeapon()
 					if(m_pGame->IsServer())
 					{
 						m_stats.last_accuracy=(BYTE)(m_stats.accuracy/(1.f/255));
-						m_fAccuracy=min(1,m_fAccuracy+((deltatime*(m_pGame->w_accuracy_decay_speed*fFireRate)*bullets)));
+						m_fAccuracy = crymin(1,m_fAccuracy+((deltatime*(m_pGame->w_accuracy_decay_speed*fFireRate)*bullets)));
 						BYTE acc=(BYTE)((m_fAccuracy*m_fAccuracyMod)/(1.f/255));
 						m_stats.accuracy=(float)((acc)*(1.f/255));	
 					}
@@ -3141,7 +3141,7 @@ void CPlayer::UpdateWeapon()
 						//pseudo realistic recoil
 						if((m_fRecoilXDelta+1)<m_pGame->w_recoil_max_degree)
 						{
-								float delta=min(1, (m_pTimer->GetCurrTime()-wi.fireFirstBulletTime)+wp.fFireRate);
+								float delta = crymin(1, (m_pTimer->GetCurrTime()-wi.fireFirstBulletTime)+wp.fFireRate);
 								float recoilx=wp.max_recoil*((delta*2)*2);
 								float recoilz=recoilx;
 
@@ -3154,7 +3154,7 @@ void CPlayer::UpdateWeapon()
 								float fRandA = m_SynchedRandomSeed.GetRandTable(ucSeed);
 								float fRandB = m_SynchedRandomSeed.GetRandTable(ucSeed+13);			
 								
-								m_fRecoilXUp=m_fRecoilX=(min(wp.max_recoil,wp.min_recoil+recoilx+(recoilx*fRandA)))*bullets;
+								m_fRecoilXUp=m_fRecoilX=(crymin(wp.max_recoil,wp.min_recoil+recoilx+(recoilx*fRandA)))*bullets;
 								m_fRecoilZUp=m_fRecoilZ=((m_fRecoilXUp)-(m_fRecoilXUp*fRandA)*2)*bullets;
 								if (m_stats.aiming)
 								{
@@ -3301,7 +3301,7 @@ return;
 
 				//smooth the head rotation.
 				Ang3 delta = Ang3(xAngle*0.5f,0,zAngle) - m_vHeadAngles;
-				m_vHeadAngles = m_vHeadAngles + delta*min(1.0f,m_pTimer->GetFrameTime()*10.0f);
+				m_vHeadAngles = m_vHeadAngles + delta * crymin(1.0f,m_pTimer->GetFrameTime()*10.0f);
 
 				m_vHeadAngles.Snap180();
 
@@ -4069,7 +4069,7 @@ void CPlayer::StartAnimation( const SPlayerUpdateContext &ctx  )
 
 		//play ladder animation at a speed between 0.001 and 1, depending on the palyer velocity.
 		//we cant use a speed = 0 because it would be impossible to rotate the head bone, fix this in the anim sys?
-		float aspeed = max(0.001f,min(1.0f,fabs(ctx.status.vel.z)));
+		float aspeed = crymax(0.001f, crymin(1.0f,fabs(ctx.status.vel.z)));
 		m_pEntity->SetAnimationSpeed( aspeed );
 
 		/*if( fabs(ctx.status.vel.z) > .1f )
@@ -6517,7 +6517,7 @@ void	CPlayer::UpdateCollisionDamage( )
 
 		for(imax=-1 ; colN>0; colN--)
 		{
-			float	curVel = max(0.0f,history[colN-1].v[1]*history[colN-1].n);
+			float	curVel = crymax(0.0f,history[colN-1].v[1]*history[colN-1].n);
 			if(history[colN-1].mass[1]<=massLimitMin || curVel<velLimit)
 				continue;
 			float	curDamage = (history[colN-1].mass[1]<massLimitMax ? history[colN-1].mass[1] : massLimitMax)*curVel;
@@ -6988,7 +6988,7 @@ m_pGame->m_pLog->Log("\006 dead player < %s > position is invalid %.2f %.2f %.2f
 			return;
 		}
 	}
-	m_stats.fKWater = min(1.0f,m_stats.fInWater*(1.0f/.60f));
+	m_stats.fKWater = crymin(1.0f,m_stats.fInWater*(1.0f/.60f));
 	m_bSwimming = m_stats.fKWater>0.0f;
 	m_stats.fKWater*=m_stats.fKWater;
 }
@@ -7023,7 +7023,7 @@ void CPlayer::DampInputVector(vectorf &vec ,float speed ,float stopspeed ,bool o
 
 	float dt = m_fLastDeltaTime;//m_pTimer->GetFrameTime();//m_pGame->GetSystem()->GetITimer()->GetFrameTime();
 
-	vec = m_vLastMotionDir + delta*min(dt*spd,1.0f);
+	vec = m_vLastMotionDir + delta*crymin(dt*spd,1.0f);
 
 	if (vec.len()<0.001f) 
 		vec.Set(0,0,0);

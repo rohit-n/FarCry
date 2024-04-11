@@ -162,7 +162,7 @@ bool CEntity::DrawEntity(const SRendParams & _EntDrawParams)
 
 
   // lod depends on distance and size and entity settings
-  int nLod = max(0,(int)(rParms.fDistance*GetLodRatioNormilized()/(m_pISystem->GetI3DEngine()->GetObjectsLODRatio()*GetRadius())));
+  int nLod = crymax(0,(int)(rParms.fDistance*GetLodRatioNormilized()/(m_pISystem->GetI3DEngine()->GetObjectsLODRatio()*GetRadius())));
 
 	// disable scissoring for entities inside portals
 	if(m_pVisArea && ((IVisArea*)m_pVisArea)->IsPortal())
@@ -829,7 +829,7 @@ void CEntity::PreloadInstanceResources(Vec3d vPrevPortalPos, float fPrevPortalDi
 float CEntity::GetMaxViewDist()
 {
 	I3DEngine * p3DEngine = m_pISystem->GetI3DEngine();
-	return max(p3DEngine->GetObjectsMinViewDist(),
+	return crymax(p3DEngine->GetObjectsMinViewDist(),
 		GetRenderRadius()*p3DEngine->GetObjectsViewDistRatio()*GetViewDistRatioNormilized());
 }
 

@@ -1043,7 +1043,7 @@ no boost is used
 		else
 		{
 			drive.bHandBrake = 0;
-			drive.dpedal = m_fPedalSpeed*dt*min(m_fEngineHealth/50.0f,1.0f); //use damage model here, filippo:begin to use damage model when vehicle have half the health.
+			drive.dpedal = m_fPedalSpeed*dt * crymin(m_fEngineHealth/50.0f,1.0f); //use damage model here, filippo:begin to use damage model when vehicle have half the health.
 		}
 
 		if (!m_bAcceleratedFlagSetLastFrame)
@@ -1063,7 +1063,7 @@ no boost is used
 		else
 		{
 			drive.bHandBrake = 0;
-			drive.dpedal = -m_fPedalSpeed*dt*min(m_fEngineHealth/50.0f,1.0f); //use damage model here, filippo:begin to use damage model when vehicle have half the health.
+			drive.dpedal = -m_fPedalSpeed*dt * crymin(m_fEngineHealth/50.0f,1.0f); //use damage model here, filippo:begin to use damage model when vehicle have half the health.
 			m_bBreakLightsOn = true;
 		}
 	}
@@ -1117,7 +1117,7 @@ no boost is used
 		//if the delta is above 180 deg snap it to the correct angles, otherwise could be a crazy rotating wheel in few cases.
 		if (fabs(deltaa)<180)
 		{
-			m_flastwheelrotation += deltaa*min(dt*5.0f,1.0f);//5 degree at sec
+			m_flastwheelrotation += deltaa * crymin(dt*5.0f,1.0f);//5 degree at sec
 			vCurrAngles.y = m_flastwheelrotation;
 		}
 		else
@@ -1185,7 +1185,7 @@ no boost is used
 
 		//get the delta necessary to put the steer in the center position, and change the steer in smooth way.
 		float deltaa = 0-drive.steer;
-		drive.steer += deltaa*min(dt*m_fv0SteerRelaxation*gf_PI/180.0f,1.0f);
+		drive.steer += deltaa * crymin(dt*m_fv0SteerRelaxation*gf_PI/180.0f,1.0f);
 	}
 
 	pe_params_car pc;
@@ -1743,7 +1743,7 @@ void CVehicle::UpdateCamera(float fTimeStep, bool bSynchronizing)
 				posTarget = m_vPrevCamTarget;
 				do 
 				{
-					fStep = min(fTimeStep,m_fMaxCamTimestep);
+					fStep = crymin(fTimeStep,m_fMaxCamTimestep);
 					posTarget += velTarget*fStep;
 					m_vCamPos += m_vCamVel*fStep;
 

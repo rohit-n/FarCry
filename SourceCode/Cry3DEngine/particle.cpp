@@ -171,7 +171,7 @@ bool CParticle::Update(const PartProcessParams & PPP)
 			{
 				m_vPos += Vec3d(	cry_cosf( fAge*m_pParams->fTurbulenceSpeed),
 													cry_sinf( fAge*m_pParams->fTurbulenceSpeed),
-													0)* PPP.fFrameTime * (max(1.f,fAge))*
+													0)* PPP.fFrameTime * (crymax(1.f,fAge))*
 													m_pParams->fTurbulenceSize;
 			}
 
@@ -570,7 +570,7 @@ void CParticle::Physicalize(  ParticleParams &Params,IPhysicalWorld * pPhysicalW
 		if (Params.pStatObj)
 		{
 			Vec3 vSize = Params.pStatObj->GetBoxMax() - Params.pStatObj->GetBoxMin();
-			fPartSize = max(max(vSize.x,vSize.y),vSize.z);
+			fPartSize = crymax(crymax(vSize.x,vSize.y),vSize.z);
 		}
 
 		params.mass = 0.1f;

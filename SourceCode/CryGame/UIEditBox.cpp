@@ -98,7 +98,7 @@ LRESULT CUIEditBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	
 	
 			if (!m_iSelectionCount && (m_pUISystem->GetIInput()->KeyDown(XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(XKEY_RSHIFT)))
 			{
-				m_iSelectionStart = min(m_iCursorPos, iCursorPosition);
+				m_iSelectionStart = crymin(m_iCursorPos, iCursorPosition);
 				m_iSelectionCount = abs(iCursorPosition - m_iCursorPos);
 			}
 			else if (!m_bMouseSelecting)
@@ -207,7 +207,7 @@ int CUIEditBox::Draw(int iPass)
 		{
 			wchar_t szPassword[256] = {L'*'};
 
-			int iSize = min(m_szText.size(), 255);
+			int iSize = crymin(m_szText.size(), 255);
 			szPassword[iSize] = 0;
 
 			for (int i = 1; i < iSize; i++)

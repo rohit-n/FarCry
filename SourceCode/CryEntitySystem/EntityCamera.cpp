@@ -147,7 +147,7 @@ m_sParam.m_cam_dir.Normalize();
 	}
 
   	rotax = (camdir^dir).normalize();	camdiry = rotax^camdir;
-  	dangle = cry_acosf(min(1.0f,max(-1.0f,camdir*dir)));
+  	dangle = cry_acosf(crymin(1.0f,crymax(-1.0f,camdir*dir)));
   	Vec3 camdirTmp = camdir*(float)(cry_cosf(dangle))+camdiry*(float)(cry_sinf(dangle));
 	Vec3 camposTmp = tview+camdirTmp*dist;
 	if (!b1p) {

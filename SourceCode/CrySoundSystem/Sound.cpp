@@ -909,7 +909,7 @@ void CSound::SetPitch(int nValue)
 	int iReScaledValue;
 	// Scale from 0 - 1000 to FMOD range
 	iReScaledValue = (int)((float)nValue / 1000.0f * (float)m_pSound->GetBaseFreq());
-	iReScaledValue = __max(iReScaledValue, 100);
+	iReScaledValue = crymax(iReScaledValue, 100);
 	// channel = The channel number/handle to change the frequency for. CS_ALL can also be used (see remarks).
     // freq = The frequency to set. Valid ranges are from 100 to 705600.
 	if ((m_nChannel>=0) && (m_pSound->GetType()==btSAMPLE))

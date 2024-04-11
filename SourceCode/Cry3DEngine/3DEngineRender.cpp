@@ -744,7 +744,7 @@ void C3DEngine::RenderSkyBox(IShader *pSH)
 		else
 			memset(m_pRESky->m_arrvPortalVerts,0,sizeof(m_pRESky->m_arrvPortalVerts));
 
-    m_pRESky->m_fTerrainWaterLevel = max(0,m_pTerrain->GetWaterLevel());
+    m_pRESky->m_fTerrainWaterLevel = crymax(0,m_pTerrain->GetWaterLevel());
 		m_pRESky->m_fSkyBoxStretching = m_fSkyBoxStretching;
        
     GetRenderer()->EF_AddEf(0, m_pRESky, pSH, NULL, pObj, 0, NULL,EFSLIST_PREPROCESS);
@@ -1553,7 +1553,7 @@ void C3DEngine::DrawShadowSpotOnTerrain(Vec3d vPos, float fRadius)
 
 	fHeight = 1.f-fHeight/(fRadius);
 
-	tmp.color.bcolor[3] = uchar(min(255.f,fAlpha*fHeight*255.f));
+	tmp.color.bcolor[3] = uchar(crymin(255.f,fAlpha*fHeight*255.f));
 
 	GetRenderer()->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA);
 	GetRenderer()->SetColorOp(eCO_MODULATE, eCO_MODULATE, eCA_Texture|(eCA_Constant<<3), eCA_Texture|(eCA_Constant<<3));

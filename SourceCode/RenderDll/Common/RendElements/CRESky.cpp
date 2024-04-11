@@ -81,12 +81,12 @@ bool CRESky::mfDraw(SShader *ef, SShaderPass *sfm)
 	}
 
 	Vec3d camera = gRenDev->GetCamera().GetPos();
-	camera.z = max(0,camera.z);
+	camera.z = crymax(0,camera.z);
 
-	float fWaterCamDiff = max(0,camera.z-m_fTerrainWaterLevel);
+	float fWaterCamDiff = crymax(0,camera.z-m_fTerrainWaterLevel);
 
 	float fMaxDist = iSystem->GetI3DEngine()->GetMaxViewDist()/1024.f;
-	float P = (fWaterCamDiff)/128 + max(0,(fWaterCamDiff)*0.03f/fMaxDist);
+	float P = (fWaterCamDiff)/128 + crymax(0,(fWaterCamDiff)*0.03f/fMaxDist);
 	float D = (fWaterCamDiff)/10.0f*fSkyBoxSize/124.0f - P + 8;
 
 	P*=m_fSkyBoxStretching;
@@ -191,9 +191,9 @@ bool CRESky::DrawFogLayer()
 		return true;
 
 	Vec3d camera = gRenDev->GetCamera().GetPos();
-	camera.z = max(0,camera.z);
+	camera.z = crymax(0,camera.z);
 
-	float fLayerZ = -(max(0,gRenDev->m_FS.m_FogEnd-64)/(256-64))*SKY_BOX_SIZE - camera.z/35;
+	float fLayerZ = -(crymax(0,gRenDev->m_FS.m_FogEnd-64)/(256-64))*SKY_BOX_SIZE - camera.z/35;
 
 	bool bRGB = (gRenDev->GetFeatures() & RFT_RGBA) != 0;
 

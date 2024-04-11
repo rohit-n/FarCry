@@ -1337,12 +1337,12 @@ void CFlock::Update()
 		boid->Update(dt,m_bc);
 
 		// Update bounding box of flock.
-		m_bounds.min.x = __min( m_bounds.min.x,boid->m_pos.x-m_bc.fBoidRadius );
-		m_bounds.min.y = __min( m_bounds.min.y,boid->m_pos.y-m_bc.fBoidRadius );
-		m_bounds.min.z = __min( m_bounds.min.z,boid->m_pos.z-m_bc.fBoidRadius );
-		m_bounds.max.x = __max( m_bounds.max.x,boid->m_pos.x+m_bc.fBoidRadius );
-		m_bounds.max.y = __max( m_bounds.max.y,boid->m_pos.y+m_bc.fBoidRadius );
-		m_bounds.max.z = __max( m_bounds.max.z,boid->m_pos.z+m_bc.fBoidRadius );
+		m_bounds.min.x = crymin( m_bounds.min.x,boid->m_pos.x-m_bc.fBoidRadius );
+		m_bounds.min.y = crymin( m_bounds.min.y,boid->m_pos.y-m_bc.fBoidRadius );
+		m_bounds.min.z = crymin( m_bounds.min.z,boid->m_pos.z-m_bc.fBoidRadius );
+		m_bounds.max.x = crymax( m_bounds.max.x,boid->m_pos.x+m_bc.fBoidRadius );
+		m_bounds.max.y = crymax( m_bounds.max.y,boid->m_pos.y+m_bc.fBoidRadius );
+		m_bounds.max.z = crymax( m_bounds.max.z,boid->m_pos.z+m_bc.fBoidRadius );
 	}
 	if (m_pEntity && !m_boids.empty())
 	{

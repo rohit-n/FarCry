@@ -142,9 +142,9 @@ bool InsidePolygon(Vec3 *polygon,int N,Vec3 p)
   p1 = polygon[0];
   for (i=1;i<=N;i++) {
     p2 = polygon[i % N];
-    if (p.y > min(p1.y,p2.y)) {
-      if (p.y <= max(p1.y,p2.y)) {
-        if (p.x <= max(p1.x,p2.x)) {
+    if (p.y > crymin(p1.y,p2.y)) {
+      if (p.y <= crymax(p1.y,p2.y)) {
+        if (p.x <= crymax(p1.x,p2.x)) {
           if (p1.y != p2.y) {
             xinters = (p.y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
             if (p1.x == p2.x || p.x <= xinters)
@@ -332,10 +332,10 @@ bool CVisArea::UpdatePortalCameraScissor(CCamera & cam, list2<Vec3d> * lstVerts,
       vMax2d.y = arrScreenSpacePos[i].y;
   }
 
-  vMin2d.x = max(vMin2d.x,0);
-  vMin2d.y = max(vMin2d.y,0);
-  vMax2d.x = min(vMax2d.x,GetRenderer()->GetWidth());
-  vMax2d.y = min(vMax2d.y,GetRenderer()->GetHeight());
+  vMin2d.x = crymax(vMin2d.x,0);
+  vMin2d.y = crymax(vMin2d.y,0);
+  vMax2d.x = crymin(vMax2d.x,GetRenderer()->GetWidth());
+  vMax2d.y = crymin(vMax2d.y,GetRenderer()->GetHeight());
 
   if(vMax2d.x <= vMin2d.x || vMax2d.y < vMin2d.y)
     return false;
@@ -459,10 +459,10 @@ void CVisArea::DrawVolume(CObjManager * pObjManager, int nReqursionLevel,
         }
         else
         { // not first time - merge
-          int nMaxX = max(pDLight->m_sX + pDLight->m_sWidth,  CurCamera.m_ScissorInfo.x2);
-          int nMaxY = max(pDLight->m_sY + pDLight->m_sHeight, CurCamera.m_ScissorInfo.y2);
-          pDLight->m_sX = min(pDLight->m_sX, CurCamera.m_ScissorInfo.x1);
-          pDLight->m_sY = min(pDLight->m_sY, CurCamera.m_ScissorInfo.y1);
+          int nMaxX = crymax(pDLight->m_sX + pDLight->m_sWidth,  CurCamera.m_ScissorInfo.x2);
+          int nMaxY = crymax(pDLight->m_sY + pDLight->m_sHeight, CurCamera.m_ScissorInfo.y2);
+          pDLight->m_sX = crymin(pDLight->m_sX, CurCamera.m_ScissorInfo.x1);
+          pDLight->m_sY = crymin(pDLight->m_sY, CurCamera.m_ScissorInfo.y1);
           pDLight->m_sWidth  = nMaxX - pDLight->m_sX;
           pDLight->m_sHeight = nMaxY - pDLight->m_sY;
         }
@@ -711,7 +711,7 @@ int CVisArea::GetVisAreaConnections(IVisArea ** pAreas, int nMaxConnNum, bool bS
 				pAreas[nOut] = (IVisArea*)m_lstConnections[nArea];
 			nOut++;
 		}*/
-    return min(nMaxConnNum,GetRealConnections(pAreas, nMaxConnNum, bSkipDisabledPortals));
+    return crymin(nMaxConnNum,GetRealConnections(pAreas, nMaxConnNum, bSkipDisabledPortals));
 	}
 	else
 	{
@@ -733,7 +733,7 @@ int CVisArea::GetVisAreaConnections(IVisArea ** pAreas, int nMaxConnNum, bool bS
 		}
 	}
 
-	return min(nMaxConnNum,nOut);
+	return crymin(nMaxConnNum,nOut);
 }
 
 bool CVisArea::IsPortalValid()

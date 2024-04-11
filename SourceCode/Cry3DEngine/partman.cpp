@@ -583,7 +583,7 @@ void CPartManager::UpdateEmitters()
 		emitter.m_bbox.Reset();
 				*/
 
-		float fSpawnPeriod = emitter.m_spawnPeriod/max(0.01f,GetCVars()->e_particles_lod) + (1.f-GetCVars()->e_particles_lod)*0.1f;
+		float fSpawnPeriod = emitter.m_spawnPeriod/crymax(0.01f,GetCVars()->e_particles_lod) + (1.f-GetCVars()->e_particles_lod)*0.1f;
 		if (fTime > emitter.m_startTime || emitter.m_startTime == 0)
 		{
 			if (fTime - emitter.m_lastSpawnTime > fSpawnPeriod || fSpawnPeriod == 0)
@@ -629,7 +629,7 @@ void CPartManager::UpdateEmitters()
 				if (fTime > pChildEmitter->m_endTime)
 					pChildEmitter->m_bActiveChild = false;
 
-				float spawnPeriod = pChildEmitter->m_spawnPeriod/max(0.01f,GetCVars()->e_particles_lod) + (1.f-GetCVars()->e_particles_lod)*0.1f;
+				float spawnPeriod = pChildEmitter->m_spawnPeriod/crymax(0.01f,GetCVars()->e_particles_lod) + (1.f-GetCVars()->e_particles_lod)*0.1f;
 				if (pChildEmitter->m_pParams->fEmitterLifeTime <= 0 && pChildEmitter->m_pParams->fSpawnDelay <= 0)
 				{
 					float spawnPeriodMul = pChildEmitter->m_pParams->fSpawnPeriod;

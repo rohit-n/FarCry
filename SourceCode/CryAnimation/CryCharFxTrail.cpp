@@ -50,7 +50,7 @@ void CryCharFxTrail::UpdateEntries (const Matrix44* pBones)
 	}
 
 	// grow the entry queue
-	m_numEntries = min(numMaxEntries(), m_numEntries + 1);
+	m_numEntries = crymin(numMaxEntries(), m_numEntries + 1);
 
 	// increment the head entry to fill the new data in
 	m_nHeadEntry = (m_nHeadEntry + numMaxEntries() - 1) % numMaxEntries();

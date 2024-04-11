@@ -267,7 +267,7 @@ void CObjManager::RenderObjectVegetationNonCastersNoFogVolume( IEntityRender * p
 	DrawParams.fDistance = fEntDistance;
 	DrawParams.vAmbientColor = m_vOutdoorAmbientColor;
 	if(GetCVars()->e_objects_fade_on_distance)
-		DrawParams.fAlpha = min(1.f,(1.f - fEntDistance / fMaxViewDist)*6);
+		DrawParams.fAlpha = crymin(1.f,(1.f - fEntDistance / fMaxViewDist)*6);
 
 	// modulate ambient color by envir color
 	Vec3d vWorldColor = Get3DEngine()->GetWorldColor();
@@ -567,7 +567,7 @@ void CObjManager::RenderObject( IEntityRender * pEntityRS,
 	DrawParams.fDistance = fEntDistance;
 	DrawParams.vAmbientColor = (pvAmbColor && pCVars->e_portals!=4) ? (*pvAmbColor) : m_vOutdoorAmbientColor;
 	if(GetCVars()->e_objects_fade_on_distance)
-		DrawParams.fAlpha = min(1.f,(1.f - fEntDistance / fMaxViewDist)*6);
+		DrawParams.fAlpha = crymin(1.f,(1.f - fEntDistance / fMaxViewDist)*6);
 
 	// adjust ambient level depending on lsources around for not lightmapped objects
 	if(!(nRenderFlags & ERF_USELIGHTMAPS && pEntityRS->HasLightmap(0)) && pvAmbColor)
@@ -1159,9 +1159,9 @@ CFColor CObjManager::CalcShadowOnTerrainColor(float fAlpha, bool bLMapGeneration
 	Vec3d vAverColor = m_vOutdoorAmbientColor*(1.f-fAlpha)*0.5f + Vec3d(1,1,1)*fAlpha;
 
 	return CFColor (
-		min(255.f,vAverColor.x), 
-		min(255.f,vAverColor.y), 
-		min(255.f,vAverColor.z));
+		crymin(255.f,vAverColor.x), 
+		crymin(255.f,vAverColor.y), 
+		crymin(255.f,vAverColor.z));
 }
 
 void CObjManager::RenderEntityShadowOnTerrain(IEntityRender * pEntityRnd, bool bLMapGeneration,	CREShadowMapGen * pREShadowMapGenerator)
@@ -1346,7 +1346,7 @@ void CObjManager::ProcessEntityParticles(IEntityRender * pEnt, float fEntDistanc
 	PartParams.nCount = 15;
 	PartParams.eBlendType = ParticleBlendType_ColorBased;
 	PartParams.nTexId = GetRenderer()->LoadTexture("cloud");
-	float fAlpha = GetCVars()->e_rain_amount*min(1.f,(1.f-fEntDistance/fMaxRainDropsDist)*2.f);
+	float fAlpha = GetCVars()->e_rain_amount*crymin(1.f,(1.f-fEntDistance/fMaxRainDropsDist)*2.f);
 	PartParams.vColorStart = Get3DEngine()->GetFogColor()*fAlpha;
 	PartParams.vColorEnd = Get3DEngine()->GetFogColor()*fAlpha;
 	PartParams.vDirection(0,0,1);
@@ -1484,7 +1484,7 @@ bool CObjManager::ProcessShadowMapCasting(IEntityRender * pEnt, CDLight * pDLigh
 		if(pLsource->GetShadowMapFrustum())
 		{
 			float fAlpha = (1.f-fDistToTheCamera/(pEnt->GetRenderRadius()*GetCVars()->e_shadow_maps_view_dist_ratio))*3.f;
-			pLsource->GetShadowMapFrustum()->fAlpha = min(1.f,fAlpha);
+			pLsource->GetShadowMapFrustum()->fAlpha = crymin(1.f,fAlpha);
 
 			pLsource->GetShadowMapFrustum()->nDLightId = pLsource->nDLightId = pDLight ? pDLight->m_Id : -1;
 		}

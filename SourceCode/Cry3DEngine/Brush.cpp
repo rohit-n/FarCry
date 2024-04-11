@@ -159,7 +159,7 @@ bool CBrush::DrawEntity(const struct SRendParams & _EntDrawParams)
 	if (m_dwRndFlags & ERF_USELIGHTMAPS)
 		nLod = 0; // disable since low lods has no lmaps calculated
 	else // lod depends on distance and size
-		nLod = max(0,(int)(rParms.fDistance*GetLodRatioNormilized()/(GetCVars()->e_obj_lod_ratio*GetRenderRadius())));
+		nLod = crymax(0,(int)(rParms.fDistance*GetLodRatioNormilized()/(GetCVars()->e_obj_lod_ratio*GetRenderRadius())));
 
 
 	// enable lightmaps if alowed
@@ -760,7 +760,7 @@ void CObjManager::MergeBrushes()
       for (int m=0; m<mg->Owners.Num(); m++)
       {
         int nId = mg->Owners[m].Id;
-        maxMergedMats[nId] = max(mg->Owners.Num(), maxMergedMats[nId]);
+        maxMergedMats[nId] = crymax(mg->Owners.Num(), maxMergedMats[nId]);
       }
     }
   }
@@ -1374,7 +1374,7 @@ int CBrush::DestroyPhysicalEntityCallback(IPhysicalEntity *pent)
 
 float CBrush::GetMaxViewDist()
 {
-  return max(GetCVars()->e_obj_min_view_dist, 
+  return crymax(GetCVars()->e_obj_min_view_dist, 
 		m_fWSRadius*GetCVars()->e_obj_view_dist_ratio*GetViewDistRatioNormilized());
 }
 

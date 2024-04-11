@@ -408,7 +408,7 @@ int CXPuppetProxy::Update(SOBJECTSTATE *state)
 			//force AI to use smaller acceleraion near target only when outdoor, 
 			//indoors have fDistanceFromTarget pretty small all the times and this cause AI to smooth to much, missing doors.
 			if (state->fDistanceFromTarget>0 && !indoor) 
-				accel = min(state->fDistanceFromTarget,accel);
+				accel = crymin(state->fDistanceFromTarget,accel);
 	
 			m_pPlayer->DampInputVector(motion.dir,accel,decel,true,false);
 		}

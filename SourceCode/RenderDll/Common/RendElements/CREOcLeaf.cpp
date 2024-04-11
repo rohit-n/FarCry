@@ -807,8 +807,8 @@ void CREOcLeaf::mfGenerateIndicesForAttenuation(SLightIndicies *li, CDLight *pDL
       float fDist0 = sDistPointToSegment(objectSpaceLightPosition, *v0, *v1);
       float fDist1 = sDistPointToSegment(objectSpaceLightPosition, *v0, *v2);
       float fDist2 = sDistPointToSegment(objectSpaceLightPosition, *v1, *v2);
-      fDist = min(fDist0, fDist1);
-      fDist = min(fDist, fDist2);
+      fDist = crymin(fDist0, fDist1);
+      fDist = crymin(fDist, fDist2);
     }
 
     if (fDist <= pDLight->m_fRadius)

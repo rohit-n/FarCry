@@ -3751,7 +3751,7 @@ void CGLTexMan::DrawToTexture(Plane& Pl, STexPic *Tex, int RendFlags)
   int nHeight = nWidth;
   if (nWidth != Tex->m_Width || nHeight != Tex->m_Height)
   {
-    int nSize = min(nWidth, nHeight);
+    int nSize = crymin(nWidth, nHeight);
     Tex->m_Width = nSize;
     Tex->m_Height = nSize;
     Tex->m_Flags &= ~FT_ALLOCATED;
@@ -3793,7 +3793,7 @@ void CGLTexMan::DrawToTexture(Plane& Pl, STexPic *Tex, int RendFlags)
 
   I3DEngine *eng = (I3DEngine *)iSystem->GetI3DEngine();
 
-  float fMinDist = min(SKY_BOX_SIZE*0.5f, eng->GetDistanceToSectorWithWater());
+  float fMinDist = crymin(SKY_BOX_SIZE*0.5f, eng->GetDistanceToSectorWithWater());
   float fMaxDist = eng->GetMaxViewDistance();
 
   CCamera tmp_cam = gRenDev->GetCamera();
@@ -5783,7 +5783,7 @@ float CGLTexMan::CalcFogVal(float fi, float fj)
     return -(fThr * fi);
   float fFog = (1.0f - ((f2 + f1) * fThr * -0.5f)) * (f1 - f2);
   ff = ((fDelta - ff) - fFog) / fDelta;
-  float fMin = min(fi, fj) / -30.0f;
+  float fMin = crymin(fi, fj) / -30.0f;
   if (fMin >= 1.0f)
     return 1;
   return (1.0f - fMin) * ff + fMin;

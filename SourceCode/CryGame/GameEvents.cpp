@@ -338,7 +338,7 @@ void CXGame::WriteScheduledEvents(CStream &stm, int &iLastEventWritten, int iTim
 		{
 			stm.WriteNumberInBits(m_lstEvents[i].pEvent->GetType(),2);
 			m_lstEvents[i].pEvent->Write(stm,m_lstEvents[i].iPhysTime+iTimeDelta,pBitStream);
-			iLastEventCur = max(iLastEventCur, m_lstEvents[i].idx);
+			iLastEventCur = crymax(iLastEventCur, m_lstEvents[i].idx);
 		}
 		iLastEventWritten = iLastEventCur;
 	}
@@ -395,16 +395,16 @@ void CXGame::AdvanceReceivedEntities(int iPhysicalWorldTime)
 				pWorld->TimeStep(fixedStep, ent_rigid|ent_flagged_only);
 			}
 			pWorld->SetiPhysicsTime(iPhysicalWorldTime);
-			fStep = min(fixedStep*20, (iPrevTime-iPhysicalWorldTime)*timeGran);
+			fStep = crymin(fixedStep*20, (iPrevTime-iPhysicalWorldTime)*timeGran);
 			do {
-				pWorld->TimeStep(min(fStep,0.1f), ent_living|ent_independent|ent_flagged_only);
+				pWorld->TimeStep(crymin(fStep,0.1f), ent_living|ent_independent|ent_flagged_only);
 			} while	((fStep-=0.1f)>0.0001f);
 		}
 		else
 		{
-			fStep = min(0.3f, (pWorld->GetiPhysicsTime()-iPhysicalWorldTime)*timeGran);
+			fStep = crymin(0.3f, (pWorld->GetiPhysicsTime()-iPhysicalWorldTime)*timeGran);
 			do {
-				pWorld->TimeStep(min(fStep,0.1f), ent_all|ent_flagged_only);
+				pWorld->TimeStep(crymin(fStep,0.1f), ent_all|ent_flagged_only);
 			} while ((fStep-=0.1f)>0.0001f);
 		}
 		pWorld->SetiPhysicsTime(iPrevTime);

@@ -187,7 +187,7 @@ bool CWaterVolume::TesselateFace(list2<struct_VERTEX_FORMAT_P3F_N_COL4UB_TEX2F> 
   float fDist12 = v1.xyz.GetDistance(v2.xyz);
   float fDist20 = v2.xyz.GetDistance(v0.xyz);
 
-  float fMaxDist = max(max(fDist01,fDist12), fDist20);
+  float fMaxDist = crymax(crymax(fDist01,fDist12), fDist20);
 	float fCameraDist=200;
 	
 	if(fMaxDist == fDist01)
@@ -776,8 +776,8 @@ bool CWaterVolume::IsWaterVolumeAreasVisible()
 
 void CWaterVolume::SetTriSizeLimits(float fTriMinSize, float fTriMaxSize)
 { 
-	m_fTriMinSize = max(0.25f,min(fTriMinSize, 8));
-	m_fTriMaxSize = max(0.25f,min(fTriMaxSize, 8));
+	m_fTriMinSize = crymax(0.25f,crymin(fTriMinSize, 8));
+	m_fTriMaxSize = crymax(0.25f,crymin(fTriMaxSize, 8));
 	// remake leaf buffer
 	m_pRenderer->DeleteLeafBuffer(m_pLeafBuffer);
 	m_pLeafBuffer=0;

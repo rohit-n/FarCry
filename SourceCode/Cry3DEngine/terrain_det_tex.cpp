@@ -156,7 +156,7 @@ void CTerrain::DrawDetailTextures(float _fFogNearDistance, float _fFogFarDistanc
 				// calc vertex offset to move detail textures closer to camera and up, 
 				// especially when zmin is very small
 				// and especially for not Z projections
-				float fOffset = max(0.05f,0.25f-GetViewCamera().GetZMin());
+				float fOffset = crymax(0.05f,0.25f-GetViewCamera().GetZMin());
 				Vec3d vDetTexOffset = GetViewCamera().GetVCMatrixD3D9().GetOrtZ()*fOffset;
 				vDetTexOffset.z += 0.015f;
 				vDetTexOffset *= 0.75f;

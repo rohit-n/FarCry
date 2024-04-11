@@ -200,7 +200,7 @@ int STexPic::GetFileNames(char *name0, char *name1, int nLen)
       const char *name1 = strchr(&name[1], '$');
       if (name1)
       {
-        nLen = min(nLen, name1-name-1);
+        nLen = crymin(nLen, name1-name-1);
         strncpy(name0, &name[1], nLen);
         name0[nLen] = 0;
         return 1;
@@ -209,10 +209,10 @@ int STexPic::GetFileNames(char *name0, char *name1, int nLen)
     strncpy(name0, m_SourceName.c_str(), nLen);
     return 1;
   }
-  int nL = min(nLen, name-m_SourceName.c_str());
+  int nL = crymin(nLen, name-m_SourceName.c_str());
   strncpy(name0, m_SourceName.c_str(), nL);
   name0[nL] = 0;
-  nL = min(nLen, (int)strlen(&name[6]));
+  nL = crymin(nLen, (int)strlen(&name[6]));
   strncpy(name1, &name[6], nL);
   name1[nL] = 0;
 
@@ -1183,8 +1183,8 @@ STexPic *CTexMan::UploadImage(CImageFile* im, const char *name, uint flags, uint
         for (i=0; i<ti->m_Width*ti->m_Height; i++)
         {
           byte a = dst[i*4+3];
-          aMin = min(a, aMin);
-          aMax = max(a, aMax);
+          aMin = crymin(a, aMin);
+          aMax = crymax(a, aMax);
         }
         if (aMax != aMin)
           ti->m_Flags |= FT_HASALPHA;
@@ -1667,16 +1667,16 @@ void CTexMan::ImagePreprocessing(CImageFile* im, uint flags, uint flags2, byte e
   }
   if (!(m_Streamed & 1) && !(flags & FT_NORESIZE))
   {
-    int minSize = max(CRenderer::CV_r_texminsize, 16);
+    int minSize = crymax(CRenderer::CV_r_texminsize, 16);
     if (eTT == eTT_Bumpmap)
     {
       if (CRenderer::CV_r_texbumpresolution > 0)
       {
         if (nWidth >= minSize || nHeight >= minSize)
         {
-          int nRes = min(CRenderer::CV_r_texbumpresolution, 4);
-          nWidth = max(nWidth>>nRes, 1);
-          nHeight = max(nHeight>>nRes, 1);
+          int nRes = crymin(CRenderer::CV_r_texbumpresolution, 4);
+          nWidth = crymax(nWidth>>nRes, 1);
+          nHeight = crymax(nHeight>>nRes, 1);
         }
       }
     }
@@ -1688,9 +1688,9 @@ void CTexMan::ImagePreprocessing(CImageFile* im, uint flags, uint flags2, byte e
         {
           if (nWidth >= minSize || nHeight >= minSize)
           {
-            int nRes = min(CRenderer::CV_r_texskyresolution, 4);
-            nWidth = max(nWidth>>nRes, 1);
-            nHeight = max(nHeight>>nRes, 1);
+            int nRes = crymin(CRenderer::CV_r_texskyresolution, 4);
+            nWidth = crymax(nWidth>>nRes, 1);
+            nHeight = crymax(nHeight>>nRes, 1);
           }
         }
       }
@@ -1701,9 +1701,9 @@ void CTexMan::ImagePreprocessing(CImageFile* im, uint flags, uint flags2, byte e
         {
           if (nWidth >= minSize || nHeight >= minSize)
           {
-            int nRes = min(CRenderer::CV_r_texlmresolution, 4);
-            nWidth = max(nWidth>>nRes, 1);
-            nHeight = max(nHeight>>nRes, 1);
+            int nRes = crymin(CRenderer::CV_r_texlmresolution, 4);
+            nWidth = crymax(nWidth>>nRes, 1);
+            nHeight = crymax(nHeight>>nRes, 1);
           }
         }
       }
@@ -1716,9 +1716,9 @@ void CTexMan::ImagePreprocessing(CImageFile* im, uint flags, uint flags2, byte e
           {
             if (nWidth >= minSize || nHeight >= minSize)
             {
-              int nRes = min(CRenderer::CV_r_texresolution, 4);
-              nWidth = max(nWidth>>nRes, 1);
-              nHeight = max(nHeight>>nRes, 1);
+              int nRes = crymin(CRenderer::CV_r_texresolution, 4);
+              nWidth = crymax(nWidth>>nRes, 1);
+              nHeight = crymax(nHeight>>nRes, 1);
             }
           }
         }
@@ -1726,7 +1726,7 @@ void CTexMan::ImagePreprocessing(CImageFile* im, uint flags, uint flags2, byte e
     }
     if (nWidth != nHeight && CRenderer::CV_r_texforcesquare)
     {
-      nWidth = max(nWidth, nHeight);
+      nWidth = crymax(nWidth, nHeight);
       nHeight = nWidth;
     }
     // Hardware limitation check
@@ -2102,7 +2102,7 @@ byte *CTexMan::GenerateNormalMap(byte *src, int width, int height, uint flags, u
       bits = bits >> 1;
       nlevelsh++;
     }
-    nMips = max(nlevelsw, nlevelsh);
+    nMips = crymax(nlevelsw, nlevelsh);
   }
   int mx = width-1;
   int my = height-1;
@@ -2389,7 +2389,7 @@ void CTexMan::MergeNormalMaps(byte *src[2], CImageFile *im[2], int nMips[2])
           vN[1].y = (src[1][n*4+1]/255.0f-0.5f)*2.0f;
           vN[1].z = (src[1][n*4+0]/255.0f-0.5f)*2.0f;
 
-          float fLen = min(vN[nIndexNM].Length(), 1.0f);
+          float fLen = crymin(vN[nIndexNM].Length(), 1.0f);
 
           vN[0].x /= vN[0].z;
           vN[0].y /= vN[0].z;
@@ -2426,7 +2426,7 @@ void CTexMan::MergeNormalMaps(byte *src[2], CImageFile *im[2], int nMips[2])
         wdt = 1;
       if (!hgt)
         hgt = 1;
-      int l1 = min(l, nMips[1]-1);
+      int l1 = crymin(l, nMips[1]-1);
       int wdt1 = Width1 >> l1;
       int hgt1 = Height1 >> l1;
       if (!wdt1)
@@ -2448,7 +2448,7 @@ void CTexMan::MergeNormalMaps(byte *src[2], CImageFile *im[2], int nMips[2])
           vN[1].y = (src[1][(i&mwdt)*4+(j&mhgt)*wdt1*4+1]/255.0f-0.5f)*2.0f;
           vN[1].z = (src[1][(i&mwdt)*4+(j&mhgt)*wdt1*4+0]/255.0f-0.5f)*2.0f;
 
-          float fLen = min(vN[nIndexNM].Length(), 1.0f);
+          float fLen = crymin(vN[nIndexNM].Length(), 1.0f);
 
           vN[0].x /= vN[0].z;
           vN[0].y /= vN[0].z;

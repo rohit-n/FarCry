@@ -622,9 +622,9 @@ public:
       colAmb.a = 1.0f;
     else
       colAmb.a = m_RP.m_fCurOpacity;
-    colAmb.r = min(colAmb.r * fScale, 1.0f);
-    colAmb.g = min(colAmb.g * fScale, 1.0f);
-    colAmb.b = min(colAmb.b * fScale, 1.0f);
+    colAmb.r = crymin(colAmb.r * fScale, 1.0f);
+    colAmb.g = crymin(colAmb.g * fScale, 1.0f);
+    colAmb.b = crymin(colAmb.b * fScale, 1.0f);
 
     return colAmb;
   }
@@ -637,9 +637,9 @@ public:
       fScale = 0.25f;
     if (Flags & LMF_DIVIDEDIFF2)
       fScale = 0.5f;
-    colDif.r = min(colDif.r * fScale, 1.0f);
-    colDif.g = min(colDif.g * fScale, 1.0f);
-    colDif.b = min(colDif.b * fScale, 1.0f);
+    colDif.r = crymin(colDif.r * fScale, 1.0f);
+    colDif.g = crymin(colDif.g * fScale, 1.0f);
+    colDif.b = crymin(colDif.b * fScale, 1.0f);
     colDif.a = 1.0f;
 
     return colDif;

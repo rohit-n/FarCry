@@ -117,7 +117,7 @@ extern "C" void portable_splitpath (
              */
 
             if (dir) {
-                len = min((unsigned)(((char *)last_slash - (char *)path) / sizeof(char)),
+                len = crymin((unsigned)(((char *)last_slash - (char *)path) / sizeof(char)),
                     (_MAX_DIR - 1));
                 strncpy(dir, path, len);
                 *(dir + len) = ('\0');
@@ -142,7 +142,7 @@ extern "C" void portable_splitpath (
              * the '.'.
              */
             if (fname) {
-                len = min((unsigned)(((char *)dot - (char *)path) / sizeof(char)),
+                len = crymin((unsigned)(((char *)dot - (char *)path) / sizeof(char)),
                     (_MAX_FNAME - 1));
                 strncpy(fname, path, len);
                 *(fname + len) = ('\0');
@@ -151,7 +151,7 @@ extern "C" void portable_splitpath (
              * to the terminating nul character of path.
              */
             if (ext) {
-                len = min((unsigned)(((char *)p - (char *)dot) / sizeof(char)),
+                len = crymin((unsigned)(((char *)p - (char *)dot) / sizeof(char)),
                     (_MAX_EXT - 1));
                 strncpy(ext, dot, len);
                 *(ext + len) = ('\0');
@@ -162,7 +162,7 @@ extern "C" void portable_splitpath (
              * string into fname.
              */
             if (fname) {
-                len = min((unsigned)(((char *)p - (char *)path) / sizeof(char)),
+                len = crymin((unsigned)(((char *)p - (char *)path) / sizeof(char)),
                     (_MAX_FNAME - 1));
                 strncpy(fname, path, len);
                 *(fname + len) = ('\0');

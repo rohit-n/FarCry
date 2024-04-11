@@ -398,7 +398,7 @@ void CryModelState::SynchronizeWithPhysicalEntity(IPhysicalEntity *pent, const V
 	{	// copy state _from_ physical entity
 		if (!pent && !m_nAuxPhys) 
 			return;
-		int i,j,nLod = min(m_pCharPhysics!=pent?1:0,(int)numLODs()-1);
+		int i,j,nLod = crymin(m_pCharPhysics!=pent?1:0,(int)numLODs()-1);
 		float rScale = 1.0f;///scale;
 		pe_status_pos sp;
 		pe_status_joint sj;
@@ -494,7 +494,7 @@ void CryModelState::SynchronizeWithPhysicalEntity(IPhysicalEntity *pent, const V
 IPhysicalEntity *CryModelState::RelinquishCharacterPhysics()
 {
 	if (m_bHasPhysics) {
-		int i, nLod=min(numLODs()-1,1), iRoot=getBonePhysChildIndex(0,0);
+		int i, nLod=crymin(numLODs()-1,1), iRoot=getBonePhysChildIndex(0,0);
 		DestroyCharacterPhysics();
 
 		ConvertBoneGlobalToRelativeMatrices();	// takes into accout all post-animation layers
@@ -625,7 +625,7 @@ int CryModelState::TranslatePartIdToDeadBody(int partid)
 	if ((unsigned int)partid>=(unsigned int)numBones())
 		return -1;
 
-	int nLod = min(numLODs()-1,1);
+	int nLod = crymin(numLODs()-1,1);
 	if (getBoneInfo(partid)->m_PhysInfo[nLod].pPhysGeom)
 		return partid;
 

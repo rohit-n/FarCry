@@ -1356,7 +1356,7 @@ void CShader::mfOptimizeShaderHW(SShader *ef, TArray<SShaderPassHW>& Layers, int
               break;
             case eSrcPointer_TexLM:
               Layers[i].m_Flags |= SHPF_LMTC;
-              m_nTC = max(m_nTC, 2);
+              m_nTC = crymax(m_nTC, 2);
               break;
           }
         }
@@ -1387,7 +1387,7 @@ void CShader::mfOptimizeShaderHW(SShader *ef, TArray<SShaderPassHW>& Layers, int
           {
             if (Layers[i].m_VProgram->mfHasPointer((ESrcPointer)(eSrcPointer_Tex+n)))
             {
-              m_nTC = max(m_nTC, n+1);
+              m_nTC = crymax(m_nTC, n+1);
               if (n)
                 Layers[i].m_Flags |= SHPF_LMTC;
               break;
@@ -1432,7 +1432,7 @@ void CShader::mfOptimizeShaderHW(SShader *ef, TArray<SShaderPassHW>& Layers, int
             m_bNeedNormal = true;
             break;
           case eSrcPointer_Tex:
-            m_nTC = max(m_nTC, 1);
+            m_nTC = crymax(m_nTC, 1);
             break;
         }
       }
@@ -1547,7 +1547,7 @@ void CShader::mfOptimizeShader(SShader *ef, TArray<SShaderPass>& Layers, int Sta
             continue;
           nT++;
         }
-        m_nTC = max(m_nTC, nT);
+        m_nTC = crymax(m_nTC, nT);
       }
 
       if (ef->m_eSort <= eS_Opaque)
@@ -1651,9 +1651,9 @@ void CShader::mfConstruct (SShader *ef)
       ef->m_HWTechniques[i]->m_Flags |= FHF_TANGENTS;
     if (m_nTC > 1)
       ef->m_HWTechniques[i]->m_Flags |= FHF_LMTC;
-    m_bNeedTangents = max(m_bNeedTangents, bTangs);
-    m_bNeedNormal = max(m_bNeedNormal, bNormal);
-    m_nTC = max(m_nTC, nTC);
+    m_bNeedTangents = crymax(m_bNeedTangents, bTangs);
+    m_bNeedNormal = crymax(m_bNeedNormal, bNormal);
+    m_nTC = crymax(m_nTC, nTC);
   }
   mfOptimizeShader(ef, ef->m_Passes, 1);
 
@@ -1910,7 +1910,7 @@ SEnvTexture *CShader::mfFindSuitableEnvLCMap(Vec3d& Pos, bool bMustExist, int Re
   }
   else
   {
-    float fTimeInterval = max(fDistToCam, 1.0f) * CRenderer::CV_r_envlcmupdateinterval;
+    float fTimeInterval = crymax(fDistToCam, 1.0f) * CRenderer::CV_r_envlcmupdateinterval;
     float fDelta = curTime - gRenDev->m_TexMan->m_EnvLCMaps[firstForUse].m_TimeLastUsed;
     if (fDelta > fTimeInterval)
       nUpdate = firstForUse;

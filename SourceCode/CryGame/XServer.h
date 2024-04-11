@@ -51,7 +51,7 @@ class BannedID
 {
 public:
 	BannedID() { memset(vBanID, 0, 64); bSize = 0; };
-	BannedID(const unsigned char *vByteArr, unsigned char bArrSize, const string &szPlayerName) { memset(vBanID, 0, 64); memcpy(vBanID, vByteArr, min(bArrSize, 64)); szName = szPlayerName; bSize = bArrSize; };
+	BannedID(const unsigned char *vByteArr, unsigned char bArrSize, const string &szPlayerName) { memset(vBanID, 0, 64); memcpy(vBanID, vByteArr, crymin(bArrSize, 64)); szName = szPlayerName; bSize = bArrSize; };
 	BannedID(const BannedID &NewBannedID) { szName = NewBannedID.szName; memset(vBanID, 0, 64); memcpy(vBanID, NewBannedID.vBanID, NewBannedID.bSize); bSize = NewBannedID.bSize; };
 	virtual ~BannedID() {};
 

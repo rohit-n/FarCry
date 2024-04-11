@@ -49,8 +49,8 @@ uint CGLRenderer::Make3DSprite(int nTexSize, float fAngleStep, IStatObj * pStatO
     glDrawBuffer(GL_BACK);
 
     // cals vertical/horisontal radiuses
-    float dxh = (float)max( fabs(pStatObj->GetBoxMax().x), fabs(pStatObj->GetBoxMin().x));
-    float dyh = (float)max( fabs(pStatObj->GetBoxMax().y), fabs(pStatObj->GetBoxMin().y));
+    float dxh = (float)crymax( fabs(pStatObj->GetBoxMax().x), fabs(pStatObj->GetBoxMin().x));
+    float dyh = (float)crymax( fabs(pStatObj->GetBoxMax().y), fabs(pStatObj->GetBoxMin().y));
     float fRadiusHors = (float)sqrt_tpl(dxh*dxh + dyh*dyh);//max(dxh,dyh);
     float fRadiusVert = (pStatObj->GetBoxMax().z-pStatObj->GetBoxMin().z)*0.5f;
 

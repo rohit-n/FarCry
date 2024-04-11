@@ -410,7 +410,7 @@ const bool CADPCMDecoderInstance::FillPCMBuffer(signed long *pBuffer, int nSampl
 	const unsigned int cuiModulo = m_nPos % m_uiCurrentSamplesPerBlock;
 	if(cuiModulo != 0 && m_iFilePos > 0)//to not let break anything 
 	{	//we are not on a block boundary
-		unsigned int uiLeft = min((unsigned int)nSamples, (m_uiCurrentSamplesPerBlock - cuiModulo));
+		unsigned int uiLeft = crymin((unsigned int)nSamples, (m_uiCurrentSamplesPerBlock - cuiModulo));
 		if(uiLeft != 0)//read as many sampels as left decompressed and not more than requested
 		{
 			//copy decompressed data
@@ -478,7 +478,7 @@ const bool CADPCMDecoderInstance::FillPCMBuffer22KHz(signed long *pBuffer, int n
 	unsigned int uiLeft = 0;
 	if(cuiModulo != 0 && m_iFilePos > 0)//to not let break anything 
 	{	//we are not on a block boundary
-		uiLeft = min((unsigned int)nSamples/2, (m_uiCurrentSamplesPerBlock - cuiModulo));/*22KHz*/
+		uiLeft = crymin((unsigned int)nSamples/2, (m_uiCurrentSamplesPerBlock - cuiModulo));/*22KHz*/
 		signed long *pslDecompressed = reinterpret_cast<signed long*>(m_aDecodedBlock) + cuiModulo;
 		if(uiLeft != 0)//read as many sampels as left decompressed and not more than requested
 		{

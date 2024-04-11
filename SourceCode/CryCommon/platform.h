@@ -102,7 +102,8 @@ typedef void *EVENT_HANDLE;
 #define FNAME(X) X.d_name
 #endif
 
-
+#define crymax(a,b)            (((a) > (b)) ? (a) : (b))
+#define crymin(a,b)            (((a) < (b)) ? (a) : (b))
 
 //////////////////////////////////////////////////////////////////////////
 // Use our own memory manager.

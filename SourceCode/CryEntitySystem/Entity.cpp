@@ -519,7 +519,7 @@ void CEntity::GetRenderBBox(Vec3d &mins, Vec3d &maxs)
 //////////////////////////////////////////////////////////////////////////
 float CEntity::GetRenderRadius() const
 { 
-	return m_pDynLight ? max(m_fRadius,m_pDynLight->m_fRadius) : m_fRadius ;
+	return m_pDynLight ? crymax(m_fRadius,m_pDynLight->m_fRadius) : m_fRadius ;
 }
 
 // set the position of the entity
@@ -1348,10 +1348,10 @@ void CEntity::OnCollide(float fDeltaTime)
 				velImpact = velImpactCur;
 			}
 //			velImpact = max(velImpact,velImpactCur);
-			velSlide2 = max(velSlide2,velSlide2Cur);
+			velSlide2 = crymax(velSlide2,velSlide2Cur);
 			//m_pISystem->GetILog()->LogToConsole("test=%0.4f", (r*contacts[nColls].n)/r.len());
 			if (sqr(r*contacts[nColls].n)>r.len2()*sqr(0.97f))
-				velRoll2 = max(velRoll2,velRoll2Cur);
+				velRoll2 = crymax(velRoll2,velRoll2Cur);
 		}
 		if (velRoll2<0.1f)
 		{
@@ -1888,7 +1888,7 @@ void CEntity::UpdateCharacterPhysicsAndIK( SEntityUpdateContext &ctx )
 			if (!m_bIsBound && m_physic && m_pEntitySystem->m_pCharacterIK->GetIVal() && m_physic->GetType()==PE_LIVING) 
 			{
 				Vec3 feet[2], offset = m_pCryCharInstance[k]->GetOffset(); // generally should be transformed into local coordinates
-				offset.z = max(offset.z,0.0f); 
+				offset.z = crymax(offset.z,0.0f); 
 				sensors.nSensors = 2;
 				sensors.pOrigins = feet;
 				feet[0] = m_pCryCharInstance[k]->GetLimbEndPos(LIMB_LEFT_LEG);

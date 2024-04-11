@@ -132,7 +132,7 @@ void CrySkinBasisBuilder::preprocess()
 	m_nFirstBone = 0;
 	bool bNotInited = true;
 
-	for (unsigned i = m_nDestIntervalBegin; i < min(m_nDestIntervalEnd,numTangents); ++i)
+	for (unsigned i = m_nDestIntervalBegin; i < crymin(m_nDestIntervalEnd,numTangents); ++i)
 	{
 		unsigned nGeomVert = pExtToInt[i];
 		const CryVertexBinding& rLink = m_pGeometry->getLink(nGeomVert);
@@ -146,8 +146,8 @@ void CrySkinBasisBuilder::preprocess()
 		}
 		else
 		{
-			m_nFirstBone = min (m_nFirstBone, nBone);
-			m_numBones = max (nBone+1, m_numBones);
+			m_nFirstBone = crymin (m_nFirstBone, nBone);
+			m_numBones = crymax (nBone+1, m_numBones);
 		}
 	}
 }

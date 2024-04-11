@@ -612,7 +612,7 @@ void CCoverageBuffer::ScanTriangle(Point2d p1,Point2d p2,Point2d p3)
       dxdyr = d;
     }
   
-    int y2 = max(fastfround(p2.y), 0); // limit by screen bottom
+    int y2 = crymax(fastfround(p2.y), 0); // limit by screen bottom
     if(p1.y>p2.y && y2<COVERAGEBUFFER_SIZE) // if top side of triangle is visible
     {
       for( int y = fastfround(p1.y); y >= y2; y-- )
@@ -645,7 +645,7 @@ void CCoverageBuffer::ScanTriangle(Point2d p1,Point2d p2,Point2d p3)
       dxdyr = d;
     }
   
-    int y2 = min(fastfround(p2.y),COVERAGEBUFFER_SIZE);// limit by screen top
+    int y2 = crymin(fastfround(p2.y),COVERAGEBUFFER_SIZE);// limit by screen top
     if(p2.y>p3.y && y2>0) // if bottom side of triangle is visible ((y2) line was already drawn)
     {
       for( int y = fastfround(p3.y); y < y2; y++ ) // ((y2) line was already drawn)

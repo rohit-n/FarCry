@@ -206,7 +206,7 @@ struct IEntityRender
 
   /* Allows to adjust defailt max view distance settings, 
     if fMaxViewDistRatio is 100 - default max view distance is used */
-  void SetViewDistRatio(int nViewDistRatio) { ucViewDistRatio = min(254,max(0,nViewDistRatio)); }
+  void SetViewDistRatio(int nViewDistRatio) { ucViewDistRatio = crymin(254,crymax(0,nViewDistRatio)); }
 
 	/*! Makes object visible at any distance */
 	void SetViewDistUnlimited() { ucViewDistRatio = 255; }
@@ -220,7 +220,7 @@ struct IEntityRender
 
   /*! Allows to adjust defailt lod distance settings, 
   if fLodRatio is 100 - default lod distance is used */
-  void SetLodRatio(int nLodRatio) { ucLodRatio = min(255,max(0,nLodRatio)); }
+  void SetLodRatio(int nLodRatio) { ucLodRatio = crymin(255,crymax(0,nLodRatio)); }
 
   //! return lod distance ratio
   float GetLodRatioNormilized() { return 0.01f*ucLodRatio; }

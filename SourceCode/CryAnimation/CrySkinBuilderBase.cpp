@@ -55,7 +55,7 @@ void CrySkinBuilderBase::preprocess()
 			// if the vertex is smooth, we'll need to keep the weights and destination indices
 			m_numSmoothLinks += numVertexLinks;
 
-		m_numBones = max(m_pGeometry->getLink(nVert).maxBoneID(), m_numBones);
+		m_numBones = crymax(m_pGeometry->getLink(nVert).maxBoneID(), m_numBones);
 		
 		m_numLinks += numVertexLinks;
 	}

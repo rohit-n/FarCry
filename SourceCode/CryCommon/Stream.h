@@ -742,7 +742,7 @@ inline bool CStream::Read(CStream &stm)
 		size_t readed;
 		while(nToRead>0)
 		{
-			readed=min((int)nToRead,(int)BYTES2BITS(100));
+			readed=crymin((int)nToRead,(int)BYTES2BITS(100));
 			if(!ReadBits(cTemp,readed))return false;
 			stm.WriteBits(cTemp,readed);
 			nToRead-=readed;

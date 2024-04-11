@@ -107,7 +107,7 @@ bool CHighMap::IntersectWithSector(Vec3d vStartPoint, Vec3d vStopPoint, float fD
       break;
   }
   
-	nMaxTestsToScip = min(nMaxTestsToScip,4);
+	nMaxTestsToScip = crymin(nMaxTestsToScip,4);
   for(; nTest<nSteps-nMaxTestsToScip; nTest++)
   {
     vPos += vDir;

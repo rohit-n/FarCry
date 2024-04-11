@@ -237,37 +237,37 @@ float SEvalFuncs::EvalWaveForm2(SWaveForm *wf, float frac)
 
     case eWF_Sin:
       val = QRound((frac*wf->m_Freq+wf->m_Phase)*1024.0f);
-      val = min(val, 1023);
+      val = crymin(val, 1023);
       return wf->m_Amp*gRenDev->m_RP.m_tSinTable[val]+wf->m_Level;
 
     case eWF_SawTooth:
       val = QRound((frac*wf->m_Freq+wf->m_Phase)*1024.0f);
-      val = min(val, 1023);
+      val = crymin(val, 1023);
       return wf->m_Amp*gRenDev->m_RP.m_tSawtoothTable[val]+wf->m_Level;
 
     case eWF_InvSawTooth:
       val = QRound((frac*wf->m_Freq+wf->m_Phase)*1024.0f);
-      val = min(val, 1023);
+      val = crymin(val, 1023);
       return wf->m_Amp*gRenDev->m_RP.m_tInvSawtoothTable[val]+wf->m_Level;
 
     case eWF_Square:
       val = QRound((frac*wf->m_Freq+wf->m_Phase)*1024.0f);
-      val = min(val, 1023);
+      val = crymin(val, 1023);
       return wf->m_Amp*gRenDev->m_RP.m_tSquareTable[val]+wf->m_Level;
 
     case eWF_Triangle:
       val = QRound((frac*wf->m_Freq+wf->m_Phase)*1024.0f);
-      val = min(val, 1023);
+      val = crymin(val, 1023);
       return wf->m_Amp*gRenDev->m_RP.m_tTriTable[val]+wf->m_Level;
 
     case eWF_Hill:
       val = QRound((frac*wf->m_Freq+wf->m_Phase)*1024.0f);
-      val = min(val, 1023);
+      val = crymin(val, 1023);
       return wf->m_Amp*gRenDev->m_RP.m_tHillTable[val]+wf->m_Level;
 
     case eWF_InvHill:
       val = QRound((frac*wf->m_Freq+wf->m_Phase)*1024.0f);
-      val = min(val, 1023);
+      val = crymin(val, 1023);
       return wf->m_Amp*(1.0f-gRenDev->m_RP.m_tHillTable[val])+wf->m_Level;
 
     default:

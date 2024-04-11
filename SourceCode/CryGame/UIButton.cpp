@@ -251,7 +251,7 @@ int CUIButton::GetText(IFunctionHandler *pH)
 
 	char szString[1024] = {0,0};
 
-	size_t iSize = min(m_szText.size(), sizeof(szString)-1);
+	size_t iSize = crymin(m_szText.size(), sizeof(szString)-1);
 
 	size_t i = 0;
 	for (; i < iSize; i++)

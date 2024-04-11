@@ -66,7 +66,7 @@ void CObjManager::CheckUnload()
   {
     CStatObj * pStatObj = (*it);
     if(pStatObj->m_bUseStreaming && pStatObj->GetLeafBuffer() &&
-      max(pStatObj->m_nLastRendFrameId, pStatObj->m_nMarkedForStreamingFrameId) < GetFrameID()-100)
+      crymax(pStatObj->m_nLastRendFrameId, pStatObj->m_nMarkedForStreamingFrameId) < GetFrameID()-100)
     {
 			int p;
       for(p=0; p<2; p++)

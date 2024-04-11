@@ -214,8 +214,8 @@ void CSpectator::ProcessKeys(CXEntityProcessingCmd &epc)
 
 	m_vAngles=angles;
 
-	m_vAngles.x = max(m_vAngles.x,-65);
-  m_vAngles.x = min(m_vAngles.x,65);
+	m_vAngles.x = crymax(m_vAngles.x,-65);
+  m_vAngles.x = crymin(m_vAngles.x,65);
 
 	epc.SetDeltaAngles(m_vAngles);
 

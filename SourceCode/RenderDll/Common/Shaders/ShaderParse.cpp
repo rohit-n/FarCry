@@ -3256,7 +3256,7 @@ bool CShader::mfCompileSequence(SShader *ef, SShaderTexUnit *tl, int nLayer, cha
       rni = -rn;
     else
     {
-      int nn = min(n, -rn);
+      int nn = crymin(n, -rn);
       rni = rand() % nn;
     }
 

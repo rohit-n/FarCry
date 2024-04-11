@@ -539,7 +539,7 @@ void SEvalFuncs_RE::BeamDeform(SDeform *df)
 
     float d = camVec.Dot(*vNormal);
     d = d * d;
-    d *= min(fLerp*10.0f, 1.0f);
+    d *= crymin(fLerp*10.0f, 1.0f);
 
     color.a = color.a * d;
     if (gbRgb)

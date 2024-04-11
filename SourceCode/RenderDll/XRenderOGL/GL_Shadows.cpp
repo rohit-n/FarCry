@@ -31,7 +31,7 @@ void CGLRenderer::DrawAllShadowsOnTheScreen()
 	float height=600;
 	Set2DMode(true, (int)width, (int)height);
 
-	float fArrDim = max(4, sqrt(float(MAX_DYNAMIC_SHADOW_MAPS_COUNT)));
+	float fArrDim = crymax(4, sqrt(float(MAX_DYNAMIC_SHADOW_MAPS_COUNT)));
 	float fPicDimX = width/fArrDim;
 	float fPicDimY = height/fArrDim;
 	int nShadowId=0;
@@ -159,7 +159,7 @@ void CGLRenderer::PrepareDepthMap(ShadowMapFrustum * lof, bool make_new_tid)
   static int nCurTexIdSlot = 0;
   //lof->bUpdateRequested = true;
 
-  lof->nTexSize = max(lof->nTexSize, 32);
+  lof->nTexSize = crymax(lof->nTexSize, 32);
   if(lof->nTexIdSlot>=0)
   {
     if(m_ShadowTexIDBuffer[lof->nTexIdSlot].pOwner == lof->pOwner)
@@ -534,7 +534,7 @@ void MakePenumbraTextureFromDepthMap(byte * pDepthMapIn, int nSize, byte * pPenu
       
      fVal = (fVal*2.f) + 127.f;
 
-      DATA(x,y) = uchar( max(min(fVal,255),0) );
+      DATA(x,y) = uchar( crymax(crymin(fVal,255),0) );
     }
   }
 

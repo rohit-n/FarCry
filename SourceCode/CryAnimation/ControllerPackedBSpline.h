@@ -58,13 +58,13 @@ public:
 	// returns the start time
 	virtual float GetTimeStart ()
 	{
-		return min(m_pPos->getTimeMin(), m_pRot->getTimeMin());
+		return crymin(m_pPos->getTimeMin(), m_pRot->getTimeMin());
 	}
 
 	// returns the end time
 	virtual float GetTimeEnd()
 	{
-		return max(m_pPos->getTimeMax(), m_pRot->getTimeMax());
+		return crymax(m_pPos->getTimeMax(), m_pRot->getTimeMax());
 	}
 
 	ILog* GetLog()const;

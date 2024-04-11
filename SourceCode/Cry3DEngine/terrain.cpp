@@ -146,7 +146,7 @@ void CTerrain::RenderTerrain( CObjManager * pObjManager, const int & DrawFlags )
 		if(!m_lstVisSectors.Count())
 			m_fDistanceToSectorWithWater=0;
 
-		m_fDistanceToSectorWithWater = max(m_fDistanceToSectorWithWater, (m_pViewCamera->GetPos().z-m_fGlobalWaterLevel)*0.05f);
+		m_fDistanceToSectorWithWater = crymax(m_fDistanceToSectorWithWater, (m_pViewCamera->GetPos().z-m_fGlobalWaterLevel)*0.05f);
 	}
 
 	if(m_pDetailObjects)
@@ -273,7 +273,7 @@ void CTerrain::RefineSector(int x1, int x2, int y1, int y2, bool bAllIN)
     {
       float fOrgX = float(info->m_nOriginX);
       float fOrgY = float(info->m_nOriginY);
-      info->m_bGroundVisible = m_pViewCamera->IsAABBVisibleFast( AABB(Vec3d(fOrgX,fOrgY,info->m_fMinZ), Vec3d(fOrgX+CTerrain::GetSectorSize(),fOrgY+CTerrain::GetSectorSize(),max(info->m_fMaxZ,m_fGlobalWaterLevel))));
+      info->m_bGroundVisible = m_pViewCamera->IsAABBVisibleFast( AABB(Vec3d(fOrgX,fOrgY,info->m_fMinZ), Vec3d(fOrgX+CTerrain::GetSectorSize(),fOrgY+CTerrain::GetSectorSize(),crymax(info->m_fMaxZ,m_fGlobalWaterLevel))));
     }
 
 		// calc distance
