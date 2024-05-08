@@ -79,7 +79,6 @@ void CSDLMouse::Update(bool bPrevFocus)
 
 	memset(m_Deltas, 0, sizeof(m_Deltas));
 	memcpy(m_oldEvents, m_Events, sizeof(m_Events));
-	memset(m_Events, 0, sizeof(m_Events));
 
 	float mouseDelta[6];
 	memset(mouseDelta, 0, sizeof(mouseDelta));
@@ -105,7 +104,7 @@ void CSDLMouse::Update(bool bPrevFocus)
 			}
 			if (event.button.button == SDL_BUTTON_RIGHT)
 			{
-				m_Events[0] = 0;
+				m_Events[1] = 0;
 			}
 		}
 		else if (event.type == SDL_MOUSEWHEEL)
