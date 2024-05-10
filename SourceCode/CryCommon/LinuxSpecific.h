@@ -20,7 +20,7 @@
 #include <math.h>
 #include <string.h>
 #include <errno.h>
-#include </usr/include/ctype.h>
+#include <ctype.h>
 
 typedef unsigned int				DWORD;
 typedef unsigned int*				LPDWORD;
