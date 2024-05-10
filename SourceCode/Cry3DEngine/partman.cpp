@@ -879,7 +879,10 @@ void CPartManager::LoadSharedParticleLibrary( const char *sEffectsFolder,const c
 	}
 
 	char filename[_MAX_PATH];
-	_makepath( filename,NULL,sEffectsFolder,sLibName,"prt" );
+	strcpy(filename, sEffectsFolder);
+	strcat(filename, "/");
+	strcat(filename, sLibName);
+	strcat(filename, ".prt");
 
 	CCryFile file;
 	if (file.Open( filename,"rb" ))

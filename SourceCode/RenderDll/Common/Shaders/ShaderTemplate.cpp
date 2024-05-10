@@ -568,6 +568,7 @@ STexPic *CShader::mfTryToLoadTexture(const char *nameTex, int Flags, int Flags2,
 STexPic *CShader::mfLoadResourceTexture(const char *nameTex, const char *path, int Flags, int Flags2, byte eTT, SShader *sh, SEfResTexture *Tex, float fAmount1, float fAmount2)
 {
   STexPic *tx = mfTryToLoadTexture(nameTex, Flags, Flags2, eTT, sh, fAmount1, fAmount2);
+  const char* last_slash;
 
   if ((!tx || !tx->IsTextureLoaded()) && nameTex && path)
   {
@@ -576,7 +577,6 @@ STexPic *CShader::mfLoadResourceTexture(const char *nameTex, const char *path, i
       if (tx)
         tx->Release(false);
       char name[256];
-      char ext[32];
       char pname[256];
       char *pPath = (char *)path;
       size_t ln = strlen(nameTex);
@@ -586,8 +586,12 @@ STexPic *CShader::mfLoadResourceTexture(const char *nameTex, const char *path, i
         Warning( VALIDATOR_FLAG_TEXTURE,nameTex,"Warning: Too long texture name (path: '%s', name: '%s')\n", path, nameTex);
         pPath = "Textures\\";
       }
-      _splitpath(nameTex, NULL, NULL, name, ext);
-      strcat(name, ext);
+      last_slash = strrchr(nameTex, '\\');
+      if (!last_slash)
+      {
+        return NULL; 
+      }
+      strcpy(name, last_slash + 1);
       UsePath((char *)name, (char *)pPath, pname);
       tx = mfTryToLoadTexture(pname, Flags, Flags2, eTT, sh, fAmount1, fAmount2);
       if ((!tx || !tx->IsTextureLoaded()) && nameTex && path)
