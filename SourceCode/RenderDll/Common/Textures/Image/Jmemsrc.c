@@ -23,9 +23,9 @@
  */
 
 /* this is not a core library module, so it doesn't define JPEG_INTERNALS */
-#include "Jpeg6/jinclude.h"
-#include "Jpeg6/jpeglib.h"
-#include "Jpeg6/jerror.h"
+#include "jpeg6/jinclude.h"
+#include "jpeg6/jpeglib.h"
+#include "jpeg6/jerror.h"
 
 
 /* Expanded data source object for stdio input */

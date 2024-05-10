@@ -213,11 +213,11 @@ mfSet_error(eIFE_BadFormat, "IJL disabled");
 
 #endif // WIN64
 
-#ifdef WIN64
+#if defined(WIN64) || defined(__linux)
 
 extern "C"
 {
-  #include "Jpeg6/Jpeglib.h"
+  #include "jpeg6/jpeglib.h"
   #include "Jmemsrc.c" // include buffer source input code
 }
 
