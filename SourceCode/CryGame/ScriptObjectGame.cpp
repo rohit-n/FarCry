@@ -1095,8 +1095,11 @@ int CScriptObjectGame::GetLevelList (IFunctionHandler* pH)
 	string sLevelsFolder = m_pGame->GetLevelsFolder();
 	//struct __finddata64_t fd;
 	//intptr_t	hFind;
-
+#ifndef __linux
 	struct _finddata_t c_file;
+#else
+	dirent c_file;
+#endif
   intptr_t hFile;
 
 	ICryPak *pIPak = m_pSystem->GetIPak();
@@ -1113,13 +1116,13 @@ int CScriptObjectGame::GetLevelList (IFunctionHandler* pH)
 	do {
 		arrMissions.clear();
 
-		if ((strncmp(c_file.name, ".",1)!=0) &&
-			(c_file.attrib & _A_SUBDIR)	&& m_pGame->GetLevelMissions( (sLevelsFolder + "/" +c_file.name).c_str(), arrMissions) &&
+		if ((strncmp(FNAME(c_file), ".",1)!=0) &&
+			(IS_DIR(c_file))	&& m_pGame->GetLevelMissions( (sLevelsFolder + "/" +FNAME(c_file)).c_str(), arrMissions) &&
       (!pszMissionFilter || HasStringI(arrMissions, pszMissionFilter)))
 		{
 			_SmartScriptObject pLevelObj(m_pScriptSystem);
 
-			pLevelObj->SetValue("Name", c_file.name);
+			pLevelObj->SetValue("Name", FNAME(c_file));
 
 			_SmartScriptObject pMissionObj(m_pScriptSystem);
 
@@ -2681,7 +2684,13 @@ bool SortSaveGame(const SFoundSaveGame &a, const SFoundSaveGame &b)
 int CScriptObjectGame::GetSaveGameList(IFunctionHandler *pH)
 {
 	intptr_t hEnumFile = -1L;
-	__finddata64_t sFindData;
+#ifndef __linux
+	struct _finddata_t sFindData;
+#else
+	dirent sFindData;
+#endif
+
+	ICryPak *pIPak = m_pSystem->GetIPak();
 	_SmartScriptObject cList(m_pSystem->GetIScriptSystem(), false);
 	std::vector<SFoundSaveGame> vSaveList;
 
@@ -2699,18 +2708,16 @@ int CScriptObjectGame::GetSaveGameList(IFunctionHandler *pH)
 
 	string pattern = szSaveGameDir + "*.sav";
 
-	if ((hEnumFile = _findfirst64(pattern.c_str(), &sFindData)) == -1L) 
+	if ((hEnumFile = pIPak->FindFirst(pattern.c_str(), &sFindData)) == -1L )		
 	{
-		_findclose(hEnumFile);
-		hEnumFile = -1L;
 		return pH->EndFunction(cList);
 	}
 
 	do
 	{
-	  if(sFindData.attrib&_A_SUBDIR) continue;
+	  if(IS_DIR(sFindData)) continue;
 
-		string szSaveFilename = szSaveGameDir + sFindData.name;
+		string szSaveFilename = szSaveGameDir + FNAME(sFindData);
 
 		CDefaultStreamAllocator sa;
 		CStream stm(300, &sa); 
@@ -2734,7 +2741,7 @@ int CScriptObjectGame::GetSaveGameList(IFunctionHandler *pH)
 
 				if ((szMagic == SAVEMAGIC))
 				{
-					m_pSystem->GetILog()->Log("\tfound savegame: %s", sFindData.name);
+					m_pSystem->GetILog()->Log("\tfound savegame: %s", FNAME(sFindData));
 
 					string szLevelName;
 					string szMissionName;
@@ -2759,7 +2766,7 @@ int CScriptObjectGame::GetSaveGameList(IFunctionHandler *pH)
 					Save.iHour = (int)bHour;
 					Save.iMinute = (int)bMinute;
 					Save.iSecond = (int)bSecond;
-					Save.szFileName = sFindData.name;
+					Save.szFileName = FNAME(sFindData);
 					Save.szLevel = szLevelName;
 					Save.szMission = szMissionName;
 
@@ -2767,21 +2774,21 @@ int CScriptObjectGame::GetSaveGameList(IFunctionHandler *pH)
 				}
 				else
 				{
-					m_pSystem->GetILog()->Log("\tfound savegame: %s $4wrong version", sFindData.name);
+					m_pSystem->GetILog()->Log("\tfound savegame: %s $4wrong version", FNAME(sFindData));
 				}
 			}
 			else
 			{
-				m_pSystem->GetILog()->Log("\tfound savegame: %s $4failed to read", sFindData.name);
+				m_pSystem->GetILog()->Log("\tfound savegame: %s $4failed to read", FNAME(sFindData));
 			}
 		}
 		else
 		{
-			m_pSystem->GetILog()->Log("\tfound savegame: %s $4zero length", sFindData.name);
+			m_pSystem->GetILog()->Log("\tfound savegame: %s $4zero length", FNAME(sFindData));
 		}
-	} while (_findnext64(hEnumFile, &sFindData) != -1);
+	} while (pIPak->FindNext( hEnumFile, &sFindData ) == 0);
 
-	_findclose(hEnumFile);
+	pIPak->FindClose(hEnumFile);
 	hEnumFile = 0;
 
 	std::sort(vSaveList.begin(), vSaveList.end(), SortSaveGame);

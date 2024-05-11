@@ -197,7 +197,9 @@ bool CGameMods::SetCurrentMod(const char *sModName,bool bNeedsRestart)
 
 	// Open all paks in the mod folder.
 	char sPaksFilter[_MAX_PATH];
-	_makepath( sPaksFilter,NULL,m_pMod->sFolder.c_str(),"*","pak" );
+	strcpy(sPaksFilter, m_pMod->sFolder.c_str());
+	strcat(sPaksFilter, "/*.pak");
+
 	m_pSystem->GetIPak()->OpenPacks( "",sPaksFilter );
 	
 	// Open all basic *.pak files in the MOD folder		
@@ -312,7 +314,11 @@ void CGameMods::ScanMods()
 	ClearMods();
 
 	// search all files in the mods folder
+#ifndef __linux
 	struct _finddata_t c_file;
+#else
+	dirent c_file;
+#endif
   intptr_t hFile;
 	string sSearchPattern = "Mods/*.*";  
 
@@ -322,16 +328,16 @@ void CGameMods::ScanMods()
 	do
 	{
 		// skip files and ., .., keep only real folders
-		if ((c_file.attrib &_A_SUBDIR) && ((strncmp(c_file.name,".",1)!=0)))
+		if ((IS_DIR(c_file)) && ((strncmp(FNAME(c_file),".",1)!=0)))
 		{			
-			m_pILog->Log("Found MOD game: %s",c_file.name);
-			if (stricmp(c_file.name,"FarCry")==0)
+			m_pILog->Log("Found MOD game: %s", FNAME(c_file));
+			if (stricmp(FNAME(c_file),"FarCry")==0)
 				continue;
 
 			SGameModDescription *pGameMod=new SGameModDescription;
 
-			pGameMod->sName=c_file.name;
-			pGameMod->sFolder=string("Mods/")+c_file.name;			
+			pGameMod->sName=FNAME(c_file);
+			pGameMod->sFolder=string("Mods/")+FNAME(c_file);			
 			if (!ParseModDescription(pGameMod->sFolder.c_str(),pGameMod))
 			{				
 				pGameMod->sAuthor=string("Unknown");		
