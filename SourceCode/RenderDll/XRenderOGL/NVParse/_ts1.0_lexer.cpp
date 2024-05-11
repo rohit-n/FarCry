@@ -744,7 +744,7 @@ char *yytext;
 #ifdef _WIN32
 # include <windows.h>
 #endif
-#include <GL/gl.h>
+
 #include "nvparse_errors.h"
 #include "nvparse_externs.h"
 
@@ -1917,7 +1917,7 @@ YY_BUFFER_STATE b;
 
 #ifndef YY_ALWAYS_INTERACTIVE
 #ifndef YY_NEVER_INTERACTIVE
-extern int isatty YY_PROTO(( int ));
+//extern int isatty YY_PROTO(( int ));
 #endif
 #endif
 

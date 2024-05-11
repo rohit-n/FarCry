@@ -3430,10 +3430,8 @@ YY_BUFFER_STATE b;
 	}
 
 
-#ifndef YY_ALWAYS_INTERACTIVE
-#ifndef YY_NEVER_INTERACTIVE
+#if !defined(__linux) && !defined(YY_ALWAYS_INTERACTIVE) && !defined(YY_NEVER_INTERACTIVE)
 extern int isatty YY_PROTO(( int ));
-#endif
 #endif
 
 #ifdef YY_USE_PROTOS
