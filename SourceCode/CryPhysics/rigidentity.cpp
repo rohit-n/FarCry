@@ -792,6 +792,7 @@ int CRigidEntity::RemoveContactPoint(CPhysicalEntity *pCollider, const vectorf &
 int CRigidEntity::RegisterContactPoint(masktype &contact_mask, int idx, const vectorf &pt, const geom_contact *pcontacts, int iPrim0,int iFeature0, 
 																			 int iPrim1,int iFeature1, int flags, float penetration)
 {
+	int c;
 	if (!(m_pWorld->m_vars.bUseDistanceContacts | m_flags&ref_use_simple_solver) && penetration==0 && GetType()!=PE_ARTICULATED)
 		return -1;
 	FUNCTION_PROFILER( GetISystem(),PROFILE_PHYSICS );
@@ -831,7 +832,8 @@ int CRigidEntity::RegisterContactPoint(masktype &contact_mask, int idx, const ve
 			CPhysicalEntity *pCollider = m_pColliders[j]; 
 			pCollider->RemoveCollider(this); RemoveCollider(pCollider);
 		}
-		m_pColliderContacts[AddCollider(g_CurColliders[idx])] |= getmask(i);
+		c = AddCollider(g_CurColliders[idx]);
+		m_pColliderContacts[c] |= getmask(i);
 		g_CurColliders[idx]->AddCollider(this);
 		contact_mask |= getmask(i);
 	} else if (bUseSimpleSolver || 
@@ -1134,7 +1136,7 @@ int CRigidEntity::UpdatePenaltyContact(int i, float time_interval)//, int bResol
 
 int CRigidEntity::RegisterConstraint(const vectorf &pt0,const vectorf &pt1, int ipart0, CPhysicalEntity *pBuddy,int ipart1, int flags)
 {
-	int i;
+	int i,  c;
 	masktype constraint_mask;
 
 	for(i=0,constraint_mask=0; i<m_nColliders; constraint_mask|=m_pColliderConstraints[i++]);
@@ -1151,7 +1153,8 @@ int CRigidEntity::RegisterConstraint(const vectorf &pt0,const vectorf &pt1, int 
 		if (pConstraints) delete[] pConstraints;
 		if (pInfos) delete[] pInfos;
 	}
-	m_pColliderConstraints[AddCollider(pBuddy)] |= getmask(i);
+	c = AddCollider(pBuddy);
+	m_pColliderConstraints[c] |= getmask(i);
 	pBuddy->AddCollider(this);
 	
 	m_pConstraints[i].pt[0] = pt0;
