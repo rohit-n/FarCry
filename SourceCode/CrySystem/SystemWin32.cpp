@@ -252,9 +252,11 @@ const char *CSystem::GetUserName()
 	memset(szNameBuffer, 0, 1024);
 
 	DWORD dwSize = 1024;
-
+#ifndef __linux
 	::GetUserName(szNameBuffer, &dwSize);
-
+#else
+	strncpy(szNameBuffer, getenv("USER"), dwSize);
+#endif
 	return szNameBuffer;
 }
 
