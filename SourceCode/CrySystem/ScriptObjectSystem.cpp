@@ -21,8 +21,11 @@
 #include <ISound.h>
 #include <IGame.h>									// IGame
 #include <ICryPak.h>
-#if !defined(LINUX)
-	#include "ddraw.h"
+#ifndef __linux
+#include "ddraw.h"
+#include <SDL_cpuinfo.h>
+#else
+#include <SDL2/SDL_cpuinfo.h>
 #endif
 #include "HTTPDownloader.h"
 #include <time.h>
@@ -2905,10 +2908,8 @@ int CScriptObjectSystem::GetSystemMem( IFunctionHandler* pH )
 {
 	CHECK_PARAMETERS( 0 );
 
-	MEMORYSTATUS sMemStat;
-	GlobalMemoryStatus( &sMemStat );
 	// return size of total physical memory in MB
-	int iSysMemInMB( sMemStat.dwTotalPhys >> 20 );
+	int iSysMemInMB = SDL_GetSystemRAM();
 
 	return( pH->EndFunction( iSysMemInMB ) );
 }
