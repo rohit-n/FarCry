@@ -600,15 +600,30 @@ void CTimeDemoRecorder::LogInfo( const char *format,... )
 	va_end(ArgList);
 
 	char path_buffer[_MAX_PATH];
+#ifndef __linux
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
-
+#else
+	char* ext;
+#endif
 	m_pSystem->GetILog()->Log( szBuffer  );
 
+#ifndef __linux
 	_splitpath( m_file.c_str(), drive, dir, fname, ext );
 	_makepath( path_buffer, drive, dir,fname,"log" );
+#else
+	strcpy(path_buffer, "../");
+	strcat(path_buffer, m_file.c_str());
+	ext = strrchr(path_buffer, '.');
+	if (!ext)
+	{
+		return;
+	}
+	strcpy(ext, ".log");
+#endif
+
 	FILE *hFile = fopen( path_buffer,"at" );
 	if (hFile)
 	{

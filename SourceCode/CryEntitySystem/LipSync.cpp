@@ -145,7 +145,19 @@ bool CLipSync::LoadRandomExpressions(const char *pszExprScript, bool bRaiseError
 		m_loadedExpression = pszExprScript;
 		// Get only filename from path. use it as global key to expressions table.
 		char filename[_MAX_FNAME];
-		_splitpath( pszExprScript,NULL,NULL,filename,NULL );
+		char* ext;
+
+		const char* last_slash = strrchr(pszExprScript, '/');
+		if (!last_slash)
+		{
+			return false;
+		}
+		strcpy(filename, last_slash + 1);
+		ext = strrchr(filename, '.');
+		if (ext)
+		{
+			*ext = '\0';
+		}
 		
 		_SmartScriptObject pObj(m_pScriptSystem, true);
 		if (m_pScriptSystem->GetGlobalValue( filename,pObj ))
