@@ -371,7 +371,7 @@ void ZipDir::CacheFactory::InitDataOffset (FileEntry& fileEntry, const ZipFile::
 		THROW_ZIPDIR_ERROR (ZD_ERROR_VALIDATION_FAILED, "The local file header descriptor doesn't match the basic parameters declared in the global file header in the file. The archive content is misconsistent and may be damaged. Please try to repair the archive");
 
 	// now compare the local file name with the one recorded in CDR: they must match.
-	if (memicmp ((const char*)&pBuffer[sizeof(LocalFileHeader)], (const char*)pFileHeader+1, pFileHeader->nFileNameLength))
+	if (strnicmp ((const char*)&pBuffer[sizeof(LocalFileHeader)], (const char*)pFileHeader+1, pFileHeader->nFileNameLength))
 	{
 		// either file name, or the extra field do not match
 		THROW_ZIPDIR_ERROR(ZD_ERROR_VALIDATION_FAILED, "The local file header contains file name which does not match the file name of the global file header. The archive content is misconsistent with its directory. Please repair the archive");

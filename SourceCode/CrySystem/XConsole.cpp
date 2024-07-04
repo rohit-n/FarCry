@@ -1970,7 +1970,7 @@ const char* CXConsole::AutoComplete( const char* substr )
 	for (size_t i = 0; i < cmds.size(); i++)
 	{
 		size_t cmdlen = strlen(cmds[i]);
-		if (cmdlen >= substrLen && memicmp(cmds[i],substr,substrLen) == 0)
+		if (cmdlen >= substrLen && strnicmp(cmds[i],substr,substrLen) == 0)
 		{
 			if (substrLen == cmdlen)
 			{
