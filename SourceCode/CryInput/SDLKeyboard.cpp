@@ -197,6 +197,8 @@ unsigned char CSDLKeyboard::XKEY2ASCII(unsigned short nCode, int modifiers)
 		HANDLE_CASE(XKEY_B, 'b')
 		HANDLE_CASE(XKEY_N, 'n')
 		HANDLE_CASE(XKEY_M, 'm')
+		HANDLE_CASE(XKEY_BACKSLASH, '\\')
+		HANDLE_CASE(XKEY_MINUS, '-')
 	default:
 		ret = '\0';
 	}
@@ -212,9 +214,16 @@ unsigned char CSDLKeyboard::XKEY2ASCII(unsigned short nCode, int modifiers)
 		//STUB
 		return 0;
 	}
-	else if ((modifiers & XKEY_MOD_SHIFT) != 0)
+	else if ((modifiers & XKEY_MOD_LSHIFT) != 0)
 	{
-		ret += 32;
+		switch (ret)
+		{
+			case '-':
+				ret = '_';
+				break;
+			default:
+				ret += 32;
+		}
 	}
 
 	return ret;
