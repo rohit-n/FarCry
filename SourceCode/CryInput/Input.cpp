@@ -223,11 +223,11 @@ bool CInput::Init(ISystem *pSystem
 
 #ifndef PS2
 	m_pLog=pSystem->GetILog();
+	m_postingenable = 1;
   
 #ifndef USE_SDL_INPUT
 	m_hinst=hinst;
 	m_hwnd=hwnd;
-	m_postingenable = 1;
 		
 	//if (dinput)
 	{
