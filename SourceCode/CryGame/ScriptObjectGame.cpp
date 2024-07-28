@@ -2700,9 +2700,9 @@ int CScriptObjectGame::GetSaveGameList(IFunctionHandler *pH)
 
 	pH->GetParam(1, szProfileName);
 
-	string szSaveGameDir = "Profiles/player/";
+	string szSaveGameDir = "profiles/player/";
 	szSaveGameDir+= szProfileName;
-	szSaveGameDir += "/Savegames/";
+	szSaveGameDir += "/savegames/";
 
 	//m_pSystem->GetILog()->Log("SEARCHING FOR SAVEGAMES (PROFILE: %s)!", szProfileName);
 
