@@ -159,10 +159,8 @@ CXGame::CXGame()
 	m_pIngameDialogMgr = new CIngameDialogMgr();
 	m_pUISystem = 0;
 	mp_model = 0;
-#if !defined(LINUX)
 	// to avoid all references to movie user in this file
 	m_pMovieUser = new CMovieUser(this);
-#endif
 	m_nPlayerIconTexId = -1;
 	m_nVehicleIconTexId = -1;
 	m_nBuildingIconTexId = -1;
@@ -209,7 +207,6 @@ CXGame::~CXGame()
 		delete m_pIngameDialogMgr;
 	m_pIngameDialogMgr=NULL;
 
-#if !defined(LINUX)
 	if (m_pMovieUser)
 	{
 		if (m_pSystem)
@@ -223,7 +220,7 @@ CXGame::~CXGame()
 		}
 		delete m_pMovieUser;
 	}
-#endif
+
 	m_pMovieUser=NULL;
 
 	// shutdown the client if there is one
@@ -431,10 +428,10 @@ void CXGame::SoftReset()
 		vLoadedWeapons.push_back(m_pWeaponSystemEx->GetWeaponClass(i)->GetName());
 
 	m_pWeaponSystemEx->Reset();
-#if !defined(LINUX)
+
 	if (m_pSystem->GetIMovieSystem())
 		m_pSystem->GetIMovieSystem()->StopAllSequences();
-#endif
+
 	m_pScriptObjectGame->Reset();
 
 	m_pScriptSystem->ForceGarbageCollection();
@@ -480,10 +477,10 @@ void CXGame::Reset()
 	m_XSurfaceMgr.Reset();
 	m_XAreaMgr.Clear();
 	ClearTagPoints();
-#if !defined(LINUX)
+
 	if (m_pSystem->GetIMovieSystem())
 		m_pSystem->GetIMovieSystem()->Reset(false);
-#endif
+
 	m_pScriptObjectGame->Reset();
 
 	m_pScriptSystem->ForceGarbageCollection();
@@ -547,12 +544,12 @@ bool CXGame::Init(struct ISystem *pSystem,bool bDedicatedSrv,bool bInEditor,cons
 	m_pClient	= NULL;
 	m_pServer	= NULL;
 
-  m_pSystem->GetILog()->Log("Game Initialization");
-#if !defined(LINUX)	
+	m_pSystem->GetILog()->Log("Game Initialization");
+
 	IMovieSystem *pMovieSystem=m_pSystem->GetIMovieSystem();
 	if (pMovieSystem)
 		pMovieSystem->SetUser(m_pMovieUser);
-#endif
+
 	if (!m_pTimeDemoRecorder)
 		m_pTimeDemoRecorder = new CTimeDemoRecorder(pSystem);
   
@@ -858,17 +855,21 @@ bool CXGame::Update()
 	bool bPause=IsInPause(pProcess);
 	if (m_bIsLoadingLevelFromFile)
 		bPause=false;
-#if !defined(LINUX)	
+
 	// Pauses or unpauses movie system.
 	if (bPause != m_bMovieSystemPaused)
 	{
 		m_bMovieSystemPaused = bPause;
-		if (bPause)
-			m_pSystem->GetIMovieSystem()->Pause();
-		else
-			m_pSystem->GetIMovieSystem()->Resume();
+		IMovieSystem *pMovieSystem=m_pSystem->GetIMovieSystem();
+		if (pMovieSystem)
+		{
+			if (bPause)
+				pMovieSystem->Pause();
+			else
+				pMovieSystem->Resume();
+		}
 	}
-#endif
+
 	// [marco] check current sound and vis areas
 	// for music etc.	
 	CheckSoundVisAreas();
@@ -1450,11 +1451,11 @@ void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szM
 
 		m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
 	}
-#if !defined(LINUX)	
+
 	if (m_pSystem->GetIMovieSystem())
 		m_pSystem->GetIMovieSystem()->StopAllCutScenes();
 	//m_lstPlayedCutScenes.clear();
-#endif		
+
 	bool bDedicated=GetSystem()->IsDedicated();
 
 	string strGameType = g_GameType->GetString();
@@ -1716,8 +1717,13 @@ void CXGame::GotoGame(bool bTriggerOnSwitch)
 //////////////////////////////////////////////////////////////////////////
 void CXGame::MenuOn()
 {
+	ISoundSystem* snd = m_pSystem->GetISoundSystem();
 	// stop sounds and timers affected by game pause
-	m_pSystem->GetISoundSystem()->Pause(true,true); 
+	if (snd)
+	{
+		snd->Pause(true,true);
+	}
+
 	m_pScriptTimerMgr->Pause(true);
 
 	if (m_pSystem->GetIMusicSystem())
@@ -1763,8 +1769,17 @@ void CXGame::MenuOn()
 void CXGame::MenuOff()
 {
 	// resume sounds and timers affected by game pause
-	m_pSystem->GetISoundSystem()->Pause(false);
-	m_pSystem->GetIMusicSystem()->Pause(false);
+	ISoundSystem* snd = m_pSystem->GetISoundSystem();
+	IMusicSystem* mus = m_pSystem->GetIMusicSystem();
+	if (snd)
+	{
+		snd->Pause(false);
+	}
+	if (mus)
+	{
+		mus->Pause(false);
+	}
+
 	m_pScriptTimerMgr->Pause(false);
 
 
@@ -1834,10 +1849,8 @@ IScriptObject *CXGame::GetScriptObject()
 
 void CXGame::PlaySubtitle(ISound * pSound)
 {
-#if !defined(LINUX)	
 	if (m_pMovieUser)
 		m_pMovieUser->PlaySubtitles(pSound);
-#endif
 }
 
 vector2f CXGame::GetSubtitleSize(const string &szMessage, float sizex, float sizey, const string &szFontName, const string &szFontEffect)

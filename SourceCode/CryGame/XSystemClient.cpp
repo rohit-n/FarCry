@@ -91,11 +91,9 @@ void CXSystemClient::RemoveEntity(EntityId wID, bool bRemoveNow)
 ///////////////////////////////////////////////
 void CXSystemClient::DeleteAllEntities()
 {
-#if !defined(LINUX)	
 	IMovieSystem *pMovieSystem=m_pSystem->GetIMovieSystem();
 	if (pMovieSystem)
 		pMovieSystem->Reset(false);
-#endif
 	m_pEntitySystem->Reset();
 }
 

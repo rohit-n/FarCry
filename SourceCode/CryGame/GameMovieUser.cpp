@@ -124,7 +124,11 @@ void CMovieUser::BeginCutScene(unsigned long dwFlags,bool bResetFx)
 	if(IAnimSequence::NO_GAMESOUNDS & dwFlags)
 	{
 		// lower all other sounds volume when playing cutscene
-		GetISystem()->GetISoundSystem()->SetGroupScale(SOUNDSCALE_MISSIONHINT,0.5f);
+		ISoundSystem* snd = GetISystem()->GetISoundSystem();
+		if (snd)
+		{
+			snd->SetGroupScale(SOUNDSCALE_MISSIONHINT, 0.5f);
+		}
 
 		/*
 		ICVar *pSFXVolume=GetISystem()->GetIConsole()->GetCVar("s_SFXVolume");
@@ -188,7 +192,11 @@ void CMovieUser::EndCutScene()
 	}
 	if (m_bSoundsPaused)
 	{
-		GetISystem()->GetISoundSystem()->SetGroupScale(SOUNDSCALE_MISSIONHINT,1.0f);
+		ISoundSystem* snd = GetISystem()->GetISoundSystem();
+		if (snd)
+		{
+			snd->SetGroupScale(SOUNDSCALE_MISSIONHINT, 1.0f);
+		}
 
 		/*
 		ICVar *pSFXVolume=GetISystem()->GetIConsole()->GetCVar("s_SFXVolume");

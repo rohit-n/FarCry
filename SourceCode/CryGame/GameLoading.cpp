@@ -299,7 +299,12 @@ bool CXGame::SaveToStream(CStream &stm, Vec3d *pos, Vec3d *angles,string sFilena
 	// save current EAX preset
 	int nPreset;
 	CS_REVERB_PROPERTIES tProps;
-	m_pSystem->GetISoundSystem()->GetCurrentEaxEnvironment(nPreset,tProps);
+	ISoundSystem* snd = m_pSystem->GetISoundSystem();
+	if (snd)
+	{
+		snd->GetCurrentEaxEnvironment(nPreset,tProps);
+	}
+
 	stm.Write(nPreset);
 	if (nPreset==-1)
 	{	
@@ -570,20 +575,23 @@ bool CXGame::SaveToStream(CStream &stm, Vec3d *pos, Vec3d *angles,string sFilena
 	// serialize any playing cutscenes
 	
 	IMovieSystem *pMovies = m_pSystem->GetIMovieSystem();
-	ISequenceIt *pIt = pMovies->GetSequences();
-	IAnimSequence *pSeq = pIt->first();
-	while (pSeq)
+	if (pMovies)
 	{
-
-		if (pMovies->IsPlaying(pSeq))
+		ISequenceIt *pIt = pMovies->GetSequences();
+		IAnimSequence *pSeq = pIt->first();
+		while (pSeq)
 		{
-			stm.Write((BYTE)CHUNK_INGAME_SEQUENCE);	
-			stm.Write(pSeq->GetName());
-			stm.Write(pMovies->GetPlayingTime(pSeq));
+
+			if (pMovies->IsPlaying(pSeq))
+			{
+				stm.Write((BYTE)CHUNK_INGAME_SEQUENCE);
+				stm.Write(pSeq->GetName());
+				stm.Write(pMovies->GetPlayingTime(pSeq));
+			}
+			pSeq = pIt->next();
 		}
-		pSeq = pIt->next();
+		pIt->Release();
 	}
-	pIt->Release();
 
   // save required hud/clientstuff data
   stm.Write((BYTE)CHUNK_HUD);
@@ -1326,16 +1334,17 @@ bool CXGame::LoadFromStream(CStream &stm, bool isdemo)
 			break;
 		case CHUNK_INGAME_SEQUENCE:
 			{
-#if !defined(LINUX)	
 				IMovieSystem *pMovies = m_pSystem->GetIMovieSystem();
 				char szName[1024];
 				stm.Read(szName,1024);
 				float fTime;
 				stm.Read(fTime);
-				IAnimSequence *pSeq = pMovies->FindSequence(szName);
-				pMovies->PlaySequence(pSeq,false);
-				pMovies->SetPlayingTime(pSeq,fTime);
-#endif
+				if (pMovies)
+				{
+					IAnimSequence *pSeq = pMovies->FindSequence(szName);
+					pMovies->PlaySequence(pSeq,false);
+					pMovies->SetPlayingTime(pSeq,fTime);
+				}
 			}
 			break;
     case CHUNK_HUD:
@@ -2929,7 +2938,6 @@ bool CXGame::LoadFromStream_PATCH_1(CStream &stm, bool isdemo, CScriptObjectStre
 			break;
 		case CHUNK_INGAME_SEQUENCE:
 			{
-#if !defined(LINUX)	
 				IMovieSystem *pMovies = m_pSystem->GetIMovieSystem();
 				char szName[1024];
 				stm.Read(szName,1024);
@@ -2938,7 +2946,6 @@ bool CXGame::LoadFromStream_PATCH_1(CStream &stm, bool isdemo, CScriptObjectStre
 				IAnimSequence *pSeq = pMovies->FindSequence(szName);
 				pMovies->PlaySequence(pSeq,false);
 				pMovies->SetPlayingTime(pSeq,fTime);
-#endif
 			}
 			break;
 		case CHUNK_HUD:
