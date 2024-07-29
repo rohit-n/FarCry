@@ -45,6 +45,7 @@
 //#include "XPath.h"
 #include <ISound.h>
 #include <IAgent.h>
+#include <ICryPak.h>
 #include <chrono>
 #include <time.h>
 
@@ -675,7 +676,7 @@ void CXGame::Save(string sFileName, Vec3d *pos, Vec3d *angles,bool bFirstCheckpo
 
 		// replace / by \ because MakeSureDirectoryPathExists does not work with unix paths
 		size_t pos = 1;
-		
+#ifndef __linux
 		for(;;)
 		{
 			pos = sFileName.find_first_of("/", pos);
@@ -690,6 +691,17 @@ void CXGame::Save(string sFileName, Vec3d *pos, Vec3d *angles,bool bFirstCheckpo
 		}
 
 		if (MakeSureDirectoryPathExists(sFileName.c_str()))
+#else
+		ICryPak *pPak=m_pSystem->GetIPak();
+		char dname[256];
+		strcpy(dname, sFileName.c_str());
+		char* last_slash = strrchr(dname, '/');
+		if (last_slash)
+		{
+			*last_slash = '\0';
+		}
+		if (pPak->MakeDir(dname))
+#endif
 		{
 			if(!m_pSystem->WriteCompressedFile((char *)sFileName.c_str(), stm.GetPtr(), stm.GetSize()))
 			{
