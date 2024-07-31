@@ -64,7 +64,12 @@ int CScriptObjectMovie::PlaySequence(IFunctionHandler *pH)
 	if (pH->GetParamCount()==2)
 		pH->GetParam(2, bResetFx);
 
-	m_pSystem->GetIMovieSystem()->PlaySequence(pszName,bResetFx);
+	IMovieSystem *pMovieSystem=m_pSystem->GetIMovieSystem();
+	if (pMovieSystem)
+	{
+		pMovieSystem->PlaySequence(pszName,bResetFx);
+	}
+
 
 	return pH->EndFunction();
 }
@@ -95,6 +100,7 @@ int CScriptObjectMovie::StopAllCutScenes(IFunctionHandler *pH)
 {
 	CHECK_PARAMETERS(0);	
 	IGame *pGame=m_pSystem->GetIGame();
+	IMovieSystem* mov = m_pSystem->GetIMovieSystem();
 	if (!pGame) 
 	{
 		// can this happen?
@@ -103,7 +109,11 @@ int CScriptObjectMovie::StopAllCutScenes(IFunctionHandler *pH)
 
 	//pGame->StopCurrentCutscene();
 	//m_pMovieSystem->StopAllCutScenes();
-	m_pSystem->GetIMovieSystem()->StopAllCutScenes();
+	if (mov)
+	{
+		mov->StopAllCutScenes();
+	}
+
 
 	return pH->EndFunction();
 }
