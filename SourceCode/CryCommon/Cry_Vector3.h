@@ -413,9 +413,25 @@ ILINE  Vec3_tpl<F> GetOrthogonal( const Vec3_tpl<F>& v ) {
 }
 
 
+//! normalize the val to 0-360 range
+ILINE f32 Snap_s360( f32 val ) {
+	if( val < 0.0f )
+		val =f32( 360.0f + cry_fmod(val,360.0f));
+	else
+		if(val >= 360.0f)
+			val =f32(cry_fmod(val,360.0f));
+	return val;
+}
 
-
-
+//! normalize the val to -180, 180 range
+ILINE f32 Snap_s180( f32 val ) {
+	if( val > -180.0f && val < 180.0f)
+		return val;
+	val = Snap_s360( val );
+	if( val>180.0f )
+		return -(360.0f - val);
+	return val;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -483,25 +499,9 @@ typedef Ang3_tpl<f32>		Ang3;
 //ILINE Ang3 Rad2Deg(const Ang3& a)	{	return Ang3(RAD2DEG(a.x),RAD2DEG(a.y),RAD2DEG(a.z));	}
 ILINE Ang3 Deg2Rad(const Ang3& a) {	return Ang3(DEG2RAD(a.x),DEG2RAD(a.y),DEG2RAD(a.z));	}
 
-//! normalize the val to 0-360 range 
-ILINE f32 Snap_s360( f32 val ) {
-	if( val < 0.0f )
-		val =f32( 360.0f + cry_fmod(val,360.0f));
-	else
-		if(val >= 360.0f)
-			val =f32(cry_fmod(val,360.0f));
-	return val;
-}
 
-//! normalize the val to -180, 180 range 
-ILINE f32 Snap_s180( f32 val ) {
-	if( val > -180.0f && val < 180.0f)
-		return val;
-	val = Snap_s360( val );
-	if( val>180.0f )
-		return -(360.0f - val);
-	return val;
-}
+
+
 
 
 
