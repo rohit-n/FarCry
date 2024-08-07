@@ -475,7 +475,7 @@ public:
   {
     if (m_LogFile)
     {
-      fprintf (m_LogFile, str);
+      fprintf (m_LogFile, "%s\n", str);
     }
   }
   
