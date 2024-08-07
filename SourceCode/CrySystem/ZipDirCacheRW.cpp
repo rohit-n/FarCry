@@ -9,8 +9,9 @@
 #include "ZipDirCacheRW.h"
 #include "ZipDirCacheFactory.h"
 #include "ZipDirFindRW.h"
-
-
+#ifdef __linux
+#include <sys/stat.h>
+#endif
 // declaration of Z_OK for ZipRawDecompress
 #include "zlib/zlib.h"
 
@@ -362,9 +363,14 @@ bool ZipDir::CacheRW::RelinkZip()
 	for (int nAttempt = 0; nAttempt < 32; ++nAttempt)
 	{
 		string strNewFilePath = m_strFilePath + "$" + GetRandomName(nAttempt);
+#ifndef __linux
 		if (GetFileAttributes (strNewFilePath.c_str()) != -1)
 			continue; //  we don't want to overwrite the old temp files for safety reasons
-
+#else
+		struct stat st;
+		if (stat(strNewFilePath.c_str(), &st) == 0)
+			continue;
+#endif
 		FILE* f = fopen (strNewFilePath.c_str(), "wb");
 		if (f)
 		{
