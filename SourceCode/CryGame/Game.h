@@ -908,6 +908,9 @@ public:
 	//! sets a timer for a generic script object table
 	int		AddTimer(IScriptObject *pTable,unsigned int nStartTimer,unsigned int nTimer,IScriptObject *pUserData,bool bUpdateDuringPause);
 	void	PlaySubtitle(ISound * pSound);
+#ifdef __linux
+	bool	GetCorrectedLevelPath(char* buf, const char* in);
+#endif
 	bool	OpenPacks(const char *szFolder);
 	bool	ClosePacks(const char *szFolder);
 
