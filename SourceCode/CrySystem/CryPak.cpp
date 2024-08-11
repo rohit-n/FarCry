@@ -1206,7 +1206,7 @@ bool CCryPak::InitPack(const char *szBasePath, unsigned nFlags)
 bool CCryPak::OpenPacksCommon(const char* szDir, char *cWork, unsigned nFlags)
 {
 	char buf[g_nMaxPath];
-	char* p1, *ext;
+	char* p1, *ext, *rp;
 	const char* p2;
 	DIR *fdir;
 	int i;
@@ -1227,14 +1227,20 @@ bool CCryPak::OpenPacksCommon(const char* szDir, char *cWork, unsigned nFlags)
 	}
 
 	p1 = buf;
-	p2 = szDir;
-
+	rp = realpath(".", NULL);
+	if (!rp)
+	{
+		closedir(fdir);
+		return false;
+	}
+	p2 = rp;
 	while (*p1 == *p2)
 	{
 		p1++;
 		p2++;
 	}
 	p1++;
+	free(rp);
 
 	while ((d = readdir(fdir)) != NULL)
 	{
