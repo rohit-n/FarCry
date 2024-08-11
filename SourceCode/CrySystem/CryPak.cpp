@@ -1258,8 +1258,39 @@ bool CCryPak::OpenPacksCommon(const char* szDir, char *cWork, unsigned nFlags)
 
 bool CCryPak::ClosePacks(const char *pWildcardIn, unsigned nFlags)
 {
-	__builtin_trap();
-	return false;
+	char buf[256];
+	string wildcard, pak;
+	char* p1, *ext;
+	DIR *fdir;
+	struct dirent *d;
+	strcpy(buf, pWildcardIn);
+
+	p1 = strrchr(buf, '*');
+	if (p1)
+	{
+		wildcard = string(p1 + 1);
+		*p1 = '\0';
+	}
+
+	fdir = opendir(buf);
+	if (fdir == NULL)
+	{
+		return false;
+	}
+
+	while ((d = readdir(fdir)) != NULL)
+	{
+		ext = strstr(d->d_name, ".");
+		if (ext && !strcasecmp(ext, wildcard.c_str()))
+		{
+			pak = string(buf) + string(d->d_name);
+			ClosePack(pak.c_str(), nFlags);
+		}
+	}
+
+	closedir(fdir);
+
+	return true;
 }
 
 bool CCryPak::InitPack(const char *szBasePath, unsigned nFlags)
