@@ -43,6 +43,10 @@
 #include "CrySizerStats.h"
 #include "CrySizerImpl.h"
 
+#ifdef __linux
+#include <unistd.h>
+#endif
+
 // this is the list of modules that can be loaded into the game process
 // Each array element contains 2 strings: the name of the module (case-insensitive)
 // and the name of the group the module belongs to
@@ -825,8 +829,11 @@ bool CSystem::GetSSFileInfo( const char *inszFileName, char *outszInfo, const DW
 
 		// get mastercd directory (like in editor) - can be cleaned up
 		char szMasterCD[_MAX_PATH];
-
+#ifndef __linux
 		GetCurrentDirectory( _MAX_PATH,szMasterCD );
+#else
+		getcwd( szMasterCD, _MAX_PATH );
+#endif
 
 		if(::_GetSSFileInfo(	szDatabase,													// sourcesafe file
 													szRoot,															// project sourcesafe path 
