@@ -1672,7 +1672,12 @@ bool CCryPakFindData::Fetch(dirent* pfd)
 
 	FileMap::iterator it = m_mapFiles.begin();
 	memcpy(pfd->d_name, it->first.c_str(), min(sizeof(pfd->d_name), it->first.length()+1));
-	// pfd->attrib = it->second.nAttrib;
+	pfd->d_type = DT_REG;
+	if (it->second.nAttrib & _A_SUBDIR)
+	{
+		pfd->d_type = DT_DIR;
+	}
+
 	// pfd->size   = it->second.nSize;
 	// pfd->time_access = it->second.tAccess;
 	// pfd->time_create = it->second.tCreate;
@@ -1708,6 +1713,10 @@ CCryPakFindData::FileDesc::FileDesc (struct dirent* fd)
 {
 	nSize   = 0;
 	nAttrib = 0;
+	if (fd->d_type == DT_DIR)
+	{
+		nAttrib |= _A_SUBDIR;
+	}
 	tAccess = 0;
 	tCreate = 0;
 	tWrite  = 0;
