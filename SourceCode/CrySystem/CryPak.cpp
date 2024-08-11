@@ -1814,6 +1814,9 @@ size_t CCryPakFindData::sizeofThis()const
 
 bool CCryPak::MakeDir(const char* szPath)
 {
+#ifdef __linux
+	struct stat st;
+#endif
 	for (const char*p = szPath; *p; )
 	{
 		while (*p != g_cNonNativeSlash && *p != g_cNativeSlash && *p)
@@ -1821,19 +1824,35 @@ bool CCryPak::MakeDir(const char* szPath)
 
 		string strSubdir(szPath, p - szPath);
 		// check whether such file or dir exists
+#ifndef __linux
 		DWORD dwAttr = GetFileAttributes(strSubdir.c_str());
+#else
+		int dwAttr = stat(strSubdir.c_str(), &st);
+#endif
 		if (strSubdir.empty() || strSubdir[strSubdir.length()-1] == ':')
 		{
 			// this is the disk specification - do nothing, the disk should already exist
 		}
 		else
+#ifndef __linux
 			if (dwAttr == INVALID_FILE_ATTRIBUTES)
 			{
 				if (_mkdir (strSubdir.c_str()))
 					return false; // couldn't create such directory
 			}
+#else
+			if (dwAttr != 0)
+			{
+				if (mkdir(strSubdir.c_str(), 0755) != 0)
+					return false;
+			}
+#endif
 			else
+#ifndef __linux
 				if (dwAttr & FILE_ATTRIBUTE_DIRECTORY)
+#else
+				if (S_ISDIR(st.st_mode ))
+#endif
 				{
 					// do nothing - such a directory already exists
 				}
