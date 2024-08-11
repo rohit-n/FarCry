@@ -1602,9 +1602,11 @@ void CCryPakFindData::ScanFS(CCryPak*pPak, const char *szDirIn)
 
 	_findclose (nFS);
 #else
-	size_t len = strlen(szDirIn);
+	size_t i, len = strlen(szDirIn);
+	char* first, *second;
 	DIR *fdir;
 	char buf[256];
+	string ext = "*";
 	struct dirent *d;
 	strcpy(buf, szDirIn);
 	if (len <= 3)
@@ -1613,16 +1615,49 @@ void CCryPakFindData::ScanFS(CCryPak*pPak, const char *szDirIn)
 		return;
 	}
 
-	if (strcmp(buf + (len - 3), "*.*"))
+	for (i = 0; i < len; i++)
 	{
-		fprintf(stderr, "%s - Specific wildcards not supported\n", szDirIn);
-		return;
+		if (buf[i] == '\\')
+		{
+			buf[i] = '/';
+		}
 	}
 
-	buf[len - 3] = '\0';
-	if (buf[len - 4] == '\\')
+	first = second = NULL;
+
+	if (strcmp(buf + (len - 3), "*.*"))
 	{
-		buf[len - 4] = '\0';
+		second = strrchr(buf, '*');
+		if (!second)
+		{
+			fprintf(stderr, "%s - Unsupported directory for ScanFS\n", szDirIn);
+			return;
+		}
+		*second = '\0';
+		first = strrchr(buf, '/');
+		if (!first)
+		{
+			fprintf(stderr, "%s - Unsupported directory for ScanFS\n", szDirIn);
+			return;
+		}
+		*first = '\0';
+		first++;
+		second++;
+		if (strrchr(second, "*") != NULL)
+		{
+			fprintf(stderr, "%s - Cannot handle multiple wildcards\n", szDirIn);
+			return;
+		}
+
+		ext = second;
+	}
+	else
+	{
+		buf[len - 3] = '\0';
+		if (buf[len - 4] == '\\')
+		{
+			buf[len - 4] = '\0';
+		}
 	}
 
 	fdir = opendir(buf);
@@ -1634,6 +1669,31 @@ void CCryPakFindData::ScanFS(CCryPak*pPak, const char *szDirIn)
 
 	while ((d = readdir(fdir)) != NULL)
 	{
+		if (ext.compare("*") != 0)
+		{
+			if (strlen(d->d_name) <= ext.length())
+			{
+				//filename is too short
+				continue;
+			}
+
+			second = d->d_name + strlen(d->d_name) - ext.length();
+			if (strcasecmp(second, ext.c_str()))
+			{
+				//extension is incorrect
+				continue;
+			}
+
+			if (first != NULL && strlen(first) > 0)
+			{
+				if (strncmp(d->d_name, first, strlen(first)))
+				{
+					//string before wildcard is incorrect
+					continue;
+				}
+			}
+		}
+
 		m_mapFiles.insert (FileMap::value_type(d->d_name, FileDesc(d)));
 	}
 
