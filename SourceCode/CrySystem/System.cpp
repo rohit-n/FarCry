@@ -848,7 +848,6 @@ bool CSystem::Update( int updateFlags, int nPauseMode )
 	
 
 #ifndef _XBOX
-#ifdef WIN32
   // process window messages
 	{
 		FRAME_PROFILER( "SysUpdate:PeekMessage",this,PROFILE_SYSTEM );
@@ -904,7 +903,6 @@ bool CSystem::Update( int updateFlags, int nPauseMode )
 		events.clear();
 #endif
   }
-#endif
 #endif
 
 	m_Time.MeasureTime("WndMess");
@@ -1211,6 +1209,7 @@ void CSystem::VTunePause()
 //////////////////////////////////////////////////////////////////////////
 void CSystem::Deltree(const char *szFolder, bool bRecurse)
 {
+#ifndef __linux
 	__finddata64_t fd;
 	string filespec = szFolder;
 	filespec += "*.*";
@@ -1253,6 +1252,45 @@ void CSystem::Deltree(const char *szFolder, bool bRecurse)
 	_findclose(hfil);
 
 	RemoveDirectory(szFolder);
+#else
+	DIR *fdir;
+	struct dirent *d;
+	string name;
+
+	fdir = opendir(szFolder);
+	if (fdir == NULL)
+	{
+		__builtin_trap();
+		closedir(fdir);
+		return;
+	}
+
+	while ((d = readdir(fdir)) != NULL)
+	{
+		if (d->d_type == DT_DIR)
+		{
+			if (strcmp(d->d_name, ".") && strcmp(d->d_name, ".."))
+			{
+				if (bRecurse)
+				{
+					name = szFolder;
+					name += d->d_name;
+					name += "/";
+
+					Deltree(name.c_str(), bRecurse);
+				}
+			}
+		}
+		else
+		{
+			name = szFolder;
+			name += d->d_name;
+			remove(name.c_str());
+		}
+	}
+
+	remove(szFolder);
+#endif
 }
 
 
