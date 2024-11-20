@@ -36,6 +36,9 @@
 static int64 g_lCurrentTime = 0;
 #endif
 
+#ifdef __linux
+#include <SDL2/SDL.h>
+#endif
 /////////////////////////////////////////////////////
 CTimer::CTimer() 
 {
@@ -75,7 +78,7 @@ bool CTimer::Init(ISystem *pSystem)
 	m_pSystem->GetIConsole()->Register( "fixed_time_step",&m_fixed_time_step,0,0,"Game updated with this fixed time step" );
 #if !defined (PS2) && !defined (GC)	
 	LARGE_INTEGER TTicksPerSec;
-
+#ifndef __linux
 	if (QueryPerformanceFrequency(&TTicksPerSec))
 	{ 
 		// performance counter is available, use it instead of multimedia timer
@@ -85,12 +88,14 @@ bool CTimer::Init(ISystem *pSystem)
 		m_pfnUpdate = &CTimer::GetPerformanceCounterTime;
 	}
 	else
-	{ 
+	{
+#endif
 		//Use MM timer if unable to use the High Frequency timer
 		m_lTicksPerSec=1000;
 		m_pfnUpdate = &CTimer::GetMMTime;
+#ifndef __linux
 	}
-
+#endif
 	Reset();
 
 	return (true);
@@ -199,6 +204,7 @@ void CTimer::Enable(bool bEnable)
 
 //get time from performance counter
 /////////////////////////////////////////////////////
+#ifndef __linux
 int64 CTimer::GetPerformanceCounterTime()
 {
 #ifdef PROFILING
@@ -215,13 +221,16 @@ int64 CTimer::GetPerformanceCounterTime()
 
 	return lNow.QuadPart;
 }
-
+#endif
 //get time from multimedia timer
 /////////////////////////////////////////////////////
 int64 CTimer::GetMMTime()
-{		
+{
+#ifndef __linux
 	int64 lNow=timeGetTime();
-
+#else
+	int64 lNow=SDL_GetTicks64();
+#endif
 	return lNow;
 }
 
