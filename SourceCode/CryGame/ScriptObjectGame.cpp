@@ -2700,7 +2700,7 @@ int CScriptObjectGame::GetSaveGameList(IFunctionHandler *pH)
 
 	pH->GetParam(1, szProfileName);
 
-	string szSaveGameDir = "profiles/player/";
+	string szSaveGameDir = m_pGame->GetPlayerProfilePath();
 	szSaveGameDir+= szProfileName;
 	szSaveGameDir += "/savegames/";
 
@@ -3386,6 +3386,8 @@ bool CScriptObjectGame::_GetProfileFileNames( IFunctionHandler *pH, string &outS
 	outSystem="system.cfg";
 	outGame="game.cfg";
 
+	string path = m_pGame->GetPlayerProfilePath();
+
 	if(pH->GetParamCount()>0)		// use given profile name or don't use profiles 
 	{
 		CHECK_PARAMETERS(1);
@@ -3401,8 +3403,8 @@ bool CScriptObjectGame::_GetProfileFileNames( IFunctionHandler *pH, string &outS
 
 		string sName;
 
-		outSystem=string("Profiles/Player/")+sProfileName+"_"+outSystem;
-		outGame=string("Profiles/Player/")+sProfileName+"_"+outGame;
+		outSystem=path+sProfileName+"_"+outSystem;
+		outGame=path+sProfileName+"_"+outGame;
 	}
 	return true;
 }
@@ -3500,16 +3502,17 @@ int CScriptObjectGame::SaveConfiguration(IFunctionHandler *pH)
 
 	if (szProfileName)
 	{
-		string path = "profiles/player/";
+		string path = m_pGame->GetPlayerProfilePath();
 		path += szProfileName;
 #if defined(LINUX)
-		mkdir( path.c_str(), 0xFFFF );
+		mkdir( path.c_str(), 0755 );
+		path += "/";
 #else
 		_mkdir( path.c_str() );
 #endif
 		path += "savegames/";
 #if defined(LINUX)
-		mkdir( path.c_str(), 0xFFFF );
+		mkdir( path.c_str(), 0755 );
 #else
 		_mkdir( path.c_str() );
 #endif

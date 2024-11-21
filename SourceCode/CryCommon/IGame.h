@@ -316,6 +316,7 @@ struct IGame
 	//virtual ITagPointManager* GetTagPointManager();
 	virtual IXAreaMgr* GetAreaManager() = 0;
 	virtual ITagPointManager* GetTagPointManager() = 0;
+	virtual string GetPlayerProfilePath() = 0;
 };
 
 #ifdef GAME_IS_FARCRY

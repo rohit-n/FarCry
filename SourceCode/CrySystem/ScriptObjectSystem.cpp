@@ -831,8 +831,16 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler *pH)
 		dirent c_file;
 #endif
 		intptr_t hFile;
+		if (!strcmp(pszFolderName, "profiles/player"))
+		{
+			hFile = m_pSystem->GetIPak()->FindFirst((m_pSystem->GetIGame()->GetPlayerProfilePath() + "*.*").c_str(), &c_file);
+		}
+		else
+		{
+			hFile = m_pSystem->GetIPak()->FindFirst((string(pszFolderName) + "/*.*").c_str(), &c_file);
+		}
 
-		if ((hFile = m_pSystem->GetIPak()->FindFirst((string(pszFolderName) + "/*.*").c_str(), &c_file)) == -1L)
+		if (hFile == -1L)
 		{
 			return pH->EndFunction(*pObj);
 		}

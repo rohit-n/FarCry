@@ -209,11 +209,11 @@ private:
 // IMPORTANT: DONT FORGET TO UPDATE "SAVEVERSION" DEFINE IN GAME.H IF THE FORMAT CHANGES
 //
 //////////////////////////////////////////////////////////////////////////
-void SaveName(string &s, string &prof)
+void SaveName(string &s, string &prof, string profilePath)
 {
 	if(!s[0]) s = "quicksave";
 	for(unsigned int i = 0; i<s.size(); i++) if(!isalnum(s[i])) s[i] = '_';
-	s = "profiles/player/" + prof + "/savegames/" + s + ".sav";
+	s = profilePath + prof + "/savegames/" + s + ".sav";
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -664,12 +664,12 @@ void CXGame::Save(string sFileName, Vec3d *pos, Vec3d *angles,bool bFirstCheckpo
 		if (g_playerprofile->GetString() && strlen(g_playerprofile->GetString()))
 		{
 			string tmp( g_playerprofile->GetString() );
-			SaveName(sFileName, tmp);
+			SaveName(sFileName, tmp, GetPlayerProfilePath());
 		}
 		else
 		{
 			string tmp( "default" );
-			SaveName(sFileName, tmp);
+			SaveName(sFileName, tmp, GetPlayerProfilePath());
 		}
 		
 		m_pLog->LogToConsole("Level saved in %d bytes(%s)", BITS2BYTES(stm.GetSize()), sFileName.c_str());
@@ -1438,7 +1438,7 @@ bool CXGame::Load(string sFileName)
 	assert(g_playerprofile);
 	
 	string tmp( g_playerprofile->GetString() );
-	SaveName(sFileName, tmp);
+	SaveName(sFileName, tmp, GetPlayerProfilePath());
 
 	CDefaultStreamAllocator sa;
 	CStream stm(300, &sa); 
@@ -1658,10 +1658,11 @@ void CXGame::SaveConfiguration( const char *pszSystemCfg,const char *pszGameCfg,
 
 	string sSystemCfg = pszSystemCfg;
 	string sGameCfg = pszGameCfg;
+	string path = GetPlayerProfilePath();
 	if (sProfileName)
 	{	
-		sSystemCfg=string("Profiles/Player/")+sProfileName+"_"+sSystemCfg;
-		sGameCfg=string("Profiles/Player/")+sProfileName+"_"+sGameCfg;		
+		sSystemCfg=path+sProfileName+"_"+sSystemCfg;
+		sGameCfg=path+sProfileName+"_"+sGameCfg;
 	}
 
 	FILE *pFile=fxopen(sSystemCfg.c_str(), "wb");
@@ -1791,10 +1792,11 @@ void CXGame::LoadConfiguration(const string &sSystemCfg,const string &sGameCfg)
 //////////////////////////////////////////////////////////////////////////
 void CXGame::RemoveConfiguration(string &sSystemCfg,string &sGameCfg,const char *sProfileName)
 {
+	string path = GetPlayerProfilePath();
 	if (sProfileName)
 	{	
-		sSystemCfg=string("Profiles/Player/")+sProfileName+"_"+sSystemCfg;
-		sGameCfg=string("Profiles/Player/")+sProfileName+"_"+sGameCfg;
+		sSystemCfg=path+sProfileName+"_"+sSystemCfg;
+		sGameCfg=path+sProfileName+"_"+sGameCfg;
 	}
 	
 #if defined(LINUX)
@@ -1806,7 +1808,7 @@ void CXGame::RemoveConfiguration(string &sSystemCfg,string &sGameCfg,const char 
 #endif
 
 	// remove the folder
-	string path = "profiles/player/";
+	path = GetPlayerProfilePath();
 	path += sProfileName;
 	path += "/";
 

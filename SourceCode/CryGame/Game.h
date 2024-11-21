@@ -927,6 +927,7 @@ public:
 
 	virtual IXAreaMgr* GetAreaManager() { return &m_XAreaMgr; };
 	virtual ITagPointManager* GetTagPointManager();
+	string	GetPlayerProfilePath();
 
 	ITagPointManager *m_pTagPointManager;
 	string m_sGameName;

@@ -1963,3 +1963,70 @@ ITagPointManager* CXGame::GetTagPointManager()
 {
 	return m_pTagPointManager;
 }
+
+string CXGame::GetPlayerProfilePath()
+{
+#ifdef __linux
+	DIR *fdir;
+	int found_profiles = 0;
+	int found_player = 0;
+	struct dirent *d;
+	string ret;
+
+	fdir = opendir(".");
+	if (fdir == NULL)
+	{
+		__builtin_trap();
+		closedir(fdir);
+		return "";
+	}
+
+	while ((d = readdir(fdir)) != NULL)
+	{
+		if ((d->d_type == DT_DIR || d->d_type == DT_LNK) && !strcasecmp(d->d_name, "profiles"))
+		{
+			found_profiles = 1;
+			ret += d->d_name;
+			ret += "/";
+			break;
+		}
+	}
+
+	closedir(fdir);
+	if (!found_profiles)
+	{
+		__builtin_trap();
+		return "";
+	}
+
+	fdir = opendir(ret.c_str());
+
+	if (fdir == NULL)
+	{
+		__builtin_trap();
+		closedir(fdir);
+		return "";
+	}
+
+	while ((d = readdir(fdir)) != NULL)
+	{
+		if ((d->d_type == DT_DIR || d->d_type == DT_LNK) && !strcasecmp(d->d_name, "player"))
+		{
+			found_player = 1;
+			ret += d->d_name;
+			ret += "/";
+			break;
+		}
+	}
+
+	if (!found_player)
+	{
+		__builtin_trap();
+		return "";
+	}
+
+	return ret;
+#else
+	return "Profiles/Player/";
+#endif
+}
