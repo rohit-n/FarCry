@@ -85,6 +85,7 @@ public:
 
 	//! Create a dot3 lightmap ColorLerp / DomDirection tetxure pair
 	virtual RenderLMData * CreateLightmap(const char *pszFileName, int nItem, UINT iWidth, UINT iHeight, BYTE *pColorLerp4, BYTE *pHDRColorLerp4, BYTE *pDomDirection3, BYTE *pOccl2 = 0);
+	virtual string GetLMPakFilename(const char *pszFileName);
 // ----------------------------------------------
 
 protected:

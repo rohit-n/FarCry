@@ -103,8 +103,9 @@ bool CLMSerializationManager2::_Load( const char *pszFileName, std::vector<IEnti
 	GetSystem()->GetILog()->UpdateLoadingScreen("\003Loading lightmaps ...");
 
 	string strDirName = CryStringUtils::GetParentDirectory<string>(pszFileName);
+	string LMPak = GetLMPakFilename(pszFileName);
 	// make sure the pak file in which this LM data resides is opened
-	GetPak()->OpenPack ((strDirName + "\\" LEVELLM_PAK_NAME).c_str());
+	GetPak()->OpenPack (LMPak.c_str());
 
 	FileHeader sHeader;
 	size_t iNumItemsRead;
@@ -680,6 +681,37 @@ RenderLMData * CLMSerializationManager2::CreateLightmap(const string& strDirPath
     }
 	} 
 	return new RenderLMData(pIRenderer, iColorLerpTex, iHDRColorLerpTex, iDomDirectionTex, iOcclTex);
+}
+
+string CLMSerializationManager2::GetLMPakFilename(const char *pszFileName)
+{
+	string strDirName = CryStringUtils::GetParentDirectory<string>(pszFileName);
+#ifdef __linux
+	DIR *fdir;
+	struct dirent *d;
+	fdir = opendir(strDirName.c_str());
+	if (fdir == NULL)
+	{
+		__builtin_trap();
+		closedir(fdir);
+		return "";
+	}
+
+	while ((d = readdir(fdir)) != NULL)
+	{
+		if (!strcasecmp(d->d_name, LEVELLM_PAK_NAME))
+		{
+			closedir(fdir);
+			return strDirName + "/" + d->d_name;
+		}
+	}
+
+	closedir(fdir);
+	__builtin_trap();
+	return "";
+#else
+	return strDirName + "\\" LEVELLM_PAK_NAME;
+#endif
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
