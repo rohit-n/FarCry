@@ -38,6 +38,7 @@ inline DWORD sCycles()
   return L;
 }
 */
+#ifndef __linux
 inline double sCycles2()
 {
 #if defined(WIN32) && !defined(WIN64)  
@@ -57,13 +58,14 @@ inline double sCycles2()
 #endif
   
 }
-
+#endif
 #ifdef __GNUC__
 # define cpuid(op, eax, ebx, ecx, edx) __asm__("cpuid" : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx) : "a" (op) : "cc");
 #endif
 
 static double measure_clock_speed(double& SecondsPerCycle )
 {
+#ifndef __linux
   LARGE_INTEGER Freq;
   LARGE_INTEGER c0, c1;
 
@@ -104,7 +106,7 @@ static double measure_clock_speed(double& SecondsPerCycle )
   SetThreadPriority( GetCurrentThread(), thread_priority );
 
 #endif
-
+#endif //__linux
   return 1.0e-6/SecondsPerCycle;
 }
 
