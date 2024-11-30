@@ -13,8 +13,7 @@
 #include "StdAfx.h"
 #include "UIScreen.h"
 #include "UISystem.h"
-
-
+#include "ISound.h"
 
 _DECLARE_SCRIPTABLEEX(CUIScreen);
 
@@ -419,6 +418,32 @@ int CUIScreen::OnActivate()
 	}
 
 	int iResult = 1;
+#ifdef __linux
+	int w, h;
+	bool curr_fullscreen = false;
+	bool last_fullscreen = false;
+	ISystem* sys = m_pUISystem->GetISystem();
+	IConsole* console = sys->GetIConsole();
+	IRenderer *rend = m_pUISystem->GetIRenderer();
+	SDL_Window* wind = rend->GetHWND();
+	unsigned int winflags = SDL_GetWindowFlags(wind);
+	w = console->GetCVar("r_Width")->GetIVal();
+	h = console->GetCVar("r_Height")->GetIVal();
+	if (console->GetCVar("r_Fullscreen")->GetIVal())
+	{
+		curr_fullscreen = true;
+	}
+	if (winflags & SDL_WINDOW_FULLSCREEN)
+	{
+		last_fullscreen = true;
+	}
+
+	if (w != rend->GetWidth() || h != rend->GetHeight() || curr_fullscreen != last_fullscreen)
+	{
+		rend->ChangeResolution(w, h, 32, 60, curr_fullscreen);
+		m_pUISystem->GetISystem()->GetISoundSystem()->Silence();
+	}
+#endif
 
 	pScriptSystem->BeginCall(pScriptFunction);
 	pScriptSystem->PushFuncParam(GetScriptObject());

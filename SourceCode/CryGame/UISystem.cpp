@@ -305,7 +305,12 @@ void CUISystem::Update()
 #endif
 	
 	FUNCTION_PROFILER( m_pSystem, PROFILE_GAME );
-
+#ifdef __linux
+	ISystem* sys = GetISystem();
+	IConsole* console = sys->GetIConsole();
+	int old_fullscreen, new_fullscreen;
+	old_fullscreen = console->GetCVar("r_Fullscreen")->GetIVal();
+#endif
 	if (m_pRenderer && m_iReloadFrameID > -1 && m_pRenderer->GetFrameID() == m_iReloadFrameID)
 	{
 		Reload(0);
@@ -613,7 +618,14 @@ void CUISystem::Update()
 			}
 		}
 	}
-
+#ifdef __linux
+	new_fullscreen = console->GetCVar("r_Fullscreen")->GetIVal();
+	if (old_fullscreen != new_fullscreen)
+	{
+		Reload(0);
+		return;
+	}
+#endif
 	// check if the widget is still "alive"
 	// it might be dead because of a call to release, or because of a call to Reload()
 	if (!WidgetExist(pMouseOver))
