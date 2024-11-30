@@ -5,6 +5,8 @@
 
 #define RemoveCRLF(...) //TODO: Add real function or delete RemoveCRLF from code
 
+#include <SDL2/SDL.h>
+
 #define _fstat64 fstat64
 #define DebugBreak() do { __asm__ volatile ("int $3"); } while(0)
 #define Int32x32To64(a, b) ((uint64)((uint64)(a)) * (uint64)((uint64)(b)))
@@ -51,8 +53,9 @@ extern BOOL SetFileTime(
     const FILETIME *lpLastWriteTime
     );
 extern BOOL GetFileTime(HANDLE hFile, LPFILETIME lpCreationTime, LPFILETIME lpLastAccessTime, LPFILETIME lpLastWriteTime);
+#if 0
 extern uint64_t __rdtsc();
-
+#endif
 extern HRESULT GetOverlappedResult(HANDLE hFile, void* lpOverlapped, LPDWORD lpNumberOfBytesTransferred, BOOL bWait);
 
 extern const BOOL compareTextFileStrings(const char* cpReadFromFile, const char* cpToCompareWith);
@@ -131,7 +134,18 @@ extern BOOL SystemTimeToFileTime(const SYSTEMTIME* syst, LPFILETIME ft);
 extern bool IsBadReadPtr(void* ptr, unsigned int size);
 
 // Defined in the launcher.
-void OutputDebugString(const char*);
+inline void OutputDebugString(const char* str)
+{
+    size_t len = strlen(str);
+    if (str[len - 1] == '\n')
+    {
+        printf("%s", str);
+    }
+    else
+    {
+         printf("%s\n", str);
+    }
+}
 
 
 //critical section stuff
@@ -165,10 +179,7 @@ extern bool QueryPerformanceFrequency(LARGE_INTEGER* frequency);
 
 inline uint32 GetTickCount()
 {
-    LARGE_INTEGER count, freq;
-    QueryPerformanceCounter(&count);
-    QueryPerformanceFrequency(&freq);
-    return uint32(count.QuadPart * 1000 / freq.QuadPart);
+    return SDL_GetTicks();
 }
 
 #define IGNORE              0       // Ignore signal
@@ -318,7 +329,16 @@ extern HANDLE CreateThread(
 
 //helper function
 extern void adaptFilenameToLinux(string& rAdjustedFilename);
-extern const int comparePathNames(const char* cpFirst, const char* cpSecond, unsigned int len);//returns 0 if identical
+inline const int comparePathNames(const char* cpFirst, const char* cpSecond, unsigned int len)
+{
+    int comp = strncasecmp(cpFirst, cpSecond, len);
+	if (comp != 0 && cpFirst[len - 1] == '\\')
+	{
+		comp = strncasecmp(cpFirst, cpSecond, len - 1);
+	}
+
+	return comp;
+}
 extern void replaceDoublePathFilename(char* szFileName);//removes "\.\" to "\" and "/./" to "/"
 
 //////////////////////////////////////////////////////////////////////////
@@ -331,7 +351,19 @@ extern void _splitpath(const char* inpath, char* drv, char* dir, char* fname, ch
 //////////////////////////////////////////////////////////////////////////
 extern int memicmp(LPCSTR s1, LPCSTR s2, DWORD len);
 
-extern "C" char* strlwr (char* str);
+inline char* strlwr (char* str)
+{
+    size_t i;
+    size_t len = strlen(str);
+    for (i = 0; i < len; i++)
+    {
+        if (isalpha(str[i]))
+        {
+            str[i] = tolower(str[i]);
+        }
+    }
+    return str;
+}
 extern "C" char* strupr(char* str);
 
 extern char* _strtime(char* date);
