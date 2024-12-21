@@ -163,10 +163,19 @@ void CDefenceWall::FillStdServerProbes()
 bool CDefenceWall::ServerCreateModuleProbe( const char *sFilename,SClientCheckContext &ctx )
 {
 	char sModule[_MAX_PATH];
+#ifndef __linux
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
 	_splitpath( sFilename,0,0,fname,ext );
 	_makepath( sModule,0,0,fname,ext );
+#else
+	const char* last_slash = strrchr(sFilename, '/');
+	if (!last_slash)
+	{
+		return false;
+	}
+	strcpy(sModule, last_slash + 1);
+#endif
 	strlwr( sModule );
 
 	// Skip comparing render dll code. (Can be OGL,D3D or NULL)
@@ -415,7 +424,11 @@ void CDefenceWall::GetRelativeFilename( string &sFilename )
 
 	// Get current folder.
 	char szCurrDir[_MAX_PATH];
+#ifndef __linux
 	GetCurrentDirectory( sizeof(szCurrDir),szCurrDir );
+#else
+	getcwd(szCurrDir, sizeof(szCurrDir));
+#endif
 	string sCurDir = szCurrDir;
 
 	UnifyFilename(sCurDir);
