@@ -34,6 +34,7 @@
 #ifdef LINUX
 #include <sys/dir.h>
 #include <sys/io.h>
+#include <unistd.h>
 #else
 #	include <direct.h>
 #	include <io.h>
@@ -57,7 +58,11 @@ m_pPakVars (pPakVars?pPakVars:&g_PakVars),
 m_mapMissingFiles ( std::less<string>(), MissingFileMapAllocator(g_pBigHeap) )
 {
 	char szCurrentDir[0x800];
+#ifndef __linux
 	if (GetCurrentDirectory(sizeof(szCurrentDir), szCurrentDir))
+#else
+	if (getcwd( szCurrentDir, sizeof(szCurrentDir) ))
+#endif
 	{
 		// normalize it (lower-char with forward slashes and trailing slash)
 		char* p;
@@ -206,9 +211,12 @@ char* CCryPak::BeautifyPath(char* dst)
 const char* CCryPak::AdjustFileName(const char *src, char *dst, unsigned nFlags,bool *bFoundInPak)
 {
 	char* rp;
+	size_t i, len;
 	char buf[g_nMaxPath];
-	strcpy(buf, "../");
-	strcat(buf, src);
+	char tmp[g_nMaxPath];
+	char* needle;
+
+	strcpy(buf, src);
 
 	if (*src == '/')
 	{
@@ -220,19 +228,73 @@ const char* CCryPak::AdjustFileName(const char *src, char *dst, unsigned nFlags,
 	rp = realpath(buf, dst);
 	if (!rp)
 	{
-		rp = realpath("../", dst);
+		rp = realpath(".", NULL);
 		if (!rp)
 		{
-			fprintf(stderr, "realpath failed for ../!\n");
+			fprintf(stderr, "realpath failed for .!\n");
 			__builtin_trap();
 			return NULL;
 		}
 
 		strcpy(dst, rp);
 		strcat(dst, "/");
-		strcat(dst, src);
-
+		//don't allow paths with multiple forward slashes
+		len = strlen(src);
+		for (i = 0; i < len; i++)
+		{
+			if (i < len - 1)
+			{
+				if (src[i] == '/' && src[i + 1] == '/')
+				{
+					continue;
+				}
+			}
+			strncat(dst, (src + i), 1);
+		}
+		free(rp);
 	}
+
+	needle = strstr(dst, "/../");
+	if (needle)
+	{
+		strcpy(tmp, needle + 3);
+		*needle = '\0';
+		needle = strrchr(dst, '/');
+		*needle = '\0';
+		
+		strcat(dst, tmp);
+	}
+
+	needle = strstr(dst, "/../");
+	if (needle)
+	{
+		__builtin_trap();
+	}
+
+	needle = strstr(dst, "\\.\\");
+	if (needle)
+	{
+		strcpy(tmp, needle + 3);
+		*needle = '\0';
+		strcat(dst, "/");
+		strcat(dst, tmp);
+	}
+
+	needle = strstr(dst, "\\.\\");
+	if (needle)
+	{
+		__builtin_trap();
+	}
+
+	len = strlen(dst);
+	for (i = 0; i < len; i++)
+	{
+		if (dst[i] == '\\')
+		{
+			dst[i] = '/';
+		}
+	}
+
 	return dst;
 }
 #else
@@ -653,9 +715,6 @@ FILE *CCryPak::FOpen(const char *pName, const char *szMode,unsigned nFlags2)
 // the path must be absolute normalized lower-case with forward-slashes
 CCachedFileDataPtr CCryPak::GetFileData(const char* szName)
 {
-#if defined(LINUX)
-	replaceDoublePathFilename((char*)szName);
-#endif
 	unsigned nNameLen = (unsigned)strlen(szName);
 	AUTO_LOCK(m_csZips);
 	// scan through registered pak files and try to find this file
@@ -1711,12 +1770,6 @@ void CCryPakFindData::ScanZips (CCryPak* pPak, const char* szDir)
 	{
 		size_t nBindRootLen = it->strBindRoot.length();
 
-#ifdef __linux
-		if (*(szDir+nBindRootLen) == '/')
-		{
-			nBindRootLen++;
-		}
-#endif
 #if defined(LINUX)
 		if (nLen > nBindRootLen && !comparePathNames(szDir, it->strBindRoot.c_str(), nBindRootLen))
 #else
