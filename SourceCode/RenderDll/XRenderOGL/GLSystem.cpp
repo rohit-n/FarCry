@@ -2520,7 +2520,7 @@ void CGLRenderer::ShutDown(bool bReInit)
   }
   if (hWnd && !bReInit)
   {
-    DestroyWindow(hWnd);
+    SDL_DestroyWindow(hWnd);
   }
 #else
   SDL_GL_DeleteContext(m_RContexts[0]->m_Context);
