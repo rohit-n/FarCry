@@ -469,6 +469,29 @@ void CGLRenderer::BeginFrame()
 
 bool CGLRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen)
 {
+#ifdef USE_SDL
+  char szWinTitle[80];
+  sprintf(szWinTitle,"- Far Cry - %s (%s)", __DATE__, __TIME__);
+  SDL_DestroyWindow(m_RContexts[0]->m_Window);
+
+  Uint32 windowFlags = SDL_WINDOW_OPENGL;
+  if (bFullScreen)
+  {
+   windowFlags |= SDL_WINDOW_FULLSCREEN;
+  }
+
+  m_FullScreen = bFullScreen;
+
+  m_RContexts[0]->m_Window = SDL_CreateWindow(szWinTitle,
+    SDL_WINDOWPOS_CENTERED,
+    SDL_WINDOWPOS_CENTERED,
+    nNewWidth,
+    nNewHeight,
+    windowFlags);
+
+  SDL_GL_MakeCurrent(m_RContexts[0]->m_Window, m_RContexts[0]->m_Context);
+  ChangeViewport(0, 0, nNewWidth, nNewHeight);
+#endif
   return false;
 }
 
