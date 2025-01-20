@@ -909,7 +909,7 @@ public:
 	int		AddTimer(IScriptObject *pTable,unsigned int nStartTimer,unsigned int nTimer,IScriptObject *pUserData,bool bUpdateDuringPause);
 	void	PlaySubtitle(ISound * pSound);
 #ifdef __linux
-	bool	GetCorrectedLevelPath(char* buf, const char* in);
+	string	GetCorrectedLevelPath(string in);
 #endif
 	bool	OpenPacks(const char *szFolder);
 	bool	ClosePacks(const char *szFolder);

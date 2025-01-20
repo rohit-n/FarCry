@@ -1429,6 +1429,60 @@ void CXGame::ProcessPMessages(const char *szMsg)
 //	}
 }
 
+#ifdef __linux
+string CXGame::GetCorrectedLevelPath(string in)
+{
+	string ret;
+	ICryPak *pIPak = m_pSystem->GetIPak();
+	dirent c_file;
+	intptr_t hFile;
+	bool found_mission = false;
+	string level; 
+
+	ret = in;
+	
+	if (ret.find('/') == string::npos)
+	{
+		return in;
+	}
+	
+	level = ret.substr(ret.find('/') + 1, string::npos);
+	ret.erase(ret.find('/'), string::npos);
+	ret += "/*";
+	hFile = pIPak->FindFirst(ret.c_str(), &c_file);
+	if (hFile == -1L)
+	{
+		return in;
+	}
+	do
+	{
+		if (IS_DIR(c_file))
+		{
+			if (!stricmp(FNAME(c_file), level.c_str()))
+			{
+				found_mission = true;
+				level = string(FNAME(c_file));
+				break;
+			}
+		}
+	} while(pIPak->FindNext( hFile, &c_file ) == 0);
+
+	pIPak->FindClose( hFile );
+
+	if (found_mission)
+	{
+		ret.erase(ret.find('*'), string::npos);
+		ret += level;
+	}
+	else
+	{
+		return in;
+	}
+
+	return ret;
+}
+#endif
+
 //////////////////////////////////////////////////////////////////////////
 /*! Load a level on the local machine (connecting with a local client)
 	@param dedicated if true the local client will not be created
@@ -1469,6 +1523,19 @@ void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szM
 	{
 		// This is just a map name, not a folder.
 		sLevelFolder = GetLevelsFolder() + "/" + sLevelFolder;
+#ifdef __linux
+		DIR *fdir;
+
+		fdir = opendir(sLevelFolder.c_str());
+		if (!fdir)
+		{
+			sLevelFolder = GetCorrectedLevelPath(sLevelFolder);
+		}
+		else
+		{
+			closedir(fdir);
+		}
+#endif
 	}
 
 	IConsole *pConsole=GetSystem()->GetIConsole();

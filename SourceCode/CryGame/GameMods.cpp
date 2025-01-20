@@ -361,82 +361,13 @@ const char *CGameMods::GetModPath(const char *szSource)
 	return (m_sReturnPath.c_str());
 }
 
-#ifdef __linux
-bool CXGame::GetCorrectedLevelPath(char* buf, const char* in)
-{
-	ICryPak *pIPak = m_pSystem->GetIPak();
-	char* needle;
-	dirent c_file;
-	intptr_t hFile;
-	bool found_mission = false;
-	string level, wildcard; 
-	strcpy(buf, in);
-	needle = strrchr(buf, '*');
-	if (!needle)
-	{
-		return false;
-	}
-	wildcard = string(needle);
-	*(needle - 1) = '\0';
-	needle = strrchr(buf, '/');
-	if (!needle)
-	{
-		return false;
-	}
-
-	level = string(needle + 1);
-	*(needle + 1) = '\0';
-	strcat(buf, "*");
-	hFile = pIPak->FindFirst(buf, &c_file);
-	if (hFile == -1L)
-	{
-		return false;
-	}
-
-	do
-	{
-		if (IS_DIR(c_file))
-		{
-			if (!stricmp(FNAME(c_file), level.c_str()))
-			{
-				found_mission = true;
-				level = string(FNAME(c_file));
-				break;
-			}
-		}
-	} while(pIPak->FindNext( hFile, &c_file ) == 0);
-
-	pIPak->FindClose( hFile );
-
-	if (found_mission)
-	{
-		buf[strlen(buf) - 1] = '\0';
-		strcat(buf, level.c_str());
-		strcat(buf, "/");
-		strcat(buf, wildcard.c_str());
-
-		return true;
-	}
-
-	return false;
-}
-#endif
 //////////////////////////////////////////////////////////////////////////
 bool CXGame::OpenPacks(const char *szFolder)
 {
 	// open first packs in the farcry folder
 	ICryPak *pIPak = m_pSystem->GetIPak();
 	bool bFound = pIPak->OpenPacks(szFolder);
-#ifdef __linux
-	char corrected[256];
-	if (!bFound)
-	{
-		if (GetCorrectedLevelPath(corrected, szFolder))
-		{
-			bFound = pIPak->OpenPacks(corrected);
-		}
-	}
-#endif
+
 	if (m_pGameMods)
 	{
 		const char *szMOD=m_pGameMods->GetCurrentMod();
@@ -455,9 +386,6 @@ bool CXGame::OpenPacks(const char *szFolder)
 //////////////////////////////////////////////////////////////////////////
 bool CXGame::ClosePacks(const char *szFolder)
 {
-#ifdef __linux
-	char corrected[256];
-#endif
 	if (m_pGameMods)
 	{
 		const char *szMOD=m_pGameMods->GetCurrentMod();
@@ -469,15 +397,7 @@ bool CXGame::ClosePacks(const char *szFolder)
 	}
 
 	bool found = m_pSystem->GetIPak()->ClosePacks(szFolder);
-#ifdef __linux
-	if (!found)
-	{
-		if (GetCorrectedLevelPath(corrected, szFolder))
-		{
-			found = m_pSystem->GetIPak()->ClosePacks(corrected);
-		}
-	}
-#endif
+
 	return found;
 }
 
