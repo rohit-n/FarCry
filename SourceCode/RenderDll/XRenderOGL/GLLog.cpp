@@ -2236,6 +2236,7 @@ void __stdcall lglViewport (GLint x, GLint y, GLsizei width, GLsizei height)
   gRenDev->Logv(SRendItem::m_RecurseLevel, "%s (%d, %d, %d, %d)\n", "glViewport", x, y, width, height);
   tglViewport(x, y, width, height);
 }
+#ifndef __linux
 BOOL __stdcall lpwglCopyContext (HGLRC Parm0, HGLRC Parm1, UINT Parm2)
 {
   gRenDev->Logv(SRendItem::m_RecurseLevel, "%s\n", "wglCopyContext");
@@ -2301,6 +2302,7 @@ BOOL __stdcall lpwglSwapBuffers (HDC hDC)
   gRenDev->Logv(SRendItem::m_RecurseLevel, "%s\n", "wglSwapBuffers");
   return tpwglSwapBuffers(hDC);
 }
+#endif
 BOOL __stdcall lwglBindTexImageARB (HPBUFFERARB hPbuffer, int iBuffer)
 {
   gRenDev->Logv(SRendItem::m_RecurseLevel, "%s\n", "wglBindTexImageARB");
@@ -2366,6 +2368,7 @@ void __stdcall lglDrawRangeElementsEXT (GLenum mode, GLuint start, GLuint end, G
   gRenDev->Logv(SRendItem::m_RecurseLevel, "%s\n", "glDrawRangeElementsEXT");
   tglDrawRangeElementsEXT(mode,start,end,count,type,indices);
 }
+#ifndef __linux
 INT __stdcall lpChoosePixelFormat (HDC hDC, CONST PIXELFORMATDESCRIPTOR* pfd)
 {
   gRenDev->Logv(SRendItem::m_RecurseLevel, "%s\n", "ChoosePixelFormat");
@@ -2391,6 +2394,7 @@ BOOL __stdcall lpSwapBuffers (HDC hDC)
   gRenDev->Logv(SRendItem::m_RecurseLevel, "%s\n", "SwapBuffers");
   return tpSwapBuffers(hDC);
 }
+#endif
 void __stdcall lglColorTableEXT (GLenum target, GLenum internalFormat, GLsizei width, GLenum format, GLenum type, const void *data)
 {
   gRenDev->Logv(SRendItem::m_RecurseLevel, "%s\n", "glColorTableEXT");

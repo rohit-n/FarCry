@@ -201,16 +201,22 @@ typedef const char * (WINAPI * PFNWGLGETEXTENSIONSSTRINGEXTPROC) ();
 static PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB;
 static PFNWGLGETEXTENSIONSSTRINGEXTPROC wglGetExtensionsStringEXT;
 
+#ifndef USE_SDL
 #define GET_GL_PROC(functype,funcname) \
   static functype funcname = (functype)pwglGetProcAddress(#funcname);\
-  assert(funcname);\
+  assert(funcname);
+#else
+#define GET_GL_PROC(functype,funcname) \
+  static functype funcname = (functype)SDL_GL_GetProcAddress(#funcname);\
+  assert(funcname);
+#endif
 
 bool CGLRenderer::FindExt( const char* Name )
 {
   char *str = (char*)glGetString(GL_EXTENSIONS);
   if (strstr(str, Name))
     return true;
-
+#ifndef __linux
   GET_GL_PROC(PFNWGLGETEXTENSIONSSTRINGARBPROC,wglGetExtensionsStringARB);
   if(wglGetExtensionsStringARB)
   {
@@ -218,7 +224,7 @@ bool CGLRenderer::FindExt( const char* Name )
     if (wglExt)
       return (strstr(wglExt, Name) != NULL);
   }
-
+#endif
   return false;
 }
 
@@ -231,9 +237,18 @@ void CGLRenderer::FindProc( void*& ProcAddress, char* Name, char* SupportName, b
     ProcAddress = GetProcAddress( (HINSTANCE)m_hLibHandle, Name );
   if( !ProcAddress )
     ProcAddress = GetProcAddress( (HINSTANCE)m_hLibHandleGDI, Name );
+#else
+  ProcAddress = SDL_GL_GetProcAddress( Name );
 #endif
   if( !ProcAddress && Supports && AllowExt )
-    ProcAddress = pwglGetProcAddress( Name );
+  {
+#ifndef USE_SDL
+    ProcAddress = pwglGetProcAddress( Name ); 
+#else
+    ProcAddress = SDL_GL_GetProcAddress( Name );
+#endif
+  }
+    
   if( !ProcAddress )
   {
     if( Supports )
@@ -1127,6 +1142,7 @@ bool CGLRenderer::CheckOGLExtensions(void)
 void CGLRenderer::MakeCurrent()
 {
   int i;
+#ifndef __linux
 
   if (pwglGetCurrentContext() == m_RContexts[0]->m_hRC)
     return;
@@ -1144,10 +1160,12 @@ void CGLRenderer::MakeCurrent()
   }
   CVProgram::m_LastVP = 0;
   CPShader::m_CurRC = NULL;
+#endif
 }
 
 void CGLRenderer::ShareResources( IRenderer *renderer )
 {
+#ifndef __linux
   // Ignore share with myself!
   if (renderer == this)
     return;
@@ -1160,6 +1178,7 @@ void CGLRenderer::ShareResources( IRenderer *renderer )
     if (iLog)
       iLog->Log("Warning: Sharing of OpenGL resources failed!" );
   }
+#endif
 }
 
 
@@ -1507,6 +1526,7 @@ typedef PROC (WINAPI * PFNWGLGETPROCADDRESSPROC) (LPCSTR str);
 // rendering context.
 int CGLRenderer::_wglExtensionSupported(const char *extension)
 {
+#ifndef __linux
   // Lazy initialization - We don't know if we've initialized this yet, so do it here.
   wglGetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC) pwglGetProcAddress("wglGetExtensionsStringEXT");
   wglGetExtensionsStringARB = (PFNWGLGETEXTENSIONSSTRINGARBPROC) pwglGetProcAddress("wglGetExtensionsStringARB");
@@ -1553,7 +1573,7 @@ int CGLRenderer::_wglExtensionSupported(const char *extension)
       start = terminator;
     }
   }
-
+#endif
   return 0;
 }
 
@@ -2121,6 +2141,12 @@ exr:
 #endif
 }
 
+#ifdef __linux
+bool CGLRenderer::CreateRContext(SRendContext *rc, WIN_HDC Glhdc, WIN_HGLRC hGLrc, int cbpp, int zbpp, int sbits, bool bAllowFSAA)
+{
+  return false;
+}
+#else
 bool CGLRenderer::CreateRContext(SRendContext *rc, WIN_HDC Glhdc, WIN_HGLRC hGLrc, int cbpp, int zbpp, int sbits, bool bAllowFSAA)
 {
   BOOL statusFSAA = false;
@@ -2321,9 +2347,11 @@ bool CGLRenderer::CreateRContext(SRendContext *rc, WIN_HDC Glhdc, WIN_HGLRC hGLr
 
   return true;
 }
+#endif
 
 bool CGLRenderer::SetCurrentContext(WIN_HWND hWnd)
 {
+#ifndef __linux
   int i;
 
   for (i=0; i<m_RContexts.Num(); i++)
@@ -2352,7 +2380,7 @@ bool CGLRenderer::SetCurrentContext(WIN_HWND hWnd)
     CVProgram::m_LastVP = NULL;
     CPShader::m_CurRC = NULL;
   }
-
+#endif
   return true;
 }
 
@@ -2395,6 +2423,7 @@ bool CGLRenderer::CreateContext(WIN_HWND hWnd, bool bAllowFSAA)
 
 bool CGLRenderer::DeleteContext(WIN_HWND hWnd)
 {
+#ifndef __linux
   int i;
 
   for (i=0; i<m_RContexts.Num(); i++)
@@ -2422,7 +2451,9 @@ bool CGLRenderer::DeleteContext(WIN_HWND hWnd)
   }
   delete rc;
   m_RContexts.Remove(i, 1);
-
+#else
+  SDL_GL_DeleteContext(m_RContexts[0]->m_Context);
+#endif
   return true;
 }
 

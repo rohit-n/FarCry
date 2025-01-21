@@ -20,9 +20,11 @@ CPBuffer::~CPBuffer()
 {
   if (m_Buffer)
   {
+#ifdef _WIN32
     pwglDeleteContext(m_MyGLctx);
     wglReleasePbufferDCARB(m_Buffer, m_MyDC);
     wglDestroyPbufferARB(m_Buffer);
+#endif
   }
 }
 
@@ -31,9 +33,9 @@ CPBuffer::~CPBuffer()
 void CPBuffer::mfHandleModeSwitch()
 {
   int lost = 0;
-
+#ifndef __linux
   wglQueryPbufferARB(m_Buffer, WGL_PBUFFER_LOST_ARB, &lost);
-
+#endif
   if ( lost )
   {
     this->~CPBuffer();
@@ -45,6 +47,7 @@ void CPBuffer::mfHandleModeSwitch()
 // It can only be called once a window has already been created.
 bool CPBuffer::mfInitialize(bool bShare)
 {
+#ifdef _WIN32
   HDC hdc = pwglGetCurrentDC();
   HGLRC hglrc = pwglGetCurrentContext();
 
@@ -211,35 +214,50 @@ bool CPBuffer::mfInitialize(bool bShare)
 #endif
 
   return true;
+#else
+  return false;
+#endif
 }
 
 bool CPBuffer::mfMakeCurrent()
 {
+#ifdef _WIN32
   if ( !pwglMakeCurrent( m_MyDC, m_MyGLctx ) )
   {
     iLog->Log("Warning: CPBuffer::mfMakeCurrent() failed.\n" );
     return false;
   }
+#endif
   return true;
 }
 
 bool CPBuffer::mfMakeMainCurrent()
 {
   CGLRenderer *rd = gcpOGL;
+#ifdef _WIN32
   if ( !pwglMakeCurrent( rd->m_CurrContext->m_hDC, rd->m_CurrContext->m_hRC ) )
   {
     iLog->Log("Warning: CPBuffer::mfMakeMainCurrent() failed.\n" );
     return false;
   }
+#endif
   return true;
 }
 
 BOOL CPBuffer::mfTextureBind()
 {
+#ifndef __linux
   return wglBindTexImageARB(m_Buffer, WGL_FRONT_LEFT_ARB);
+#else
+  return 0;
+#endif
 }
 
 BOOL CPBuffer::mfReleaseFromTexture()
 {
+#ifndef __linux
   return wglReleaseTexImageARB(m_Buffer, WGL_FRONT_LEFT_ARB);
+#else
+  return 0;
+#endif
 }

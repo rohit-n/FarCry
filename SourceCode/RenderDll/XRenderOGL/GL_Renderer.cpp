@@ -1938,6 +1938,7 @@ void CGLRenderer::SetLodBias(float value)
 ///////////////////////////////////////////
 void CGLRenderer::EnableVSync(bool enable)
 {
+#ifndef __linux
   if (wglSwapIntervalEXT)
   {
     if (enable)
@@ -1945,6 +1946,9 @@ void CGLRenderer::EnableVSync(bool enable)
     else
       wglSwapIntervalEXT(0);
   }
+#else
+  SDL_GL_SetSwapInterval(enable ? 1 : 0);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////

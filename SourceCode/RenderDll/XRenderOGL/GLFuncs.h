@@ -352,6 +352,7 @@ GL_PROC(_GL,void,glVertexPointer,(GLint size, GLenum type, GLsizei stride, const
 GL_PROC(_GL,void,glViewport,(GLint x, GLint y, GLsizei width, GLsizei height))
 
 // WGL functions.
+#ifndef __linux
 GL_PROC(_GL,BOOL,pwglCopyContext,(HGLRC,HGLRC,UINT))
 GL_PROC(_GL,HGLRC,pwglCreateContext,(HDC))
 GL_PROC(_GL,HGLRC,pwglCreateLayerContext,(HGLRC))
@@ -372,7 +373,7 @@ GL_PROC(_GL,INT,pDescribePixelFormat,(HDC,INT,UINT,PIXELFORMATDESCRIPTOR*))
 GL_PROC(_GL,BOOL,pGetPixelFormat,(HDC))
 GL_PROC(_GL,BOOL,pSetPixelFormat,(HDC,INT,CONST PIXELFORMATDESCRIPTOR*))
 GL_PROC(_GL,BOOL,pSwapBuffers,(HDC hDC))
-
+#endif
 #define GL_CLAMP_TO_EDGE                  0x812F
 #define GL_TEXTURE_MIN_LOD                0x813A
 #define GL_TEXTURE_MAX_LOD                0x813B
