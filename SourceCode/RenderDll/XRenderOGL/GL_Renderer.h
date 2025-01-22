@@ -353,7 +353,11 @@ private:
   SRendContext *m_CurrContext;
 
 	int			m_numvidmodes;
-	DEVMODE		*m_vidmodes;			
+#ifndef USE_SDL
+	DEVMODE		*m_vidmodes;
+#else
+  SDL_DisplayMode* m_vidmodes;
+#endif
 //#endif
 
 	bool	m_lod_biasSupported; 

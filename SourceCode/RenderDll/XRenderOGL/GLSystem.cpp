@@ -1310,9 +1310,66 @@ int CGLRenderer::EnumDisplayFormats(TArray<SDispFormat>& Formats, bool bReset)
         frm.m_BPP = 32;
       Formats.AddElem(frm);
     }
+#else
+    SDL_DisplayMode* m = &m_vidmodes[i];
+    for (j=0; j<Formats.Num(); j++)
+    {
+      SDispFormat *f = &Formats[j];
+      if (f->m_Width == m->w && f->m_Height == m->h)
+        break;
+    }
+    if (j == Formats.Num())
+    {
+      frm.m_Width = m->w;
+      frm.m_Height = m->h;
+      frm.m_BPP = 32;
+      Formats.AddElem(frm);
+    }
 #endif
   }
   return Formats.Num();
+}
+
+static void GetSDLModes(SDL_DisplayMode* modes, int* num_modes)
+{
+  int numModes = SDL_GetNumDisplayModes(0);
+	SDL_DisplayMode mode;
+	int i;
+	int w = 0;
+	int h = 0;
+	unsigned int num_unique = 0;
+
+	if (numModes == -1)
+	{
+		fprintf(stderr, "SDL ERROR: %s\n", SDL_GetError());
+    return;
+	}
+
+	for (i = 0; i < numModes; i++)
+	{
+		if (!SDL_GetDisplayMode(0, i, &mode))
+		{
+			if (mode.w < 640 || mode.h < 480 || mode.h == 486 || mode.h == 696
+			|| mode.h == 525 || mode.w == 864)
+			{
+				//disallow low or weird resolutions
+				continue;
+			}
+			if (w != mode.w || h != mode.h)
+			{
+				w = mode.w;
+				h = mode.h;
+				if (modes != NULL)
+				{
+					modes[num_unique].w = w;
+          modes[num_unique].h = h;
+				}
+				num_unique++;
+			}
+		}
+	}
+
+	*num_modes = num_unique;
 }
 
 #ifdef USE_SDL
@@ -1322,8 +1379,7 @@ HWND CGLRenderer::SetMode(int x,int y,int width,int height,unsigned int cbpp, in
 #endif
 {
   ///////////////////////////////////Get Desktop Settings
-
-#ifdef WIN32 // FIX_LINUX
+#ifdef _WIN32
   HWND temp = GetDesktopWindow();
   RECT trect;
 
@@ -1336,7 +1392,7 @@ HWND CGLRenderer::SetMode(int x,int y,int width,int height,unsigned int cbpp, in
   m_deskbpp = GetDeviceCaps( hDC, BITSPIXEL );
 //  m_deskfreq= GetDeviceCaps( hDC, VREFRESH );
   ReleaseDC (NULL,hDC);
-
+#endif
 
   iLog->Log("Desktop settings: %d x %d x %d",m_deskwidth,m_deskheight,m_deskbpp/*,m_deskfreq*/);
   iLog->Log("Available video modes:\n");
@@ -1345,6 +1401,7 @@ HWND CGLRenderer::SetMode(int x,int y,int width,int height,unsigned int cbpp, in
   ///////////////////////////////////Find available video modes
 
   int nummode;
+#ifndef USE_SDL
   for (nummode=0;;nummode++)
   {
     DEVMODE Tmp;
@@ -1399,7 +1456,14 @@ HWND CGLRenderer::SetMode(int x,int y,int width,int height,unsigned int cbpp, in
       ((int)(m_vidmodes[mode].dmBitsPerPel) <= cbpp))
       best_mode = mode;
   }
-
+#else
+  GetSDLModes(NULL, &m_numvidmodes);
+  if (m_numvidmodes > 0)
+  {
+    m_vidmodes = new SDL_DisplayMode[m_numvidmodes];
+    GetSDLModes(m_vidmodes, &m_numvidmodes);
+  }
+#endif
 ///////////////////////////////////Create window
 
   if (width==m_deskwidth && height==m_deskheight)
