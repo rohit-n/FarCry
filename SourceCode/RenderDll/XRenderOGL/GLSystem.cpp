@@ -1872,8 +1872,9 @@ exr:
     rc->m_hDC = GetDC((HWND)Glhwnd);
 #endif
   }
+#ifndef USE_SDL
   rc->m_Glhwnd = (HWND)Glhwnd;
-#ifdef USE_SDL
+#else
   rc->m_Window = win;
 #endif
 

@@ -63,8 +63,9 @@ struct SRendContext
 {
 	HDC		m_hDC;
 	HGLRC	m_hRC;
+#ifndef USE_SDL
 	HWND	m_Glhwnd;
-#ifdef USE_SDL
+#else
     SDL_Window* m_Window;
     SDL_GLContext m_Context;
 #endif

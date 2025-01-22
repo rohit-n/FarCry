@@ -1233,7 +1233,11 @@ void CGLRenderer::GetMemoryUsage(ICrySizer* Sizer)
 
 WIN_HWND CGLRenderer::GetHWND()
 {
+#ifndef __linux
   return m_CurrContext ? m_CurrContext->m_Glhwnd : 0;
+#else
+  return m_RContexts[0]->m_Window;
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
