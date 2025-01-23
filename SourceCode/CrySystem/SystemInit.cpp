@@ -62,11 +62,12 @@ extern HMODULE gDLLHandle;
 #		define DLL_ENTITYSYSTEM	"libCryEntitySystem.so"
 #		define DLL_INPUT				"libCryInput.so"
 #		define DLL_PHYSICS			"libCryPhysics.so"
-#		define DLL_MOVIE				"crymovie.so"
+#		define DLL_MOVIE				"libCryMovie.so"
 #		define DLL_AI						"libCryAISystem.so"
 #		define DLL_FONT					"libCryFont.so"
 #		define DLL_3DENGINE			"libCry3DEngine.so"
 #		define DLL_NULLRENDERER	"libXRenderNULL.so"
+#		define DLL_GLRENDERER "libXRenderOGL.so"
 #else
 #	define DLL_SOUND				"CrySoundSystem.dll"
 #	define DLL_NETWORK			"CryNetwork.dll"
@@ -78,6 +79,7 @@ extern HMODULE gDLLHandle;
 #	define DLL_FONT					"CryFont.dll"
 #	define DLL_3DENGINE			"Cry3DEngine.dll"
 #	define DLL_NULLRENDERER	"XRenderNULL.dll"
+#	define DLL_GLRENDERER "XRenderOGL.dll"
 #endif
 
 #define DEFAULT_LOG_FILENAME "Log.txt"
@@ -93,7 +95,7 @@ bool CSystem::OpenRenderLibrary(const char *t_rend)
 
   int nRenderer = R_DX9_RENDERER;
 #if defined(LINUX)
-	return OpenRenderLibrary(R_NULL_RENDERER);
+	return OpenRenderLibrary(R_GL_RENDERER);
 #else
   if (stricmp(t_rend, "NULL") != 0)
   {
@@ -159,9 +161,6 @@ bool CSystem::OpenRenderLibrary(int type)
 #ifdef _XBOX
   type = R_DX8_RENDERER;
 #endif
-#if defined(LINUX)
-	type = R_NULL_RENDERER;
-#endif
 
 	static int test_int = 0;
 
@@ -175,7 +174,7 @@ bool CSystem::OpenRenderLibrary(int type)
 #ifndef _XBOX
 	char libname[128];
 	if (type == R_GL_RENDERER)
-    strcpy(libname, "XRenderOGL.dll");
+		strcpy(libname, DLL_GLRENDERER);
 	else
 	if (type == R_DX8_RENDERER)
 		strcpy(libname, "XRenderD3D8.dll");
