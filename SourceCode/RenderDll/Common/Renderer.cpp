@@ -1994,6 +1994,7 @@ SShaderItem CRenderer::EF_LoadShaderItem (const char *name, EShClass Class, bool
 
 bool CRenderer::EF_ReloadFile (const char *szFileName)
 {
+#ifndef __linux
   char nmf[512];
   char drn[512];
   char drv[16];
@@ -2009,6 +2010,9 @@ bool CRenderer::EF_ReloadFile (const char *szFileName)
     return gRenDev->m_cEF.mfReloadFile(drn, nmf, FRO_SHADERS);
   if (!stricmp(extn, ".tga") || !stricmp(extn, ".pcx") || !stricmp(extn, ".dds") || !stricmp(extn, ".jpg") || !stricmp(extn, ".jpeg") || !stricmp(extn, ".gif") || !stricmp(extn, ".bmp"))
     return m_TexMan->ReloadFile(szFileName, FRO_TEXTURES);
+#else
+  __builtin_trap();
+#endif
   return false;
 }
 
