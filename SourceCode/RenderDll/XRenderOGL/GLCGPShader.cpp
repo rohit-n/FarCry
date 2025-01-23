@@ -787,13 +787,14 @@ create:
           fputs(code, fp);
           fclose(fp);
         }
+#ifdef _WIN32
         HANDLE hdst = CreateFile(namedst,GENERIC_WRITE,FILE_SHARE_READ, NULL,OPEN_EXISTING,FILE_FLAG_SEQUENTIAL_SCAN,NULL);
         FILE *hsrc = iSystem->GetIPak()->FOpen(namesrc, "r");
         writetimesrc = iSystem->GetIPak()->GetModificationTime(hsrc);
         SetFileTime(hdst,NULL,NULL,&writetimesrc);
         iSystem->GetIPak()->FClose(hsrc);
         CloseHandle(hdst);
-
+#endif
         delete [] code;
       }
 #ifdef WIN64
