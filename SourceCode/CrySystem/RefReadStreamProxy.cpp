@@ -70,7 +70,11 @@ unsigned int CRefReadStreamProxy::GetBytesRead (bool bWait)
 		if (m_pStream->isOverlapped())
 		{
 			DWORD dwBytesRead;
+#ifndef __linux
 			if (GetOverlappedResult(m_pStream->GetFile(), &m_Overlapped, &dwBytesRead, bWait))
+#else
+			if (0)
+#endif
 			{
 				m_numBytesRead = m_nPieceOffset + dwBytesRead;
 				assert (dwBytesRead <= m_nPieceLength);
@@ -370,7 +374,11 @@ DWORD CRefReadStreamProxy::CallReadFileEx ()
 #if defined(LINUX)
 		m_Overlapped.pCaller = (void*)this;//store caller address here
 #endif
+#ifndef __linux
 		if (!ReadFileEx (hFile, ((char*)m_pBuffer) + m_nPieceOffset, m_nPieceLength, &m_Overlapped, FileIOCompletionRoutine))
+#else
+		if (1)
+#endif
 		{
 			DWORD dwError = GetLastError();
 			if (!dwError)
@@ -386,14 +394,22 @@ DWORD CRefReadStreamProxy::CallReadFileEx ()
 		// the actual number of bytes read
 		DWORD dwRead = 0;
 		unsigned newOffset = m_Params.nOffset + m_nPieceOffset + m_pStream->GetArchiveOffset();
+#ifndef __linux
 		if (SetFilePointer (hFile, newOffset, NULL, FILE_BEGIN) != newOffset)
+#else
+		if (1)
+#endif
 		{
 			// the positioning error is strange, we should examine it and perhaps retry (in case the file write wasn't finished.)
 			DWORD dwError = GetLastError();
 			return dwError;
 		}
 		// just read the file
+#ifndef __linux
 		if (!ReadFile (hFile, ((char*)m_pBuffer) + m_nPieceOffset, m_nPieceLength, &dwRead, NULL))
+#else
+		if (1)
+#endif
 		{
 			// we failed to read; we don't call the callback, but we could as well call OnIOComplete()
 			// with this error code and return 0 as success flag emulating error during load

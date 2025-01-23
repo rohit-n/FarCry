@@ -29,17 +29,14 @@ bool CRefReadStream::Activate()
 	AUTO_LOCK(g_csActivate);
 
 	m_bOverlapped = m_pEngine->isOverlappedIoEnabled();
-#if !defined(LINUX64)
+#ifndef __linux
 	if (m_pZipEntry == NULL && m_hFile == INVALID_HANDLE_VALUE)
-#else
-	if (m_pZipEntry == 0 && m_hFile == INVALID_HANDLE_VALUE)
-#endif
 		m_hFile = CreateFile (m_strFileName.c_str(), GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
 			m_bOverlapped?FILE_FLAG_OVERLAPPED:0,
 			NULL);
-#if !defined(LINUX64)
 	if (m_pZipEntry == NULL && m_hFile == INVALID_HANDLE_VALUE)
 #else
+	m_hFile = INVALID_HANDLE_VALUE;
 	if (m_pZipEntry == 0 && m_hFile == INVALID_HANDLE_VALUE)
 #endif
 	{
@@ -61,9 +58,13 @@ bool CRefReadStream::Activate()
 				// try to open the file - this should really be not often the case
 				const char* szPakFile = m_pZipEntry->GetZip()->GetFilePath();
 				// even if we can't open it, it doesn't matter: we automatically resort to using the cache
+#ifndef __linux
 				m_hFile = CreateFile (szPakFile, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
 					m_bOverlapped?FILE_FLAG_OVERLAPPED:0,
 					NULL);
+#else
+				m_hFile = INVALID_HANDLE_VALUE;
+#endif
 			}
 
 			if (m_hFile == INVALID_HANDLE_VALUE)
@@ -85,7 +86,15 @@ bool CRefReadStream::Activate()
 			if (m_pZipEntry)
 				m_nFileSize = m_pZipEntry->GetFileEntry()->desc.lSizeUncompressed;
 			else
+			{
+#ifndef __linux
 				m_nFileSize = ::GetFileSize (m_hFile, NULL);
+#else
+				m_nFileSize = 0; //STUB
+				__builtin_trap();
+#endif
+			}
+				
 	
 			if (m_nFileSize == INVALID_FILE_SIZE)
 			{
@@ -103,8 +112,10 @@ bool CRefReadStream::Activate()
 CRefReadStream::~CRefReadStream()
 {
 	m_pEngine->Unregister(this);
+#ifndef __linux
 	if (m_hFile != INVALID_HANDLE_VALUE)
 		CloseHandle(m_hFile);
+#endif
 }
 
 
@@ -115,7 +126,11 @@ void CRefReadStream::Abort(CRefReadStreamProxy* pProxy)
 	{
 		// there's only one proxy that uses this object; so we can safely cancel io
 		// on this file
+#ifndef __linux
 		CancelIo (m_hFile);
+#else
+		__builtin_trap();
+#endif
 	}
 }
 
