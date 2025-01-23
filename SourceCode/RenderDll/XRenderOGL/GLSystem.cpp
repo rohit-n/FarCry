@@ -180,7 +180,7 @@ void CGLRenderer::FreeLibrary()
 
 bool CGLRenderer::LoadLibrary()
 {
-#ifdef WIN32 // FIX_LINUX
+#ifdef WIN32
   strcpy(m_LibName, "OpenGL32.dll");
 
   m_hLibHandle = ::LoadLibrary(m_LibName);
@@ -192,6 +192,8 @@ bool CGLRenderer::LoadLibrary()
   m_hLibHandleGDI = ::LoadLibrary("GDI32.dll");
   assert(m_hLibHandleGDI);
 
+  return true;
+#else
   return true;
 #endif
 }
@@ -1556,19 +1558,20 @@ HWND CGLRenderer::SetMode(int x,int y,int width,int height,unsigned int cbpp, in
   {
       return NULL;
   }
+#ifdef _WIN32
   SDL_SysWMinfo wmInfo;
   SDL_VERSION(&wmInfo.version);
   SDL_GetWindowWMInfo(win, &wmInfo);
   Glhwnd = wmInfo.info.win.window;
 #endif
+#endif
 
   m_FullScreen = fullscreen;
-
+#ifdef _WIN32
   if (!m_FullScreen)
     SetWindowPos(Glhwnd, HWND_NOTOPMOST, (GetSystemMetrics(SM_CXFULLSCREEN)-width)/2, (GetSystemMetrics(SM_CYFULLSCREEN)-height)/2, GetSystemMetrics(SM_CXDLGFRAME)*2 + width, GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CXDLGFRAME)*2 + height, SWP_SHOWWINDOW);
-
-  //SAFE_DELETE_ARRAY(m_vidmodes);
 #endif
+  //SAFE_DELETE_ARRAY(m_vidmodes);
 #ifdef USE_SDL
   return win;
 #else
@@ -2451,6 +2454,7 @@ bool CGLRenderer::SetCurrentContext(WIN_HWND hWnd)
 
 bool CGLRenderer::CreateContext(WIN_HWND hWnd, bool bAllowFSAA)
 {
+#ifndef __linux
   int i;
 
   for (i=0; i<m_RContexts.Num(); i++)
@@ -2462,7 +2466,9 @@ bool CGLRenderer::CreateContext(WIN_HWND hWnd, bool bAllowFSAA)
     return false;
   SRendContext *rc = new SRendContext;
   m_RContexts.AddElem(rc);
+#ifndef USE_SDL
   rc->m_Glhwnd = (HWND)hWnd;
+#endif
 #ifdef WIN32 // FIX_LINUX
   rc->m_hDC = GetDC((HWND)hWnd);
 #endif
@@ -2484,6 +2490,10 @@ bool CGLRenderer::CreateContext(WIN_HWND hWnd, bool bAllowFSAA)
     CPShader::m_CurRC = NULL;
   }
   return bRes;
+#else
+  __builtin_trap();
+  return false;
+#endif
 }
 
 bool CGLRenderer::DeleteContext(WIN_HWND hWnd)
