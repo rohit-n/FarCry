@@ -842,6 +842,33 @@ char *CCGVProgram_GL::mfCreateAdditionalVP(CVProgram *pPosVP)
       }
     }
     sNewStr = newScr;
+
+    if (!strstr(sNewStr, "float4 Tex3"))
+    {
+      while (true)
+      {
+        sNewStr = strstr(sNewStr, "vertout");
+        if (!sNewStr)
+          break;
+        n = 0;
+        while (sNewStr[n] != '{' && sNewStr[n]!=0) {n++;}
+        if (sNewStr[n] == '{')
+        {
+          n++;
+          while (sNewStr[n]==0x20 || sNewStr[n]==8 || sNewStr[n]==9 || sNewStr[n]==0xa) {n++;}
+          len = strlen("float4 Tex3 : TEXCOORD3;\n");
+          int len2 = strlen(newScr)+1;
+          char *newScr2 = new char[len+len2];
+          n = sNewStr-newScr+n;
+          strncpy(newScr2, newScr, n);
+          strcpy(&newScr2[n], "float4 Tex3 : TEXCOORD3;\n");
+          strcpy(&newScr2[n+len], &newScr[n]);
+          delete [] newScr;
+          newScr = newScr2;
+        }
+        break;
+      }
+    }
   }
   sNewStr = newScr;
   while (true)
