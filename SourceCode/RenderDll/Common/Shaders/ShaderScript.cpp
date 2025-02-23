@@ -566,6 +566,7 @@ void CShader::mfCheckAffectedFiles(const char *ShadersPath, int nCheckFile, TArr
   char *buf;
   char nmf[256];
   char dirn[256], *ddir;
+  const char* last_slash;
   int i;
 
   ddir = dirn;
@@ -642,9 +643,16 @@ void CShader::mfCheckAffectedFiles(const char *ShadersPath, int nCheckFile, TArr
     iSystem->GetIPak()->FClose(fp);
     strlwr(buf);
     char fname[256];
-    char fext[16];
-    _splitpath(CheckNames[nCheckFile], NULL, NULL, fname, fext);
-    strcat(fname, fext);
+    last_slash = strrchr(CheckNames[nCheckFile], '\\');
+    if (!last_slash)
+    {
+      fname[0] = '\0';
+    }
+    else
+    {
+      strcpy(fname, last_slash + 1);
+    }
+
     if (strstr(buf, fname))
     {
       ln = strlen(nmf)+1;
@@ -857,10 +865,13 @@ char *CShader::mfPreprCheckIncludes (char *buf, const char *drn, const char *nam
       Warning( 0,0,"Warning: Missing include file '%s' for shader file '%s'\n", ni, name);
       continue;
     }
-    char drv[16], dirn[512], drnn[512]; 
-    _splitpath(ni, drv, dirn, NULL, NULL);
-    strcpy(drnn, drv);
-    strcat(drnn, dirn);
+    char drnn[512];
+    char tmp[256];
+    strcpy(tmp, ni);
+    char* last_slash = strrchr(tmp, '/');
+    *(last_slash + 1) = '\0';
+    strcpy(drnn, tmp);
+
     bFind = true;
     iSystem->GetIPak()->FSeek(fp, 0, SEEK_END);
     int li = iSystem->GetIPak()->FTell(fp);
@@ -889,7 +900,7 @@ char *CShader::mfPreprCheckIncludes (char *buf, const char *drn, const char *nam
     return buf;
   char *b = new char [nBuf.Num()];
   memcpy(b, &nBuf[0], nBuf.Num());
-  delete buf;
+  delete [] buf;
 
   return b;
 }
@@ -1708,7 +1719,7 @@ char *CShader::mfPreprCheckMacros(char *buf, const char *nameFile)
 
   char *b = new char [nBuf.Num()];
   memcpy(b, &nBuf[0], nBuf.Num());
-  delete buf;
+  delete [] buf;
 
   return b;
 }
@@ -1860,11 +1871,13 @@ char *CShader::mfScriptForFileName(const char *name, SShader *shGen, uint64 nMas
   buf[len+size] = 0;
 
   char nmf[256], drn[256], drv[16], dirn[256], fln[256], extn[16];
-  _splitpath(name, drv, dirn, fln, extn);
-  strcpy(drn, drv);
-  strcat(drn, dirn);
-  strcpy(nmf, fln);
-  strcat(nmf, extn);
+  char tmp[256];
+  strcpy(tmp, name);
+  char* last_slash = strrchr(tmp, '/');
+
+  strcpy(nmf, last_slash + 1);
+  *(last_slash + 1) = '\0';
+  strcpy(drn, tmp);
   mfStartScriptPreprocess();
   char *pFinalScript = mfScriptPreprocessor(buf, drn, nmf);
 
@@ -2489,16 +2502,8 @@ void CShader::mfRemoveFromHash(SShader *ef)
 void CShader::mfAddToHash(char *name, SShader *ef)
 {
   char nameEf[256];
-  size_t i = 0;
   strncpy(nameEf, name, 256);
-  while (nameEf[i] != 0)
-  {
-    if (isalpha(nameEf[i]))
-    {
-      nameEf[i] = tolower(nameEf[i]);
-    }
-    i++;
-  }
+  strlwr(nameEf);
   SRefEfsLoaded fe;
   fe.m_Ef = ef;
   m_RefEfsLoaded.insert(LoadedShadersMapItor::value_type(nameEf, fe));
