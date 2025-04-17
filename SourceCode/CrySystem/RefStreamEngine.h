@@ -91,11 +91,11 @@ protected:
 
 	// the static function used to start the thread
 #if defined(LINUX)
-	static void* WINAPI IOWorkerThreadProc (LPVOID pThis)
+	static int IOWorkerThreadProc (LPVOID pThis)
 	{
 		((CRefStreamEngine*)pThis)->IOWorkerThread();
 		pthread_exit(NULL);//finish thread
-		return NULL;
+		return 0;
 	}
 #else
 	static DWORD WINAPI IOWorkerThreadProc (LPVOID pThis)
@@ -203,12 +203,15 @@ protected:
 
 	// this flag is set if the callback time quota is enabled
 	int m_nSuspendCallbackTimeQuota;
-	
+#ifndef __linux
 	// this is the id of the main thread in which this engine operates
 	DWORD m_dwMainThreadId;
 	// the id of the worker thread, if any 
 	DWORD m_dwWorkerThreadId;
-
+#else
+	SDL_threadID m_dwMainThreadId;
+	SDL_threadID m_dwWorkerThreadId;
+#endif
 	// This critical section protects the objects that can be written to by the main thread only
 	// It must be locked for the time of access from non-main thread and for the time of writing from the main thread
 	// Main thread can have read access to those objects anytime without serialization

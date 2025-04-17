@@ -11,6 +11,39 @@
 extern CMTSafeHeap* g_pSmallHeap;
 extern CMTSafeHeap* g_pBigHeap;
 
+#ifdef __linux
+EVENT_HANDLE CreateEvent(void* lpEventAttributes,
+	int bManualReset, int bInitialState, char* lpName)
+{
+	(void)lpEventAttributes;
+	(void)bManualReset;
+	(void)bInitialState;
+	(void)lpName;
+	return NULL;
+}
+
+void SetEvent(EVENT_HANDLE event)
+{
+	(void)event;
+}
+
+void ResetEvent(EVENT_HANDLE event)
+{
+	(void)event;
+}
+
+DWORD WaitForSingleObjectEx(HANDLE hHandle,
+	DWORD dwMilliseconds, BOOL bAlertable)
+{
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds)
+{
+	return 0;
+}
+#endif
 //////////////////////////////////////////////////////////////////////////
 // useWorkerThreads is the number of worker threads  to use;
 // currently only values 0 and 1 are supported: 0 - overlapped IO in the main thread, and 1 - overlapped IO in the worker thread
@@ -21,11 +54,7 @@ CRefStreamEngine::CRefStreamEngine (CCryPak* pPak, IMiniLog* pLog, unsigned useW
 	m_nMaxReadDepth (16),
 	m_nMaxQueueLength (4*1024),
 	m_nMaxIOMemPool (128*1024*1024),
-#if defined(LINUX)
-	m_hIOWorker (INVALID_HANDLE_VALUE),//only diff is here, but what can i do?
-#else
 	m_hIOWorker (NULL),
-#endif
 	m_dwWorkerThreadId(0),
 	m_queIOJobs(ProxyPtrAllocator(g_pSmallHeap)),
 	m_setIOPending(ProxyPtrPredicate(), ProxyPtrAllocator(g_pSmallHeap)),
@@ -33,10 +62,18 @@ CRefStreamEngine::CRefStreamEngine (CCryPak* pPak, IMiniLog* pLog, unsigned useW
 	m_bEnableOverlapped (bOverlappedIO),
 	m_nSuspendCallbackTimeQuota(0)
 {
+#ifndef __linux
 	m_dwMainThreadId = GetCurrentThreadId();
+#else
+	m_dwMainThreadId = SDL_ThreadID();
+#endif
 	CheckOSCaps();
 
+#ifndef __linux
 	if (!QueryPerformanceFrequency((LARGE_INTEGER*)&m_nPerfFreq))
+#else
+	if (1)
+#endif
 	{
 		m_nPerfFreq = 0;
 		m_nSuspendCallbackTimeQuota = 1; // suspend forever
@@ -81,10 +118,11 @@ CRefStreamEngine::~CRefStreamEngine()
 	if (m_pLog)
 		for (NameStreamMap::iterator it = m_mapFilesByName.begin(); it != m_mapFilesByName.end(); ++it)
 			m_pLog->Log("%s: %s", it->first.c_str(), it->second->Dump().c_str());
-
+#ifndef __linux
 	CloseHandle (m_hIOJob);
 	CloseHandle (m_hIOExecuted);
 	CloseHandle (m_hDummyEvent);
+#endif
 }
 
 unsigned CRefStreamEngine::UpdateAndWait (unsigned nMilliseconds, unsigned nFlags)
@@ -97,12 +135,20 @@ unsigned CRefStreamEngine::UpdateAndWait (unsigned nMilliseconds, unsigned nFlag
 // returns true if called from the main thread for this engine
 bool CRefStreamEngine::IsMainThread()
 {
+#ifndef __linux
 	return GetCurrentThreadId() == m_dwMainThreadId;
+#else
+	return SDL_ThreadID() == m_dwMainThreadId;
+#endif
 }
 
 bool CRefStreamEngine::IsWorkerThread()
 {
+#ifndef __linux
 	return GetCurrentThreadId() == m_dwWorkerThreadId;
+#else
+	return SDL_ThreadID() == m_dwWorkerThreadId;
+#endif
 } 
 
 //////////////////////////////////////////////////////////////////////////
@@ -197,15 +243,22 @@ unsigned CRefStreamEngine::GetFileSize (const char* szFilePathPC, unsigned nCryP
 	}  
    
 	// we didn't find the file size in the cache - open the file and query the size
-#if defined(LINUX)
-	HANDLE hFile = CreateFile (szFilePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+#ifdef __linux
+	FILE* hFile = fopen (szFilePath, "rb");
+	if (hFile)
 #else
 	HANDLE hFile = CreateFile (szFilePath, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
-#endif
 	if (hFile != INVALID_HANDLE_VALUE)
+#endif
 	{
+#ifndef __linux
 		unsigned nFileSize = ::GetFileSize(hFile, NULL);
 		CloseHandle (hFile);
+#else
+		unsigned nFileSize = 0; //rknstub
+		__builtin_trap();
+		fclose(hFile);
+#endif
 		return nFileSize;
 	}
 	else
@@ -285,7 +338,14 @@ unsigned CRefStreamEngine::Wait(unsigned nMilliseconds, unsigned nFlags)
 	{
 		// really wait for some IO to complete
 		if (numIOJobs(ePending) > 0) // no sense to wait here if there are no pending jobs
+		{
+#ifndef __linux
 			SleepEx(nMilliseconds, TRUE);
+#else
+			SDL_Delay(nMilliseconds);
+#endif
+		}
+			
 		StartIOJobs(); // perhaps there's room for new tasks to be started now
 	}
 	return FinalizeIOJobs(nFlags);
@@ -349,12 +409,20 @@ unsigned CRefStreamEngine::FinalizeIOJobs(unsigned nFlags)
 		assert(pProxy->IsIOExecuted());
 
 		int64 nStartTime, nEndTime;
+#ifndef __linux
 		QueryPerformanceCounter ((LARGE_INTEGER*)&nStartTime);
+#else
+		nStartTime = SDL_GetTicks64();
+#endif
 		// TODO: add control over the callback execution time
 		// this proxy needs to be moved out of the IO queue
 		pProxy->FinalizeIO ();
 		++numFinalizedJobs;
+#ifndef __linux
 		QueryPerformanceCounter((LARGE_INTEGER*)&nEndTime);
+#else
+		nEndTime = SDL_GetTicks64();
+#endif
 
 		m_nCallbackTimeQuota -= nEndTime - nStartTime;
 
@@ -387,7 +455,11 @@ void CRefStreamEngine::IOWorkerThread ()
 	for (int nRetries = 0; nRetries < 100 && !m_setIOPending.empty(); ++nRetries)
 	{
 		AUTO_UNLOCK(m_csIOPending);
+#ifndef __linux
 		SleepEx(300, TRUE);
+#else
+		SDL_Delay(300);
+#endif
 	}
 }
 
@@ -592,8 +664,10 @@ void CRefStreamEngine::StopWorkerThread()
 	{
 		m_bStopIOWorker = true;
 		SetEvent(m_hIOJob);
+#ifndef __linux
 		WaitForSingleObject (m_hIOWorker, INFINITE);
 		CloseHandle (m_hIOWorker);
+#endif
 		m_hIOWorker = NULL;
 	}
 }
@@ -602,7 +676,11 @@ void CRefStreamEngine::StartWorkerThread()
 {
 	StopWorkerThread();
 	m_bStopIOWorker = false;
+#ifndef __linux
 	m_hIOWorker = CreateThread (NULL, 0x8000, IOWorkerThreadProc, this, 0, &m_dwWorkerThreadId);
+#else
+	m_hIOWorker = NULL;
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
