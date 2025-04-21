@@ -3410,6 +3410,7 @@ int CShader::mfReadTexSequence(SShader *ef, TArray<STexPic *>& tl, const char *n
 
 int CShader::mfReadAllImgFiles(SShader *ef, SShaderTexUnit *tl, STexAnim *ta, char *name)
 {
+#ifndef __linux
   struct __finddata64_t fileinfo;
   intptr_t handle;
   char d[1024];
@@ -3481,6 +3482,10 @@ int CShader::mfReadAllImgFiles(SShader *ef, SShaderTexUnit *tl, STexAnim *ta, ch
   } while (_findnext64( handle, &fileinfo ) != -1);
 
   return ns;
+#else
+  __builtin_trap();
+  return 0;
+#endif
 }
 
 //===========================================================================
