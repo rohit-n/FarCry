@@ -15,7 +15,7 @@
 
 #include "StdAfx.h"
 #include "AnimNode.h"
-#include "Animtrack.h"
+#include "AnimTrack.h"
 #include "CharacterTrack.h"
 #include "AnimSplineTrack.h"
 #include "BoolTrack.h"

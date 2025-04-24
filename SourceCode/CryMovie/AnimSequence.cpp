@@ -406,8 +406,8 @@ void CAnimSequence::ComputeTimeRange()
 				int nkey = pTrack->GetNumKeys();
 				if (nkey > 0)
 				{
-					timeRange.start = min( timeRange.start,pTrack->GetKeyTime(0) );
-					timeRange.end = max( timeRange.end,pTrack->GetKeyTime(nkey-1) );
+					timeRange.start = crymin( timeRange.start,pTrack->GetKeyTime(0) );
+					timeRange.end = crymax( timeRange.end,pTrack->GetKeyTime(nkey-1) );
 				}
 			}
 		}

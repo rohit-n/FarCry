@@ -718,8 +718,6 @@ bool CSystem::InitPhysics()
 /////////////////////////////////////////////////////////////////////////////////
 bool CSystem::InitMovieSystem()
 {
-#if !defined(LINUX)
-#ifdef WIN32
 	m_dll.hMovie = LoadDLL(DLL_MOVIE);
 	if(!m_dll.hMovie)
 		return false;
@@ -732,16 +730,12 @@ bool CSystem::InitMovieSystem()
 	}
 
 	m_pIMovieSystem = pfnCreateMovieSystem(this);
-#else
-	m_pIMovieSystem = CreateMovieSystem( this );
-#endif
 
 	if (!m_pIMovieSystem)
 	{
 		Error("Error creating the movie system interface");
 		return false;
 	}
-#endif
 	return true;
 }
 
@@ -1248,13 +1242,9 @@ bool CSystem::Init( const SSystemInitParams &params )
 	//////////////////////////////////////////////////////////////////////////
 	//if (!params.bPreview)
 	{
-#if defined(LINUX)
-		CryLogAlways("MovieSystem initialization skipped for Linux dedicated server");
-#else
 		CryLogAlways("MovieSystem initialization");
 		if (!InitMovieSystem())
 			return false;
-#endif
 	}
 
 	if (!params.bEditor)

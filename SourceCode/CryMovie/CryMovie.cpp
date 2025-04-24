@@ -1,9 +1,9 @@
 // CryMovie.cpp : Defines the entry point for the DLL application.
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CryMovie.h"
-#include "movie.h"
+#include "Movie.h"
 #include <CrtDebugStats.h>
 
 #ifdef USING_CRY_MEMORY_MANAGER

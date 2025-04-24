@@ -20,7 +20,7 @@
 #pragma once
 #endif
 
-#include "entitynode.h"
+#include "EntityNode.h"
 
 /** Camera node controls camera entity.
 */

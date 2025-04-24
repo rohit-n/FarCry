@@ -20,8 +20,8 @@
 #include "AnimSplineTrack.h"
 #include "ExprTrack.h"
 #include "BoolTrack.h"
-#include "isystem.h"
-#include "ilog.h"
+#include "ISystem.h"
+#include "ILog.h"
 #include "Movie.h"
 
 #include <ISound.h>
@@ -394,7 +394,7 @@ void CAnimEntityNode::Animate( SAnimContext &ec )
 	bool bPosModified = (m_pos != pos);
 	bool bAnglesModified = (m_rotate.v != rotate.v) || (m_rotate.w != rotate.w);
 
-	if (bPosModified || bAnglesModified || (m_scale != scale) || (m_target!=NULL))
+	if (bPosModified || bAnglesModified || (m_scale != scale) || (m_target!=(IAnimNode*)NULL))
 	{
 		InvalidateTM();
 		bMatrixModified = true;
@@ -752,7 +752,12 @@ void CAnimEntityNode::ApplySoundKey( IAnimTrack *pTrack,int nCurrKey,int nLayer,
 		// we have a different sound now
 		if (m_SoundInfo[nLayer].pSound)
 			m_SoundInfo[nLayer].pSound->Stop();
-		m_SoundInfo[nLayer].pSound=m_pMovie->GetSystem()->GetISoundSystem()->LoadSound(key.pszFilename, flags | FLAG_SOUND_UNSCALABLE );
+		ISoundSystem* snd = m_pMovie->GetSystem()->GetISoundSystem();
+		if (snd)
+		{
+			m_SoundInfo[nLayer].pSound = snd->LoadSound(key.pszFilename, flags | FLAG_SOUND_UNSCALABLE);
+		}
+		
 		m_SoundInfo[nLayer].sLastFilename=key.pszFilename;
 		if (m_SoundInfo[nLayer].pSound)
 		{

@@ -156,7 +156,7 @@ public:
 	bool	empty() const								{ return m_keys.empty(); };		// Check if curve empty (no keys).
 	int		num_keys() const						{ return m_keys.size(); };		// Return number of keys in curve.
 	key_type&	key( int n )						{ return m_keys[n]; };				// Return n key.
-	float	time( int n ) const					{ return m_keys[n].time; };		// Shortcut to key n time.
+	float	spline_time( int n ) const					{ return m_keys[n].time; };		// Shortcut to key n time.
 	value_type&	value( int n )				{ return m_keys[n].value; };	// Shortcut to key n value.
 	value_type&	ds( int n )						{ return m_keys[n].ds; };			// Shortcut to key n incoming tangent.
 	value_type&	dd( int n )						{ return m_keys[n].dd; };			// Shortcut to key n outgoing tangent.
@@ -210,13 +210,13 @@ inline	TSpline<T,Basis>::TSpline()	{
 
 template <class T,class Basis>
 inline	int	TSpline<T,Basis>::seek_key( float t )	{
-	if ((m_curr == num_keys()) || (time(m_curr) > t))	{
+	if ((m_curr == num_keys()) || (spline_time(m_curr) > t))	{
 		// Search from begining.
 		m_curr = 0;
 	}
 	if (m_curr < num_keys())	{
 		int last = num_keys() - 1;
-		while ((m_curr != last)&&(time(m_curr+1) <= t)) ++m_curr;
+		while ((m_curr != last)&&(spline_time(m_curr+1) <= t)) ++m_curr;
 	}
 	return m_curr;
 }
@@ -233,20 +233,20 @@ inline	void	TSpline<T,Basis>::interpolate( float tm,value_type& val )	{
 
 	if (m_flags&MODIFIED)	comp_deriv();
 
-	if (t < time(0))	{	// Before first key.
+	if (t < spline_time(0))	{	// Before first key.
 		val = value(0);
 		return;
 	}
 
 	if (isORT(ORT_CYCLE) || isORT(ORT_LOOP))	{
 		// Warp time.
-		float endtime = time(last);
+		float endtime = spline_time(last);
 		//t = t - floor(t/endtime)*endtime;
 		t = fast_fmod( t,endtime );
 	}
 	int curr = seek_key( t );
 	if (curr < last)	{
-		t = (t - time(curr))/(time(curr+1) - time(curr));
+		t = (t - spline_time(curr))/(spline_time(curr+1) - spline_time(curr));
 		if (t >= 0)	{
 			// Call actual interpolation function.
 			interp_keys( curr,curr+1,t,val );
@@ -344,25 +344,25 @@ inline	void TCBSpline<T>::compMiddleDeriv( int curr )	{
 	// Middle key.
 	if (curr == 0)	{
 		// First key.
-		float dts = (GetRangeEnd() - time(last)) + (time(0) - GetRangeStart());
-		float dt = 2.0f / (dts + time(1) - time(0));
+		float dts = (GetRangeEnd() - spline_time(last)) + (spline_time(0) - GetRangeStart());
+		float dt = 2.0f / (dts + spline_time(1) - spline_time(0));
 		dsA = dt * dts;
-		ddA = dt * (time(1) - time(0));
+		ddA = dt * (spline_time(1) - spline_time(0));
 	}	else	{
 		if (curr == last)	{
 			// Last key.
-			float dts = (GetRangeEnd() - time(last)) + (time(0) - GetRangeStart());
-			float dt = 2.0f / (dts + time(last) - time(last-1));
+			float dts = (GetRangeEnd() - spline_time(last)) + (spline_time(0) - GetRangeStart());
+			float dt = 2.0f / (dts + spline_time(last) - spline_time(last-1));
 			dsA = dt * dts;
-			ddA = dt * (time(last) - time(last-1));
+			ddA = dt * (spline_time(last) - spline_time(last-1));
 		}	else	{
 			// Middle key.
-			float dt = 2.0f/(time(curr+1) - time(curr-1));
-			dsA = dt * (time(curr) - time(curr-1));
-			ddA = dt * (time(curr+1) - time(curr));
+			float dt = 2.0f/(spline_time(curr+1) - spline_time(curr-1));
+			dsA = dt * (spline_time(curr) - spline_time(curr-1));
+			ddA = dt * (spline_time(curr+1) - spline_time(curr));
 		}
 	}
-	key_type &k = key(curr);
+	TCBSplineKey<T> &k = this->key(curr);
 
 	float c = (float)fabs(k.cont);
 	float sa = dsA + c*(1.0f - dsA);
@@ -382,32 +382,32 @@ inline	void TCBSpline<T>::compMiddleDeriv( int curr )	{
 	ddB = da * B * cont1;
 
 	T qp,qn;
-	if (curr > 0) qp = value(curr-1);	else qp = value(last);
-	if (curr < last) qn = value(curr+1); else qn = value(0);
+	if (curr > 0) qp = this->value(curr-1);	else qp = this->value(last);
+	if (curr < last) qn = this->value(curr+1); else qn = this->value(0);
 	k.ds = dsA*(k.value - qp) + dsB*(qn - k.value);
 	k.dd = ddA*(k.value - qp) + ddB*(qn - k.value);
 }
 
 template	<class T>
 inline	void TCBSpline<T>::compFirstDeriv()	{
-	key_type &k = key(0);
+	TCBSplineKey<T> &k = this->key(0);
 	Zero(k.ds);
-	k.dd = 0.5f*(1.0f - k.tens)*( 3.0f*(value(1) - k.value) - ds(1));
+	k.dd = 0.5f*(1.0f - k.tens)*( 3.0f*(this->value(1) - k.value) - this->ds(1));
 }
 
 template	<class T>
 inline	void TCBSpline<T>::compLastDeriv()	{
 	int last = num_keys() - 1;
-	key_type &k = key(last);
-	k.ds = -0.5f*(1.0f - k.tens)*( 3.0f*(value(last-1) - k.value) + dd(last-1) );
+	TCBSplineKey<T> &k = this->key(last);
+	k.ds = -0.5f*(1.0f - k.tens)*( 3.0f*(this->value(last-1) - k.value) + this->dd(last-1) );
 	Zero(k.dd);
 }
 
 template	<class T>
 inline	void TCBSpline<T>::comp2KeyDeriv()	{
-	key_type &k1 = key(0);
-	key_type &k2 = key(1);
-	value_type val = value(1) - value(0);
+	TCBSplineKey<T> &k1 = this->key(0);
+	TCBSplineKey<T> &k2 = this->key(1);
+	typename TCBSpline<T>::value_type val = this->value(1) - this->value(0);
 	
 	Zero(k1.ds);
 	k1.dd = (1.0f - k1.tens)*val;
@@ -434,8 +434,8 @@ inline	void	TCBSpline<T>::comp_deriv() 	{
 			compLastDeriv();
 		}
 	}
-	m_curr = 0;
-	m_flags &= ~MODIFIED;	// clear MODIFIED flag.
+	this->m_curr = 0;
+	this->m_flags &= ~TCBSpline::MODIFIED;	// clear MODIFIED flag.
 }
 
 template	<class T>
@@ -466,12 +466,12 @@ inline	float	TCBSpline<T>::calc_ease( float t,float a,float b )	{
 template <class T>
 inline	void	TCBSpline<T>::interp_keys( int from,int to,float u,T& val )
 {
-	u = calc_ease( u,key(from).easefrom,key(to).easeto );
-	basis_type basis( u );
+	u = calc_ease( u,this->key(from).easefrom,this->key(to).easeto );
+	HermitBasis basis( u );
 
 	// Changed by Sergiy&Ivo
 	//val = (basis[0]*value(from)) + (basis[1]*value(to)) + (basis[2]*dd(from)) + (basis[3]*ds(to));
-	val = Concatenate( Concatenate( Concatenate( (basis[0]*value(from)) , (basis[1]*value(to))) , (basis[2]*dd(from))) , (basis[3]*ds(to)));
+	val = Concatenate( Concatenate( Concatenate( (basis[0]*this->value(from)) , (basis[1]*this->value(to))) , (basis[2]*this->dd(from))) , (basis[3]*this->ds(to)));
 
 }
 
@@ -523,20 +523,20 @@ inline	void	TCBQuatSpline::interpolate( float tm,value_type& val )
 
 	if (m_flags&MODIFIED)	comp_deriv();
 
-	if (t < time(0))	{	// Before first key.
+	if (t < spline_time(0))	{	// Before first key.
 		val = value(0);
 		return;
 	}
 
 	if (isORT(ORT_CYCLE) || isORT(ORT_LOOP))	{
 		// Warp time.
-		float endtime = time(last);
+		float endtime = spline_time(last);
 		//t = t - floor(t/endtime)*endtime;
 		t = fast_fmod( t,endtime );
 	}
 	int curr = seek_key( t );
 	if (curr < last)	{
-		t = (t - time(curr))/(time(curr+1) - time(curr));
+		t = (t - spline_time(curr))/(spline_time(curr+1) - spline_time(curr));
 		if (t >= 0)	{
 			// Call actual interpolation function.
 			interp_keys( curr,curr+1,t,val );
@@ -601,22 +601,22 @@ inline	void TCBQuatSpline::compMiddleDeriv( int curr )
 	{
 		if (curr == 0)	{
 			// First key.
-			float dts = (GetRangeEnd() - time(last)) + (time(0) - GetRangeStart());
-			float dt = 2.0f / (dts + time(1) - time(0));
+			float dts = (GetRangeEnd() - spline_time(last)) + (spline_time(0) - GetRangeStart());
+			float dt = 2.0f / (dts + spline_time(1) - spline_time(0));
 			fp = dt * dts;
-			fn = dt * (time(1) - time(0));
+			fn = dt * (spline_time(1) - spline_time(0));
 		}	else	{
 			if (curr == last)	{
 				// Last key.
-				float dts = (GetRangeEnd() - time(last)) + (time(0) - GetRangeStart());
-				float dt = 2.0f / (dts + time(last) - time(last-1));
+				float dts = (GetRangeEnd() - spline_time(last)) + (spline_time(0) - GetRangeStart());
+				float dt = 2.0f / (dts + spline_time(last) - spline_time(last-1));
 				fp = dt * dts;
-				fn = dt * (time(last) - time(last-1));
+				fn = dt * (spline_time(last) - spline_time(last-1));
 			}	else	{
 				// Middle key.
-				float dt = 2.0f/(time(curr+1) - time(curr-1));
-				fp = dt * (time(curr) - time(curr-1));
-				fn = dt * (time(curr+1) - time(curr));
+				float dt = 2.0f/(spline_time(curr+1) - spline_time(curr-1));
+				fp = dt * (spline_time(curr) - spline_time(curr-1));
+				fn = dt * (spline_time(curr+1) - spline_time(curr));
 			}
 		}
 		fp += c - c*fp;

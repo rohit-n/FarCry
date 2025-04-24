@@ -20,8 +20,8 @@
 #include "EventTrack.h"
 #include "ConsoleTrack.h"
 #include "MusicTrack.h"
-#include "isystem.h"
-#include "igame.h"
+#include "ISystem.h"
+#include "IGame.h"
 #include "AnimCameraNode.h"
 #include "Movie.h"
 
@@ -375,7 +375,13 @@ void CAnimSceneNode::ApplySoundKey( IAnimTrack *pTrack,int nCurrKey,int nLayer, 
 		// we have a different sound now
 		if (m_SoundInfo[nLayer].pSound)
 			m_SoundInfo[nLayer].pSound->Stop();
-		m_SoundInfo[nLayer].pSound = m_pMovie->GetSystem()->GetISoundSystem()->LoadSound(key.pszFilename, flags|FLAG_SOUND_UNSCALABLE);
+
+		ISoundSystem* snd = m_pMovie->GetSystem()->GetISoundSystem();
+		if (snd)
+		{
+			m_SoundInfo[nLayer].pSound = snd->LoadSound(key.pszFilename, flags|FLAG_SOUND_UNSCALABLE);
+		}
+
 		m_SoundInfo[nLayer].sLastFilename=key.pszFilename;
 		if (m_SoundInfo[nLayer].pSound)
 		{

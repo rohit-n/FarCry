@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "sequenceit.h"
+#include "StdAfx.h"
+#include "SequenceIt.h"
 
 CSequenceIt::CSequenceIt()
 {
