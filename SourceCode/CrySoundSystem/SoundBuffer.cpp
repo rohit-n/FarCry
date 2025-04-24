@@ -250,7 +250,7 @@ bool CSoundBuffer::Load(bool bLooping, CSound *pSound)
 #ifndef CS_VERSION_372
 			pSoundStream=CS_Stream_OpenFile(pFileName, fmf, 0);
 #else
-			pSoundStream=CS_Stream_Open(m_Props.sName.c_str(), GetFModFlags(m_bLooping), 0,0);
+			pSoundStream=CS_Stream_Open(m_Props.sName.c_str(), fmf, 0,0);
 #endif
     }
 

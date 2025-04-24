@@ -18,6 +18,13 @@ set(SRC_FILES
     "StdAfx.cpp"
 )
 
+if (NOT MSVC)
+set(SRC_FILES
+    ${SRC_FILES}
+    "OpenALSound.cpp"
+)
+endif()
+
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -25,9 +32,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/OggVorbisInclude
 )
 
-target_link_directories(${PROJECT_NAME} PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
+ target_link_directories(${PROJECT_NAME} PRIVATE
+     ${CMAKE_CURRENT_SOURCE_DIR}
+ )
 
 if (${ARCH_TYPE} STREQUAL "x86")
     set(CRYSOUND_LIB crysound.lib)
@@ -56,6 +63,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${VORBISFILE_STATIC_LIB}
     legacy_stdio_definitions.lib
 )
-else() #TODO: remove this stub
-target_link_libraries(${PROJECT_NAME} PRIVATE)
+else()
+target_link_libraries(${PROJECT_NAME} PUBLIC vorbisfile openal)
 endif()

@@ -512,7 +512,6 @@ bool CSystem::InitRenderer(WIN_HINSTANCE hinst, WIN_HWND hwnd,const char *szCmdL
 /////////////////////////////////////////////////////////////////////////////////
 bool CSystem::InitSound(WIN_HWND hwnd)
 {
-#if !defined(LINUX)
 #ifndef _XBOX
 	m_dll.hSound = LoadDLL(DLL_SOUND);
 	if(!m_dll.hSound)
@@ -540,8 +539,6 @@ bool CSystem::InitSound(WIN_HWND hwnd)
 		Error( "Error creating the music system interface");
 		return false;
 	}
-	
-#endif
 	return true;
 }
 

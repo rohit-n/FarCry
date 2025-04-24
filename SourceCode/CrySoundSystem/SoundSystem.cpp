@@ -1998,6 +1998,8 @@ extern "C"
 {
 	void CheckMem(void* pData, size_t nSize)
 	{
+#ifndef __linux
 		assert (0 == IsBadReadPtr(pData, nSize));
+#endif
 	}
 }
