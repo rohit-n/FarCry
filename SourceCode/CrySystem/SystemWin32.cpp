@@ -861,6 +861,7 @@ void CSystem::Error( const char *format,... )
 {
 	// format message
 	va_list	ArgList;
+	int i;
 	char szBuffer[MAX_WARNING_LENGTH];
 	const char *sPrefix = "\001CRITICAL ERROR: ";
 	strcpy( szBuffer,sPrefix );
@@ -883,7 +884,15 @@ void CSystem::Error( const char *format,... )
 		bHandled = GetUserCallback()->OnError( szBuffer );
 
 	// remove verbosity tag since it is not supported by ::MessageBox
-	strcpy(szBuffer,szBuffer+1);
+
+	for (i = 0; i < MAX_WARNING_LENGTH - 1; i++)
+	{
+		szBuffer[i] = szBuffer[i + 1];
+		if (szBuffer[i] == '\0')
+		{
+			break;
+		}
+	}
 
 #ifdef WIN32
 	if (!bHandled)

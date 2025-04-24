@@ -1156,7 +1156,7 @@ bool CSystem::Init( const SSystemInitParams &params )
 	// FILE SYSTEM
 	//////////////////////////////////////////////////////////////////////////
 
-#if !defined(PS2) && !defined (GC)
+#if !defined(PS2) && !defined (GC) && !defined (__linux)
   m_pCpu = new CCpuFeatures;
   m_pCpu->Detect();
 #endif
