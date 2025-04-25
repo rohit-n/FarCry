@@ -45,7 +45,7 @@ XmlNodeRef CXmlNode::createNode( const char *tag )
 //////////////////////////////////////////////////////////////////////////
 bool CXmlNode::isTag( const char *tag ) const
 {
-#if defined(LINUX)
+#if 0 //defined(LINUX)
 	return compareTextFileStrings(m_tag, tag) == 0;
 #else
 	return stricmp( tag,m_tag ) == 0;
@@ -349,7 +349,9 @@ XmlString CXmlNode::getXML( int level ) const
 bool CXmlNode::saveToFile( const char *fileName )
 {
 	XmlString xml = getXML();
+#ifndef __linux
 	SetFileAttributes( fileName,FILE_ATTRIBUTE_NORMAL );
+#endif
 	FILE *file = fxopen( fileName,"wt" );
 	if (file)
 	{

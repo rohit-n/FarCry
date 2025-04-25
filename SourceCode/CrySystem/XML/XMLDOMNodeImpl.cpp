@@ -88,7 +88,7 @@ XDOM::IXMLDOMNodeList *CXMLDOMNodeImpl::getElementsByTagName(const XMLCHAR *sNam
 	m_pChildNodes->reset();
 	while(pNode=m_pChildNodes->nextNode())
 	{
-#if defined(LINUX)
+#if 0 //defined(LINUX)
 		if((compareTextFileStrings(pNode->getName(),sName)==0) && (pNode->getNodeType()==XDOM::NODE_ELEMENT))
 #else
 		if((strcmp(pNode->getName(),sName)==0) && (pNode->getNodeType()==XDOM::NODE_ELEMENT))
