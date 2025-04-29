@@ -1563,7 +1563,7 @@ class CGLTexMan : public CTexMan
   void BuildMips8(GLenum tgt, STexPic *ti, byte *data, bool bSub);
   void BuildMipsSub(byte* src, int wdt, int hgt);
   void BuildMipsSub_DSDT(byte* src, int wdt, int hgt);
-  _inline void CGLTexMan::mfMakeS8T8_EdgePix(int x, int y, byte *src, byte *dst, int wdt, int hgt, int lSrcPitch, int lDstPitch);
+  _inline void mfMakeS8T8_EdgePix(int x, int y, byte *src, byte *dst, int wdt, int hgt, int lSrcPitch, int lDstPitch);
   void MakeNormalizeVectorCubeMap(int size, STexPic *tp);
   void GetCubeVector(int i, int cubesize, int x, int y, float *vector);
 
@@ -1626,7 +1626,7 @@ public:
     {
       gcpOGL->m_RP.m_ClipPlaneWasOverrided = 1;
       gcpOGL->m_RP.m_ClipPlaneEnabled = 1;
-      int nTMUs = min(gcpOGL->m_numtmus, 4);
+      int nTMUs = crymin(gcpOGL->m_numtmus, 4);
       for (int i=0; i<nTMUs; i++)
       {
         gcpOGL->EF_SelectTMU(i);

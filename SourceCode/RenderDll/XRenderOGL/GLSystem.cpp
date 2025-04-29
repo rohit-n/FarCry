@@ -1135,8 +1135,8 @@ bool CGLRenderer::CheckOGLExtensions(void)
     glGetIntegerv(GL_MAX_TEXTURES_UNITS_ARB, &m_MaxActiveTexturesARBFixed);
     m_MaxActiveTexturesARB_VP = m_MaxActiveTexturesARBFixed;
   }
-  m_MaxActiveTexturesARB_VP = min(m_MaxActiveTexturesARB_VP, MAX_TMU);
-  m_MaxActiveTexturesARBFixed = min(m_MaxActiveTexturesARBFixed, MAX_TMU);
+  m_MaxActiveTexturesARB_VP = crymin(m_MaxActiveTexturesARB_VP, MAX_TMU);
+  m_MaxActiveTexturesARBFixed = crymin(m_MaxActiveTexturesARBFixed, MAX_TMU);
 
   return true;
 }
@@ -1908,7 +1908,7 @@ exr:
     else
     if (CV_gl_maxtexsize > 2048)
       CV_gl_maxtexsize = 2048;
-    m_MaxTextureSize = min(CV_gl_maxtexsize, m_MaxTextureSize);
+    m_MaxTextureSize = crymin(CV_gl_maxtexsize, m_MaxTextureSize);
   }
 
   iLog->Log("****** OpenGL Driver Stats ******\n");
