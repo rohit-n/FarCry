@@ -262,7 +262,7 @@ void CGLRenderer::FindProc( void*& ProcAddress, char* Name, char* SupportName, b
 void CGLRenderer::FindProcs( bool AllowExt )
 {
   #define GL_EXT(name) if( AllowExt ) SUPPORTS##name = FindExt( TEXT(#name)+1 );
-  #define GL_PROC(ext,ret,func,parms) FindProc( *(void**)&func, #func, #ext, SUPPORTS##ext, AllowExt );
+  #define GL_PROC(ext,ret,func,parms) FindProc( *(void**)&cry##func, #func, #ext, SUPPORTS##ext, AllowExt );
   #include "GLFuncs.h"
   #undef GL_EXT
   #undef GL_PROC

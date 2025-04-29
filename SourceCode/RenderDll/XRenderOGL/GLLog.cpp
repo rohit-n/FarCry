@@ -3706,7 +3706,7 @@ void CGLRenderer::SetLogFuncs(bool set)
   if (set)
   {
 #define GL_EXT(name) 
-#define GL_PROC(ext,ret,func,parms) if (func) t##func = func; func = l##func;
+#define GL_PROC(ext,ret,func,parms) if (cry##func) t##func = cry##func; cry##func = l##func;
 #include "GLFuncs.h"
 #undef GL_EXT
 #undef GL_PROC
@@ -3714,7 +3714,7 @@ void CGLRenderer::SetLogFuncs(bool set)
   else
   {
 #define GL_EXT(name) 
-#define GL_PROC(ext,ret,func,parms) if (t##func) func = t##func;
+#define GL_PROC(ext,ret,func,parms) if (t##func) cry##func = t##func;
 #include "GLFuncs.h"
 #undef GL_EXT
 #undef GL_PROC

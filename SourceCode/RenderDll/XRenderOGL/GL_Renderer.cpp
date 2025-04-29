@@ -18,7 +18,7 @@
 
 // GL functions implement.
 #define GL_EXT(name) byte SUPPORTS##name;
-#define GL_PROC(ext,ret,func,parms) ret (__stdcall *func)parms;
+#define GL_PROC(ext,ret,func,parms) ret (__stdcall *cry##func)parms;
 #include "GLFuncs.h"
 #undef GL_EXT
 #undef GL_PROC
