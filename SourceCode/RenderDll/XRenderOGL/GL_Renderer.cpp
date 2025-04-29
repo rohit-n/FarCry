@@ -340,14 +340,22 @@ void CGLRenderer::ChangeLog()
     if (m_LogFile)
     {      
       iLog->Log("OpenGL log file '%s' opened\n", "OpenGLLog.txt");
+      fprintf(m_LogFile, "\n==========================================\n");
+#ifndef __linux
       char time[128];
-      char date[128];
-
+       char date[128];
       _strtime( time );
       _strdate( date );
-
-      fprintf(m_LogFile, "\n==========================================\n");
       fprintf(m_LogFile, "OpenGL Log file opened: %s (%s)\n", date, time);
+#else
+      time_t the_time = time(NULL);
+      struct tm* tm_struct = localtime(&the_time);
+      fprintf(m_LogFile, "OpenGL Log file opened: %02i/%02i/%i (%02i:%02i:%02i)\n",
+        tm_struct->tm_mon + 1, tm_struct->tm_mday, tm_struct->tm_year + 1900,
+        tm_struct->tm_hour, tm_struct->tm_min, tm_struct->tm_sec);
+#endif
+      
+      
       fprintf(m_LogFile, "==========================================\n");
     }
   }
@@ -355,14 +363,21 @@ void CGLRenderer::ChangeLog()
   if (!CV_r_log && m_LogFile)
   {
     SetLogFuncs(false);
-
+    fprintf(m_LogFile, "\n==========================================\n");
+#ifndef __linux
     char time[128];
     char date[128];
     _strtime( time );
     _strdate( date );
-    
-    fprintf(m_LogFile, "\n==========================================\n");
     fprintf(m_LogFile, "OpenGL Log file closed: %s (%s)\n", date, time);
+#else
+    time_t the_time = time(NULL);
+    struct tm* tm_struct = localtime(&the_time);
+    fprintf(m_LogFile, "OpenGL Log file closed: %02i/%02i/%i (%02i:%02i:%02i)\n",
+        tm_struct->tm_mon + 1, tm_struct->tm_mday, tm_struct->tm_year + 1900,
+        tm_struct->tm_hour, tm_struct->tm_min, tm_struct->tm_sec);
+#endif
+
     fprintf(m_LogFile, "==========================================\n");
     
     fclose(m_LogFile);
