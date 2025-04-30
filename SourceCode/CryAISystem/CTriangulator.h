@@ -96,4 +96,4 @@ public:
 	bool TriangulateNew(void);
 };
 
-#endif  _TRIANGULATOR_H_
+#endif  //_TRIANGULATOR_H_

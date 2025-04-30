@@ -79,7 +79,7 @@ public:
   void RegisterEntity( IEntityRender* pEntityRS );
   bool UnRegisterEntity( IEntityRender* pEntityRS );
 
-  CStatObj * CObjManager::MakeObject(const char * __szFileName, const char * _szGeomName=0,
+  CStatObj * MakeObject(const char * __szFileName, const char * _szGeomName=0,
     EVertsSharing eVertsSharing = evs_NoSharing,
     bool bLoadAdditinalInfo = true,
     bool bKeepInLocalSpace = false,

@@ -1460,7 +1460,7 @@ struct IEntitySystem
 	 @see PhysicalEntityFlag
 */
 #if defined(LINUX)
-	#undef vector;//well this was previously defined in physics, so...
+	#undef vector //well this was previously defined in physics, so...
 #endif
 	virtual void	GetEntitiesInRadius( const Vec3 &origin, float radius, std::vector<IEntity*> &entities,int physFlags=PHYS_ENTITY_ALL ) const = 0;
 
