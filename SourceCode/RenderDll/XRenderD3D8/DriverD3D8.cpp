@@ -5563,12 +5563,14 @@ void CD3D8Renderer::DrawQuad3D(const Vec3d & v0, const Vec3d & v1, const Vec3d &
   m_nPolygons += 2;
 }
 
-char*	CD3D8Renderer::GetVertexProfile()
+const char*	CD3D8Renderer::GetVertexProfile()
 {
+  return "NONE";
 }
 
-char*	CD3D8Renderer::GetPixelProfile()
+const char*	CD3D8Renderer::GetPixelProfile()
 {
+  return "NONE";
 }
 
 //====================================================================

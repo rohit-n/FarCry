@@ -971,10 +971,10 @@ char *CShader::mfPreprCheckConditions(char *buf, const char *nameFile)
 
   int nPos = 0;
   bool bAccept = false;
-  char *VP = gRenDev->GetVertexProfile(false);
-  char *PP = gRenDev->GetPixelProfile(false);
-  char *VPSup = gRenDev->GetVertexProfile(true);
-  char *PPSup = gRenDev->GetPixelProfile(true);
+  const char *VP = gRenDev->GetVertexProfile(false);
+  const char *PP = gRenDev->GetPixelProfile(false);
+  const char *VPSup = gRenDev->GetVertexProfile(true);
+  const char *PPSup = gRenDev->GetPixelProfile(true);
   int nGPU = gRenDev->GetFeatures() & RFT_HW_MASK;
   while (true)
   {

@@ -150,8 +150,8 @@ public:
   virtual void  DrawBall(const Vec3d & pos, float radius );
   virtual void  DrawPoint(float x, float y, float z, float fSize = 0.0f);
 
-  virtual char*	GetVertexProfile(bool bSupported) {return "NONE";}
-  virtual char*	GetPixelProfile(bool bSupported) {return "NONE";}
+  virtual const char*	GetVertexProfile(bool bSupported) {return "NONE";}
+  virtual const char*	GetPixelProfile(bool bSupported) {return "NONE";}
 
   // basic textures operations
   virtual unsigned int DownLoadToVideoMemory(unsigned char *data,int w, int h, ETEX_Format eTFSrc, ETEX_Format eTFDst, int nummipmap, bool repeat=true, int filter=FILTER_BILINEAR, int Id=0, char *szCacheName=NULL, int flags=0);

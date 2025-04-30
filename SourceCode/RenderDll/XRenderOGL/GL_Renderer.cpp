@@ -3119,7 +3119,7 @@ void CGLRenderer::MakeMatrix(const Vec3d & pos, const Vec3d & angles,const Vec3d
   PopMatrix();
 }
 
-char*	CGLRenderer::GetVertexProfile(bool bSupportedProfile)
+const char*	CGLRenderer::GetVertexProfile(bool bSupportedProfile)
 {
   CGprofile pr;
 #ifndef WIN64
@@ -3143,7 +3143,7 @@ char*	CGLRenderer::GetVertexProfile(bool bSupportedProfile)
     return "PROFILE_VS_2_0";
 }
 
-char*	CGLRenderer::GetPixelProfile(bool bSupportedProfile)
+const char*	CGLRenderer::GetPixelProfile(bool bSupportedProfile)
 {
   CGprofile pr;
 #ifndef WIN64

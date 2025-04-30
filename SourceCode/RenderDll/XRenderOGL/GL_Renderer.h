@@ -353,8 +353,8 @@ public:
   void  SetDeviceGamma(ushort *r, ushort *g, ushort *b);
   virtual void  RefreshResources(int nFlags);
 
-  virtual char*	GetVertexProfile(bool bSupportedProfile);
-  virtual char*	GetPixelProfile(bool bSupportedProfile);
+  virtual const char*	GetVertexProfile(bool bSupportedProfile);
+  virtual const char*	GetPixelProfile(bool bSupportedProfile);
 
   virtual void *GetDynVBPtr(int nVerts, int &nOffs, int Pool);
   virtual void DrawDynVB(int nOffs, int Pool, int nVerts);

@@ -306,7 +306,7 @@ static int sFillCR(char **buf, char *dst)
 }
 
 
-static void fxAddMacro(char *Name, char *Macro)
+static void fxAddMacro(const char *Name, char *Macro)
 {
   SPair pr;
   pr.MacroName = Name;
@@ -378,8 +378,8 @@ void fxParserInit(void)
   if (gRenDev->GetFeatures() & RFT_HW_PS30)
     fxAddMacro("PS30", NULL);
 #endif//LINUX
-  char *VPSup = gRenDev->GetVertexProfile(true);
-  char *PPSup = gRenDev->GetPixelProfile(true);
+  const char *VPSup = gRenDev->GetVertexProfile(true);
+  const char *PPSup = gRenDev->GetPixelProfile(true);
   fxAddMacro(VPSup, NULL);
   fxAddMacro(PPSup, NULL);
 }
@@ -1268,10 +1268,10 @@ void shGetVector4(char *buf, vec4_t& v)
 
 static struct SColAsc
 {
-  char *nam;
+  const char *nam;
   CFColor col;
 
-  SColAsc(char *name, const CFColor& c)
+  SColAsc(const char *name, const CFColor& c)
   {
     nam = name;
     col = c;

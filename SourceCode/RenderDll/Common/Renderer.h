@@ -411,8 +411,8 @@ public:
   virtual int	GetStencilBpp()		{ return (m_sbpp); }
   virtual int	GetAlphaBpp()		{ return (m_abpp); }
   virtual char	GetType()			{ return (m_type); }
-  virtual char*	GetVertexProfile(bool bSupportedProfile)=0;
-  virtual char*	GetPixelProfile(bool bSupportedProfile)=0;
+  virtual const char*	GetVertexProfile(bool bSupportedProfile)=0;
+  virtual const char*	GetPixelProfile(bool bSupportedProfile)=0;
   virtual void	SetType(char type)	{ m_type=type; }	
 
   virtual unsigned int MakeSprite(float object_scale, int tex_size, float angle, IStatObj * pStatObj, uchar * pTmpBuffer, uint def_tid)=0;

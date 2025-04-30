@@ -4144,7 +4144,7 @@ bool CD3D9Renderer::EF_SetLightHole(Vec3d vPos, Vec3d vNormal, int idTex, float 
   return false;
 }
 
-char*	CD3D9Renderer::GetVertexProfile(bool bSupportedProfile)
+const char*	CD3D9Renderer::GetVertexProfile(bool bSupportedProfile)
 {
   CGprofile pr = CG_PROFILE_VS_1_1;
 
@@ -4170,7 +4170,7 @@ char*	CD3D9Renderer::GetVertexProfile(bool bSupportedProfile)
   }
 }
 
-char*	CD3D9Renderer::GetPixelProfile(bool bSupportedProfile)
+const char*	CD3D9Renderer::GetPixelProfile(bool bSupportedProfile)
 {
   CGprofile pr = CG_PROFILE_PS_1_1;
 

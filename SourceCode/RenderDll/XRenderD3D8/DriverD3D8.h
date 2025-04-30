@@ -457,8 +457,8 @@ private:
   void RestoreGamma(void);
   void SetGamma(float fGamma, float fBrigtness, float fContrast);
 
-  virtual char*	GetVertexProfile();
-  virtual char*	GetPixelProfile();
+  virtual const char*	GetVertexProfile();
+  virtual const char*	GetPixelProfile();
 
   void PrepareOutSpaceTextures(CREOutSpace * pRE);
   void ScanOutSpaceCube(uint & nTexID, const Vec3d & vPos, int * pResult);

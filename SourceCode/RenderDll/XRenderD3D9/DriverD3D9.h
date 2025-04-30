@@ -701,8 +701,8 @@ private:
   void DestroyWindow(void);
   void RestoreGamma(void);
   void SetGamma(float fGamma, float fBrigtness, float fContrast, bool bForce);
-  virtual char*	GetVertexProfile(bool bSupportedProfile);
-  virtual char*	GetPixelProfile(bool bSupportedProfile);
+  virtual const char*	GetVertexProfile(bool bSupportedProfile);
+  virtual const char*	GetPixelProfile(bool bSupportedProfile);
 
   struct texture_info
   {

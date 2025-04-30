@@ -1097,8 +1097,8 @@ struct IRenderer//: public IRendererCallbackServer
   virtual void TransformTextureMatrix(float x, float y, float angle, float scale)=0;
   virtual void ResetTextureMatrix()=0;
   virtual char	GetType()=0;
-  virtual char*	GetVertexProfile(bool bSupportedProfile)=0;
-  virtual char*	GetPixelProfile(bool bSupportedProfile)=0;
+  virtual const char*	GetVertexProfile(bool bSupportedProfile)=0;
+  virtual const char*	GetPixelProfile(bool bSupportedProfile)=0;
   virtual void	SetType(char type)=0;	
   virtual unsigned int  MakeSprite(float object_scale, int tex_size, float angle, IStatObj * pStatObj, uchar * pTmpBuffer, uint def_tid)=0;
   virtual unsigned int  Make3DSprite(int nTexSize, float fAngleStep, IStatObj * pStatObj)=0;
