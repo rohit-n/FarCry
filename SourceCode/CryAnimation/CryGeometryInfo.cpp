@@ -1024,6 +1024,48 @@ void CryGeometryInfo::GetSize (ICrySizer* pSizer)const
 // Will clean the buffer and return NULL when the vertex format is < 0
 char* CryGeometryInfo::getVertBuf (int nVertFormat)
 {
+	// this is the table of offsets of UVs relative to the start of the structure
+	// -1 means there's no UVs in this format
+	// This is required by Animation and must be kept in tact with the vertex format enumeration
+	const int vertFormatUVOffsets[] = 
+	{
+		-1, // no UVs in this format - invalid format
+		-1, // VERTEX_FORMAT_P3F=1,                // shadow volumes (12 bytes)
+		-1, // VERTEX_FORMAT_P3F_COL4UB=2,         // usually terrain (16 bytes)
+		offsetof(struct_VERTEX_FORMAT_P3F_TEX2F, st[0]), // VERTEX_FORMAT_P3F_TEX2F=3,          // everything else (20 bytes)
+		offsetof(struct_VERTEX_FORMAT_P3F_COL4UB_TEX2F, st[0]), // VERTEX_FORMAT_P3F_COL4UB_TEX2F=4,   // usually plants (24 bytes)
+		offsetof(struct_VERTEX_FORMAT_TRP3F_COL4UB_TEX2F, st[0]),// VERTEX_FORMAT_TRP3F_COL4UB_TEX2F=5, // fonts (28 bytes)
+		-1, // VERTEX_FORMAT_P3F_COL4UB_COL4UB=1,     
+		-1, // VERTEX_FORMAT_P3F_N=1,                
+		-1, // VERTEX_FORMAT_P3F_N_COL4UB=1,                
+		offsetof(struct_VERTEX_FORMAT_P3F_N_TEX2F, st[0]), // VERTEX_FORMAT_P3F_N_TEX2F=3,          // everything else (20 bytes)
+		offsetof(struct_VERTEX_FORMAT_P3F_N_COL4UB_TEX2F, st[0]), // VERTEX_FORMAT_P3F_N_COL4UB_TEX2F=4,   // usually plants (24 bytes)
+		-1, // VERTEX_FORMAT_P3F_N_COL4UB_COL4UB=1,                
+		offsetof(struct_VERTEX_FORMAT_P3F_COL4UB_COL4UB_TEX2F, st[0]), // VERTEX_FORMAT_P3F_COL4UB_COL4UB_TEX2F=4,   // usually plants (24 bytes)
+		offsetof(struct_VERTEX_FORMAT_P3F_N_COL4UB_COL4UB_TEX2F, st[0]) // VERTEX_FORMAT_P3F_N_COL4UB_COL4UB_TEX2F=4,   // usually plants (24 bytes)
+	};
+
+	// this is the table of offsets of colors relative to the start of the structure
+	// -1 means there's no colors in this format
+	// This is required by Animation and must be kept in tact with the vertex format enumeration
+	const int vertFormatRGBAOffsets[] = 
+	{
+		-1, // invalid format
+		-1,
+		offsetof(struct_VERTEX_FORMAT_P3F_COL4UB, color.dcolor),
+		-1,
+		offsetof(struct_VERTEX_FORMAT_P3F_COL4UB_TEX2F, color.dcolor),
+		offsetof(struct_VERTEX_FORMAT_TRP3F_COL4UB_TEX2F, color.dcolor),
+		offsetof(struct_VERTEX_FORMAT_P3F_COL4UB_COL4UB, color.dcolor),
+		-1,
+		offsetof(struct_VERTEX_FORMAT_P3F_N_COL4UB, color.dcolor),
+		-1,
+		offsetof(struct_VERTEX_FORMAT_P3F_N_COL4UB_TEX2F, color.dcolor),
+		offsetof(struct_VERTEX_FORMAT_P3F_N_COL4UB_COL4UB, color.dcolor),
+		offsetof(struct_VERTEX_FORMAT_P3F_COL4UB_COL4UB_TEX2F, color.dcolor),
+		offsetof(struct_VERTEX_FORMAT_P3F_N_COL4UB_COL4UB_TEX2F, color.dcolor)
+	};
+
 	if (nVertFormat == m_nVertBufFormat)
 		return &m_arrVertBuf[0];
 
@@ -1052,14 +1094,14 @@ char* CryGeometryInfo::getVertBuf (int nVertFormat)
 	}
 
 	// fill the UVs in
-	int nUVOffset = g_VertFormatUVOffsets[nVertFormat];
+	int nUVOffset = vertFormatUVOffsets[nVertFormat];
 	if (nUVOffset >= 0)
 	{
 		for (unsigned i = 0; i < numExtVertices(); ++i)
 			*(CryUV*)(m_arrVertBuf.begin() + nUVOffset + nVertSize * i) = getExtUV (i);
 	}
 
-	int nColorOffset = g_VertFormatRGBAOffsets[nVertFormat];
+	int nColorOffset = vertFormatRGBAOffsets[nVertFormat];
 	if (nColorOffset >= 0)
 	{
 		unsigned i;
