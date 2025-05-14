@@ -2685,9 +2685,11 @@ DLL_EXPORT IRenderer* PackageRenderConstructor(int argc, char* argv[], SCryRende
 
   g_SecondsPerCycle = iSystem->GetSecondsPerCycle();
   g_CpuFlags = iSystem->GetCPUFlags();
-
+#ifndef __linux
   srand( GetTickCount() );
-
+#else
+  srand( SDL_GetTicks() );
+#endif
   return rd;
 }
 

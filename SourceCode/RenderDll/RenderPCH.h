@@ -792,8 +792,10 @@ inline double sCycles2()
 			mov   [H],edx   // Save high value.
 	}
 	return ((double)L +  4294967296.0 * (double)H);
-#else
+#elif !defined(__linux)
 	return __rdtsc();
+#else
+  return SDL_GetTicks();
 #endif
 
 }
