@@ -1895,7 +1895,16 @@ exr:
   rc->m_Context = SDL_GL_CreateContext(win);
   if (rc->m_Context)
   {
-	  SDL_GL_MakeCurrent(win, rc->m_Context);
+    if (SDL_GL_MakeCurrent(win, rc->m_Context) != 0)
+    {
+      iLog->Log("%s\n", SDL_GetError());
+      return NULL;
+    }
+  }
+  else
+  {
+    iLog->Log("%s\n", SDL_GetError());
+    return NULL;
   }
   m_CurrContext = rc;
 #endif
