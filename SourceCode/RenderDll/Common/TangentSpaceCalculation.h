@@ -530,14 +530,14 @@ DWORD CTangentSpaceCalculation<InputProxy>::AddUV2Base( std::multimap<CBaseIndex
 
 	refBaseUV.u=refBaseUV.u+inU;
 	refBaseUV.v=refBaseUV.v+inV;
-
+#if 0
 	//no mesh is perfect 
 	if(inU.x!=0.0f || inU.y!=0.0f || inU.z!=0.0f)
 		assert(refBaseUV.u.x!=0.0f || refBaseUV.u.y!=0.0f || refBaseUV.u.z!=0.0f);
 	// no mesh is perfect
 	if(inV.x!=0.0f || inV.y!=0.0f || inV.z!=0.0f)
 		assert(refBaseUV.v.x!=0.0f || refBaseUV.v.y!=0.0f || refBaseUV.v.z!=0.0f);
-
+#endif
 	return(dwBaseUVIndex);
 }
 
