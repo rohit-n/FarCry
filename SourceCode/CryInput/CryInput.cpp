@@ -40,8 +40,12 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 }
 #endif //_XBOX
 
-#ifndef USE_SDL_INPUT
+#ifdef USE_SDL_INPUT
+#ifndef __linux
 #include <SDL_syswm.h>
+#else
+#include <SDL2/SDL_syswm.h>
+#endif
 #endif
 
 IInput *CreateInput( ISystem *pSystem,void* hinst, void* hwnd, bool usedinput)

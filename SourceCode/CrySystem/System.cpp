@@ -17,7 +17,11 @@
 //#include "ini_vars.h"
 #include "CryLibrary.h"
 
+#ifdef _WIN32
 #include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 #ifndef _XBOX
 #ifdef WIN32
