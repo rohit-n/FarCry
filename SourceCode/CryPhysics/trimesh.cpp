@@ -141,7 +141,8 @@ CTriMesh* CTriMesh::CreateTriMesh(strided_pointer<const vectorf> pVertices,index
 		m_nVertices = max(m_nVertices, max(max(pIndices[i*3],pIndices[i*3+1]),pIndices[i*3+2]));
 	m_nVertices++;
 	if (bCopyVertices) {
-		memcpy(m_pVertices = new vectorf[m_nVertices], pVertices, m_nVertices*sizeof(vectorf));
+		m_pVertices = new vectorf[m_nVertices];
+		memcpy(m_pVertices, pVertices, m_nVertices*sizeof(vectorf));
 		m_flags |= 1;
 	} else
 		m_pVertices = strided_pointer<vectorf>((vectorf*)pVertices.data,pVertices.iStride); // removes const modifier
