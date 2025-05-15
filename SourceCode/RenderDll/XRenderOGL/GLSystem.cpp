@@ -1803,6 +1803,10 @@ void __stdcall nglDeleteTextures (GLsizei n, const GLuint *textures)
 {
   for (int i=0; i<n; i++)
   {
+    if (textures[i] >= TX_LASTBIND)
+    {
+      continue;
+    }
     nTexSize -= BindSizes[textures[i]];
     BindSizes[textures[i]] = 0;
   }
