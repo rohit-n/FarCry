@@ -5,6 +5,18 @@ if (${ARCH_TYPE} STREQUAL "x86")
     add_definitions(-DDO_ASM)
 endif()
 
+if (NOT MSVC)
+#set(CG_LIB_PATH "/path/to/cg/lib")
+if ("${CG_LIB_PATH}" STREQUAL "")
+		message( FATAL_ERROR "CG_LIB_PATH is not set.
+You must set it to a path containing libCgGL.so and libCg.so.
+You can download the Cg library at https://developer.nvidia.com/cg-toolkit-download" )
+endif()
+endif() #NOT MSVC
+
+add_definitions(-DUSE_SDL)
+
+
 set(SRC_FILES
     "../Common/3DUtils.cpp"
     "../Common/CRT.cpp"
@@ -146,6 +158,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_link_directories(${PROJECT_NAME} PRIVATE
     Libraries
+    ${CG_LIB_PATH}
 )
 
 if (MSVC)
@@ -156,6 +169,12 @@ if (MSVC)
         "OpenGL32.lib"
         "cg.lib"
         "cgGL.lib"
+    )
+else()
+    set(SYSTEM_DEPS
+        Cg
+        CgGL
+        GLU
     )
 endif()
 
