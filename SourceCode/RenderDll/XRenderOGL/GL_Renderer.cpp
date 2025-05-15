@@ -434,7 +434,7 @@ void CGLRenderer::BeginFrame()
   if (CV_gl_swapOnStart && m_bSwapBuffers)
     SwapBuffers(m_CurrContext->m_hDC);
 #else
-  SDL_GL_SwapWindow(m_CurrContext->m_Window);
+  //SDL_GL_SwapWindow(m_CurrContext->m_Window);
 #endif
   if (CV_r_gamma+m_fDeltaGamma != m_fLastGamma || CV_r_brightness != m_fLastBrightness || CV_r_contrast != m_fLastContrast)
     SetGamma(CV_r_gamma+m_fDeltaGamma, CV_r_brightness, CV_r_contrast);
@@ -1093,7 +1093,13 @@ void CGLRenderer::Update()
   }
 
   if (!CV_gl_swapOnStart && m_bSwapBuffers)
+  {
+#ifndef USE_SDL
     SwapBuffers(m_CurrContext->m_hDC);
+#else
+    SDL_GL_SwapWindow(m_CurrContext->m_Window);
+#endif
+  }
 
   if (CRenderer::CV_r_log)
     Logv(0, "******************************* EndFrame ********************************\n");
