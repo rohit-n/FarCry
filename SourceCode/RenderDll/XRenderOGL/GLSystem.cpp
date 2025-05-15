@@ -53,6 +53,7 @@ void CGLRenderer::CheckGammaSupport(void)
 
 void CGLRenderer::SetDeviceGamma(ushort *r, ushort *g, ushort *b)
 {
+#ifndef __linux
   ushort gamma[3][256];
   int i;
 
@@ -73,7 +74,6 @@ void CGLRenderer::SetDeviceGamma(ushort *r, ushort *g, ushort *b)
   }
   if (SUPPORTS_WGL_3DFX_gamma_control)
     wglSetDeviceGammaRamp3DFX(m_CurrContext->m_hDC, gamma);
-#ifdef WIN32 // FIX_LINUX
   else
     SetDeviceGammaRamp(m_CurrContext->m_hDC, gamma);
 #endif
