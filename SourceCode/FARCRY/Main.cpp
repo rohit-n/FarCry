@@ -13,11 +13,18 @@
 
 #define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
 
+#ifndef __linux
 #include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 #ifdef WIN32
 #include <windows.h>
 #include <process.h>
+#else
+#include <unistd.h>
+#include "CryLibrary.h"
 #endif
 
 //#define FARCRY_CD_CHECK_RUSSIAN
@@ -97,17 +104,22 @@ static ISystem *g_pISystem=NULL;
 static bool g_bSystemRelaunch = false;
 static char szMasterCDFolder[_MAX_PATH];
 
-#ifdef WIN32
 static void* g_hSystemHandle=NULL;
+#ifdef _WIN32
 #define DLL_SYSTEM "CrySystem.dll"
 #define DLL_GAME	 "CryGame.dll"
+#else
+#define DLL_SYSTEM "libCrySystem.so"
+#define DLL_GAME	 "libCryGame.so"
 #endif
 
 #ifndef PS2
-#if !defined(PS2)
+#ifdef _WIN32
 bool RunGame(HINSTANCE hInstance,const char *sCmdLine);
-#else
+#elif defined(PS2)
 bool RunGame(HINSTANCE hInstance);
+#else
+bool RunGame(void);
 #endif
 
 
@@ -151,6 +163,7 @@ char * getenv( const char *varname )
 
 void SetMasterCDFolder()
 {
+#ifndef __linux
 	char szExeFileName[_MAX_PATH];
 	// Get the path of the executable
 	GetModuleFileName( GetModuleHandle(NULL), szExeFileName, sizeof(szExeFileName));
@@ -166,6 +179,21 @@ void SetMasterCDFolder()
 	strcat( path_buffer,".." );
 	SetCurrentDirectory( path_buffer );
 	GetCurrentDirectory( sizeof(szMasterCDFolder),szMasterCDFolder );
+#else
+	char* last_slash;
+	char dll_path[_MAX_PATH];
+	getcwd(szMasterCDFolder, sizeof(szMasterCDFolder));
+	last_slash = strrchr(szMasterCDFolder, '/');
+	if (last_slash)
+	{
+		strcpy(dll_path, ".");
+		strcat(dll_path, last_slash);
+		strcat(dll_path, "/");
+		SetModulePath(dll_path);
+	}
+	
+	chdir("../");
+#endif
 }
 
 #ifdef FARCRY_CD_CHECK_RUSSIAN
@@ -234,12 +262,16 @@ void CheckFarCryCD( HINSTANCE hInstance ) {};
 #endif // FARCRY_CD_CHECK_RUSSIAN
 
 ///////////////////////////////////////////////
+#ifndef __linux
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPSTR     lpCmdLine,
                      int       nCmdShow)
+#else
+int main(int argc, char** argv)
+#endif
 {
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(_WIN32)
 	int tmpDbgFlag;
 	tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 	tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
@@ -253,6 +285,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
   // [marco] If a previous instance is running, activate
   // the old one and terminate the new one, depending
 	// on command line devmode status
+#ifndef __linux
   HWND hwndPrev;
 	static char szWndClass[] = "CryENGINE";
 	bool bDevMode=false;
@@ -278,18 +311,22 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 			return (-1);
 		}
 	}
-
+#endif
+#ifndef __linux
 	CheckFarCryCD(hInstance);
+#endif
 	SetMasterCDFolder();
 
-#if !defined(PS2)
+#ifdef _WIN32
 	RunGame(hInstance,lpCmdLine);
-#else
+#elif defined(PS2)
 	RunGame(hInstance);
+#else
+	RunGame();
 #endif
 	return 0;
 }
-
+#ifndef __linux
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	// Window procedure
@@ -493,7 +530,8 @@ bool RegisterWindow(HINSTANCE hInst)
 	else
 		return true;
 }
-#endif
+#endif //not linux
+#endif //not XBOX
 
 #else	//PS2
 
@@ -595,7 +633,9 @@ string FormatWinError(DWORD dwError)
 }
 
 #define MAX_CMDLINE_LEN 256
+#ifndef __linux
 #include <crtdbg.h>
+#endif
 ///////////////////////////////////////////////
 // Load the game DLL and run it
 
@@ -645,8 +685,15 @@ InvokeExternalConfigTool()
 
 
 //////////////////////////////////////////////////////////////////////////
+#ifndef __linux
 bool RunGame(HINSTANCE hInstance,const char *sCmdLine)
+#else
+bool RunGame(void)
+#endif
 {
+#ifdef __linux
+	char* sCmdLine = NULL;
+#endif
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 //	InvokeExternalConfigTool();
@@ -685,13 +732,12 @@ bool RunGame(HINSTANCE hInstance,const char *sCmdLine)
 		//		return false;
 		//	}
 		//}
-
-		g_hSystemHandle = SDL_LoadObject(DLL_SYSTEM);
+		g_hSystemHandle = SDL_LoadObject((string(szMasterCDFolder) + "/" + DLL_SYSTEM).c_str());
 		if (!g_hSystemHandle)
 		{
 			string errorStr = "CrySystem.dll Loading Failed:\n";
 			errorStr += SDL_GetError();
-
+			fprintf(stderr, "%s\n", errorStr.c_str());
 			SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "FarCry Error", errorStr.c_str(), nullptr);
 
 			return false;
@@ -700,7 +746,11 @@ bool RunGame(HINSTANCE hInstance,const char *sCmdLine)
 		PFNCREATESYSTEMINTERFACE pfnCreateSystemInterface = (PFNCREATESYSTEMINTERFACE)SDL_LoadFunction( g_hSystemHandle,"CreateSystemInterface" );
 
 		// Initialize with instance and window handles.
+#ifndef __linux
 		sip.hInstance = hInstance;
+#else
+		sip.hInstance = NULL;
+#endif
 		sip.hWnd = hWnd;
 		sip.pSystem = g_pISystem;
 		sip.pCheckFunc = AuthCheckFunction;
@@ -757,6 +807,7 @@ bool RunGame(HINSTANCE hInstance,const char *sCmdLine)
 
 	#else
 			SGameInitParams ip;
+			ip.sGameDLL = DLL_GAME;
 			if (!g_pISystem->CreateGame( ip ))
 			{
 				//Error( "CreateGame Failed" );
