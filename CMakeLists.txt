@@ -33,10 +33,6 @@ else()
         add_definitions(-DLINUX64 -D_AMD64_)
     endif()
 
-    # Verbose output
-    add_compile_options(-v)
-    add_link_options(-v)
-
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -D_DEBUG -g")
 endif()
