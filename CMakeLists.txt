@@ -41,5 +41,4 @@ else()
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -D_DEBUG -g")
 endif()
 
-add_subdirectory(Externals)
 add_subdirectory(SourceCode)
