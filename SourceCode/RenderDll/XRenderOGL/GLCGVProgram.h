@@ -406,6 +406,18 @@ public:
     //cgError Ret = cgGLBindProgram(NULL);
   }
 
+  static const char* CG_Profile_To_String(int profile)
+  {
+# define CG_PROFILE_MACRO(name, compiler_id, compiler_id_caps, compiler_opt,int_id,vertex_profile) \
+	if (profile == int_id) \
+	{ \
+		return compiler_opt; \
+	}
+#include "CG/cg_profiles.h"
+
+    return "Invalid Profile";
+  }
+
   char *mfLoadCG(const char *prog_text)
   {
 #ifndef WIN64
@@ -430,7 +442,8 @@ public:
           m_CGProfileType = CG_PROFILE_ARBVP1;
         return mfLoadCG(prog_text);
       }
-      Warning(0,0,"Couldn't create CG program '%s' (%s)", m_Name.c_str(), cgGetErrorString(err));
+      Warning(0,0,"Couldn't create CG program '%s' with profile %i (%s) - (%s)",
+        m_Name.c_str(), m_CGProfileType, CG_Profile_To_String(m_CGProfileType), cgGetErrorString(err));
       mfSaveCGFile(prog_text);
       return NULL;
     }
