@@ -1,4 +1,7 @@
 # Near Chuckle
+
+![Screenshot of Far Cry on Linux](assets/fort.jpg)
+
 Far Cry's leaked source code ported to run on SDL2 and Linux. Thanks to [ugozapad](https://github.com/ugozapad)
 and [q4a](https://github.com/q4a) for their earlier work.
 
