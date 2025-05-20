@@ -417,7 +417,7 @@ public:
 
     return "Invalid Profile";
   }
-
+#ifndef DISABLE_CG
   char *mfLoadCG(const char *prog_text)
   {
 #ifndef WIN64
@@ -528,6 +528,13 @@ public:
     return pBuf;
 #endif
   }
+#else
+char *mfLoadCG(const char *prog_text)
+{
+  (void)prog_text;
+  return NULL;
+}
+#endif
 
 #ifdef WIN64
 #pragma warning( push )									//AMD Port

@@ -5,7 +5,9 @@ if (${ARCH_TYPE} STREQUAL "x86")
     add_definitions(-DDO_ASM)
 endif()
 
-if (NOT MSVC)
+set (DISABLE_CG OFF)
+
+if (NOT MSVC AND NOT DISABLE_CG)
 #set(CG_LIB_PATH "/path/to/cg/lib")
 if ("${CG_LIB_PATH}" STREQUAL "")
 		message( FATAL_ERROR "CG_LIB_PATH is not set.
@@ -15,6 +17,9 @@ endif()
 endif() #NOT MSVC
 
 add_definitions(-DUSE_SDL)
+if (DISABLE_CG)
+add_definitions(-DDISABLE_CG)
+endif()
 
 
 set(SRC_FILES
@@ -172,10 +177,11 @@ if (MSVC)
     )
 else()
     set(SYSTEM_DEPS
-        Cg
-        CgGL
         GLU
     )
+    if (NOT DISABLE_CG)
+    set (SYSTEM_DEPS ${SYSTEM_DEPS} Cg CgGL)
+    endif()
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

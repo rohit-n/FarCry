@@ -697,6 +697,9 @@ bool CCGPShader_GL::mfActivate()
     }
     else
       strcpy(namedst, namedst1);
+#ifdef DISABLE_CG
+    bCreate = false;
+#endif
 create:
     if (bCreate)
     {
@@ -804,7 +807,12 @@ create:
       statusdst = iSystem->GetIPak()->FOpen(namedst, "r");
     }
     if (!statusdst)
+    {
+#ifdef DISABLE_CG
+      iLog->LogError("Failed to load cached fragment shader %s!\n", namedst);
+#endif
       return false;
+    }
     else
     {
       iSystem->GetIPak()->FSeek(statusdst, 0, SEEK_END);

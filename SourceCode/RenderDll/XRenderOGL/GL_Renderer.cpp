@@ -104,6 +104,46 @@ int CGLRenderer::CV_gl_squaretextures;
 int CGLRenderer::CV_gl_mipprocedures;
 ICVar *CGLRenderer::CV_gl_texturefilter;
 
+#ifdef DISABLE_CG
+
+CGprofile cgGLGetLatestProfile(CGGLenum profile_type)
+{
+  if (profile_type == CG_GL_VERTEX)
+  {
+    return CG_PROFILE_ARBVP1;
+  }
+  if (profile_type == CG_GL_FRAGMENT)
+  {
+    return CG_PROFILE_ARBFP1;
+  }
+  __builtin_trap();
+}
+
+CGerror cgGetError(void)
+{
+  return 0;
+}
+
+void cgGLSetOptimalOptions(CGprofile profile)
+{
+}
+
+CGcontext cgCreateContext(void)
+{
+  return 1;
+}
+
+const char *cgGetErrorString(CGerror error)
+{
+  return "STUB";
+}
+
+void cgDestroyContext(CGcontext ctx)
+{
+}
+
+#endif
+
 //////////////////////////////////////////////////////////////////////
 CGLRenderer::CGLRenderer()
 {

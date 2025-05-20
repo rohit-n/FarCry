@@ -308,7 +308,7 @@ public:
 
     return "Invalid Profile";
   }
-
+#ifndef DISABLE_CG
   char *mfLoadCG(char *prog_text)
   {
 #ifndef WIN64
@@ -505,7 +505,13 @@ public:
     return pBuf;
 #endif
   }
-
+#else
+char *mfLoadCG(char *prog_text)
+{
+  (void)prog_text;
+  return NULL;
+}
+#endif
   void mfLoad(const char *prog_text)
   {
     if (m_CGProfileType == CG_PROFILE_ARBFP1)
