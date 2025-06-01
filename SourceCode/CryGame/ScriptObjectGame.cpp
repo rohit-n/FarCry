@@ -10,10 +10,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "StdAfx.h"
-#if defined LINUX
-#include <sys/io.h>
-#else
-#include <io.h>
+#if !defined(LINUX)
+	#include <io.h>
 #endif
 #include "Game.h"
 #include "XServer.h"
@@ -3571,7 +3569,7 @@ int CScriptObjectGame::SoundEvent(IFunctionHandler *pH)
 	CXClient *pCli=m_pGame->GetClient();
 	if(pCli)
 	{
-		pCli->SoundEvent((EntityId)nID,pos,fRadius,fThreat);
+		//pCli->SoundEvent((EntityId)nID,pos,fRadius,fThreat);
 	}
 	
 	return pH->EndFunction();

@@ -33,7 +33,6 @@
 
 #ifdef LINUX
 #include <sys/dir.h>
-#include <sys/io.h>
 #include <unistd.h>
 #else
 #	include <direct.h>

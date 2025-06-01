@@ -3,10 +3,8 @@
 #include <Stream.h>
 #include "System.h"
 #include "zlib/zlib.h"
-#if defined(LINUX)
-#	include <sys/io.h>
-#else
-#	include <io.h>
+#if !defined(LINUX)
+	#include <io.h>
 #endif
 #if defined(LINUX)
 #include "ILog.h"

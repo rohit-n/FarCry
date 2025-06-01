@@ -51,10 +51,8 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-#if defined( LINUX )
-#	include <sys/io.h>
-#else
-#	include <io.h>
+#if !defined(LINUX)
+	#include <io.h>
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

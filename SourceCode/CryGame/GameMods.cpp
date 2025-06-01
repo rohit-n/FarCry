@@ -18,10 +18,8 @@
 #include <ICryPak.h>
 #include "Game.h"
 
-#if defined(LINUX)
-	#include <sys/io.h>
-#else
-#	include <io.h>
+#if !defined(LINUX)
+	#include <io.h>
 #endif
 
 //////////////////////////////////////////////////////////////////////////

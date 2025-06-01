@@ -72,11 +72,9 @@ typedef unsigned char BYTE;
 
 #ifndef GAMECUBE
 #	include <stdio.h>
-#	if defined(LINUX)
-#		include <sys/io.h>
-#	else
-#		include <io.h>
-#	endif
+#if !defined(LINUX)
+	#include <io.h>
+#endif
 #endif
 
 
