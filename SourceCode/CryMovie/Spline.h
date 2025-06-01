@@ -338,28 +338,28 @@ template	<class T>
 inline	void TCBSpline<T>::compMiddleDeriv( int curr )	{
 	float	dsA,dsB,ddA,ddB;
 	float	A,B,cont1,cont2;
-	int last = num_keys() - 1;
+	int last = TCBSpline::num_keys() - 1;
 
 	// dsAdjust,ddAdjust apply speed correction when continuity is 0.
 	// Middle key.
 	if (curr == 0)	{
 		// First key.
-		float dts = (GetRangeEnd() - spline_time(last)) + (spline_time(0) - GetRangeStart());
-		float dt = 2.0f / (dts + spline_time(1) - spline_time(0));
+		float dts = (TCBSpline::GetRangeEnd() - TCBSpline::spline_time(last)) + (TCBSpline::spline_time(0) - TCBSpline::GetRangeStart());
+		float dt = 2.0f / (dts + TCBSpline::spline_time(1) - TCBSpline::spline_time(0));
 		dsA = dt * dts;
-		ddA = dt * (spline_time(1) - spline_time(0));
+		ddA = dt * (TCBSpline::spline_time(1) - TCBSpline::spline_time(0));
 	}	else	{
 		if (curr == last)	{
 			// Last key.
-			float dts = (GetRangeEnd() - spline_time(last)) + (spline_time(0) - GetRangeStart());
-			float dt = 2.0f / (dts + spline_time(last) - spline_time(last-1));
+			float dts = (TCBSpline::GetRangeEnd() - TCBSpline::spline_time(last)) + (TCBSpline::spline_time(0) - TCBSpline::GetRangeStart());
+			float dt = 2.0f / (dts + TCBSpline::spline_time(last) - TCBSpline::spline_time(last-1));
 			dsA = dt * dts;
-			ddA = dt * (spline_time(last) - spline_time(last-1));
+			ddA = dt * (TCBSpline::spline_time(last) - TCBSpline::spline_time(last-1));
 		}	else	{
 			// Middle key.
-			float dt = 2.0f/(spline_time(curr+1) - spline_time(curr-1));
-			dsA = dt * (spline_time(curr) - spline_time(curr-1));
-			ddA = dt * (spline_time(curr+1) - spline_time(curr));
+			float dt = 2.0f/(TCBSpline::spline_time(curr+1) - TCBSpline::spline_time(curr-1));
+			dsA = dt * (TCBSpline::spline_time(curr) - TCBSpline::spline_time(curr-1));
+			ddA = dt * (TCBSpline::spline_time(curr+1) - TCBSpline::spline_time(curr));
 		}
 	}
 	TCBSplineKey<T> &k = this->key(curr);
@@ -397,7 +397,7 @@ inline	void TCBSpline<T>::compFirstDeriv()	{
 
 template	<class T>
 inline	void TCBSpline<T>::compLastDeriv()	{
-	int last = num_keys() - 1;
+	int last = TCBSpline::num_keys() - 1;
 	TCBSplineKey<T> &k = this->key(last);
 	k.ds = -0.5f*(1.0f - k.tens)*( 3.0f*(this->value(last-1) - k.value) + this->dd(last-1) );
 	Zero(k.dd);
@@ -417,17 +417,17 @@ inline	void TCBSpline<T>::comp2KeyDeriv()	{
 
 template	<class T>
 inline	void	TCBSpline<T>::comp_deriv() 	{
-	if (num_keys() > 1)	{
-		if ((num_keys() == 2) && !closed())	{
+	if (TCBSpline::num_keys() > 1)	{
+		if ((TCBSpline::num_keys() == 2) && !TCBSpline::closed())	{
 			comp2KeyDeriv();
 			return;
 		}
-		if (closed()) {
-			for (int i = 0; i < num_keys(); ++i)	{
+		if (TCBSpline::closed()) {
+			for (int i = 0; i < TCBSpline::num_keys(); ++i)	{
 				compMiddleDeriv( i );
 			}
 		}	else	{
-			for (int i = 1; i < (num_keys()-1); ++i)	{
+			for (int i = 1; i < (TCBSpline::num_keys()-1); ++i)	{
 				compMiddleDeriv( i );
 			}
 			compFirstDeriv();
