@@ -466,7 +466,7 @@ template<class F> int unite_lists(F *pSrc0,INT_PTR nSrc0, F *pSrc1,INT_PTR nSrc1
 	{
 		a0 = pSrc0[i0&inrange0] + _condmax(pSrc0[0],inrange0); //(1<<(sizeof(index)*8-2)&~inrange0);
 		a1 = pSrc1[i1&inrange1] + _condmax(pSrc1[0],inrange1); //(1<<(sizeof(index)*8-2)&~inrange1);
-		pDst[n++] = ares = min(a0,a1);
+		pDst[n++] = ares = crymin(a0,a1);
 	}
 	return n;
 }
@@ -475,7 +475,7 @@ template<class F> int intersect_lists(F *pSrc0,int nSrc0, F *pSrc1,int nSrc1, F 
 {
 	int i0,i1,n; F ares;
 	for(i0=i1=n=0; isneg(i0-nSrc0) & isneg(i1-nSrc1); i0+=isneg(pSrc0[i0]-ares-1),i1+=isneg(pSrc1[i1]-ares-1)) {
-		pDst[n] = ares = min(pSrc0[i0],pSrc1[i1]); n += iszero(pSrc0[i0]-pSrc1[i1]);
+		pDst[n] = ares = crymin(pSrc0[i0],pSrc1[i1]); n += iszero(pSrc0[i0]-pSrc1[i1]);
 	}
 	return n;
 }
