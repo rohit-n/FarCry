@@ -68,7 +68,7 @@ typedef unsigned char BYTE;
 
 #include <platform.h>
 
-#ifdef LINUX
+#if defined(LINUX) && defined(__x86_64__)
 #include <asm/msr.h>
 #endif
 

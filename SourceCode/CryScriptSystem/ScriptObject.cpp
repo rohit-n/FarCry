@@ -192,7 +192,9 @@ void CScriptObject::EndSetGetChain()
 	if(lua_istable(m_pLS,-1))
 		lua_pop(m_pLS,1);
 	else{
+#ifdef __x86_64__
 		DebugBreak();
+#endif
 	}
 }
 

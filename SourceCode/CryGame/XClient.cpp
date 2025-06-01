@@ -553,7 +553,9 @@ void CXClient::OnXContextSetup(CStream &stm)
 	{
 		if(!m_pGame->ExecuteScript("scripts/$GT$/ClientStuff.lua",true))
 		{
+#ifdef __x86_64__
 			DebugBreak();	
+#endif
 		}
 		m_pScriptSystem->GetGlobalValue("ClientStuff",m_pClientStuff);
 		m_pScriptSystem->BeginCall("ClientStuff","OnInit");
