@@ -1701,7 +1701,7 @@ void CCryPakFindData::ScanFS(CCryPak*pPak, const char *szDirIn)
 		*first = '\0';
 		first++;
 		second++;
-		if (strrchr(second, "*") != NULL)
+		if (strrchr(second, '*') != NULL)
 		{
 			fprintf(stderr, "%s - Cannot handle multiple wildcards\n", szDirIn);
 			return;
