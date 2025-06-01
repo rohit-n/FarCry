@@ -425,7 +425,7 @@ int CUIScreen::OnActivate()
 	ISystem* sys = m_pUISystem->GetISystem();
 	IConsole* console = sys->GetIConsole();
 	IRenderer *rend = m_pUISystem->GetIRenderer();
-	SDL_Window* wind = rend->GetHWND();
+	SDL_Window* wind = (SDL_Window*)rend->GetHWND();
 	unsigned int winflags = SDL_GetWindowFlags(wind);
 	w = console->GetCVar("r_Width")->GetIVal();
 	h = console->GetCVar("r_Height")->GetIVal();

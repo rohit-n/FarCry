@@ -282,7 +282,7 @@ DLL_API CS_SAMPLE * F_API CS_Sample_Load(int index, const char *name_or_data, un
 	ALSample_t* samp = nullptr;
 	if (mode & CS_LOADMEMORY)
 	{
-		ret = audio_wav_from_data_MEM(name_or_data, 0, &thebuf);
+		ret = audio_wav_from_data_MEM((void*)name_or_data, 0, &thebuf);
 		if (ret == 0)
 		{
 			samp = new ALSample_t;

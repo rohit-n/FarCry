@@ -114,8 +114,8 @@ public:
 		m_spline->key(index).flags = flags;
 	}
 
-	virtual EAnimTrackType GetType() { assert(0); return 0; }
-	virtual EAnimValue GetValueType() { assert(0); return 0; }
+	virtual EAnimTrackType GetType() { assert(0); return (EAnimTrackType)0; }
+	virtual EAnimValue GetValueType() { assert(0); return (EAnimValue)0; }
 
 	virtual void GetValue( float time,float &value ) { assert(0); }
 	virtual void GetValue( float time,Vec3 &value ) { assert(0); }

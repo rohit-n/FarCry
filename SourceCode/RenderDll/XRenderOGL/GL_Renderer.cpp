@@ -121,7 +121,7 @@ CGprofile cgGLGetLatestProfile(CGGLenum profile_type)
 
 CGerror cgGetError(void)
 {
-  return 0;
+  return (CGerror)0;
 }
 
 void cgGLSetOptimalOptions(CGprofile profile)
@@ -130,7 +130,7 @@ void cgGLSetOptimalOptions(CGprofile profile)
 
 CGcontext cgCreateContext(void)
 {
-  return 1;
+  return (CGcontext)1;
 }
 
 const char *cgGetErrorString(CGerror error)
