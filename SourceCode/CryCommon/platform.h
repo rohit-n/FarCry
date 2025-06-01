@@ -102,6 +102,10 @@ typedef void *EVENT_HANDLE;
 #define FNAME(X) X.d_name
 #endif
 
+#if defined(__linux) && !defined(__x86_64__)
+#include <SDL2/SDL.h>
+#endif
+
 #define crymax(a,b)            (((a) > (b)) ? (a) : (b))
 #define crymin(a,b)            (((a) < (b)) ? (a) : (b))
 
@@ -236,7 +240,7 @@ static int64 GetTicks()
 {
 #if defined(WIN64)
 	return __rdtsc ();
-#else
+#elif !defined(__linux) || defined(__x86_64__)
 	typedef union _LARGE_INTEGER 
 	{
     struct 
@@ -255,6 +259,8 @@ static int64 GetTicks()
 	LARGE_INTEGER counter;
 	__asm__ __volatile__ ( "rdtsc" : "=a" (counter.u.LowPart), "=d" (counter.u.HighPart) );
 	return counter.QuadPart;
+#else
+	return SDL_GetTicks64();
 #endif
 }
 #endif
