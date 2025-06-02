@@ -189,7 +189,11 @@ int CHeightfield::PrepareForIntersectionTest(geometry_under_test *pGTest, CGeome
 	m_nMaxVertexValency = 6;
 
 	if (m_nVerticesAlloc<m_nVertices) {
+#ifndef __e2k__
 		delete[] m_pVertices;
+#else
+		delete[] m_pVertices.data;
+#endif
 		m_pVertices = new vectorf[m_nVerticesAlloc = (m_nVertices-1 & ~15)+16];
 	}
 	if (m_nTrisAlloc<m_nTris) {

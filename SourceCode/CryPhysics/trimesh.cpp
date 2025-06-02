@@ -65,7 +65,14 @@ CTriMesh::~CTriMesh()
 		if (m_pIds) delete[] m_pIds;
 	}
 	if (m_flags & 1)
+	{
+#ifndef __e2k__
 		if (m_pVertices) delete[] m_pVertices;
+#else
+		if (m_pVertices.data) delete[] m_pVertices.data;
+#endif
+	}
+		
 	if (m_pNormals && !(m_flags&4)) delete[] m_pNormals;
 	for(int i=0;i<m_nHashPlanes;i++) {
 		delete[] m_pHashGrid[i]; delete[] m_pHashData[i];
