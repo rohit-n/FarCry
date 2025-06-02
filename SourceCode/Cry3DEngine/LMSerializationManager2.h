@@ -127,7 +127,7 @@ protected:
 		unsigned char ucOcclCount/*1..4*/;
 		UVSetHeader3():ucOcclCount(0)
 		{
-			UVSetHeader::UVSetHeader();
+			UVSetHeader();
 			OcclIds[0] = OcclIds[1] = OcclIds[2] = OcclIds[3] = 0;
 		}
 	};
