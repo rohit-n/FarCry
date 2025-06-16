@@ -3569,7 +3569,7 @@ int CScriptObjectGame::SoundEvent(IFunctionHandler *pH)
 	CXClient *pCli=m_pGame->GetClient();
 	if(pCli)
 	{
-		//pCli->SoundEvent((EntityId)nID,pos,fRadius,fThreat);
+		pCli->SoundEvent((EntityId)nID,pos,fRadius,fThreat);
 	}
 	
 	return pH->EndFunction();
